@@ -5,144 +5,407 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PagFesta - Pedido</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 15px;
-    background: #fafafa;
-  }
-  h1 {
-    text-align: center;
-    color: #d63333;
-  }
-  .produto {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: white;
-  }
-  .produto label {
-    flex: 1;
-  }
-  .qtd-container {
-    display: flex;
-    align-items: center;
-  }
-  .qtd-container button {
-    width: 28px;
-    height: 28px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    border: 1px solid #d63333;
-    background: #fff0f0;
-    color: #d63333;
-    border-radius: 4px;
-    margin: 0 5px;
-    user-select: none;
-  }
-  .qtd-container input[type=number] {
-    width: 40px;
-    text-align: center;
-    border: 1px solid #d63333;
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 4px;
-  }
-  button#btnGerarPagamento {
-    display: block;
-    margin: 20px auto 0;
-    background: #d63333;
-    color: white;
-    font-size: 18px;
-    padding: 10px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  button#btnGerarPagamento:hover {
-    background: #b52b2b;
-  }
-  #resumoPedido, #telaPagamento, #areaQRCode {
-    margin-top: 30px;
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  #resumoPedido p {
-    margin: 6px 0;
-  }
-  #resumoPedido strong {
-    font-size: 18px;
-  }
-  #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
-  #btnVoltarInicioResumo, #btnVoltarResumo {
-    background: #d63333;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 15px;
-  }
-  #btnAvancarPagamento:hover,
-  #btnGerarQRCode:hover,
-  #btnNovoPedido:hover,
-  #btnVoltarInicioResumo:hover,
-  #btnVoltarResumo:hover {
-    background: #b52b2b;
-  }
-  #telaPagamento label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  #qrCanvas {
-    display: block;
-    margin: 20px auto;
-  }
-  #numeroPedidoDisplay {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 8px;
-    color: #d63333;
-  }
-  #linkAdmin {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    font-weight: bold;
-    background: #d63333;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 14px;
-    z-index: 10;
-  }
-  #linkAdmin:hover {
-    background: #b52b2b;
-  }
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    background: #fafafa;
+  }
+  h1 {
+    text-align: center;
+    color: #d63333;
+  }
+  .produto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+  }
+  .produto label {
+    flex: 1;
+  }
+  .qtd-container {
+    display: flex;
+    align-items: center;
+  }
+  .qtd-container button {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid #d63333;
+    background: #fff0f0;
+    color: #d63333;
+    border-radius: 4px;
+    margin: 0 5px;
+    user-select: none;
+  }
+  .qtd-container input[type=number] {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #d63333;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 4px;
+  }
+  button#btnGerarPagamento {
+    display: block;
+    margin: 20px auto 0;
+    background: #d63333;
+    color: white;
+    font-size: 18px;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button#btnGerarPagamento:hover {
+    background: #b52b2b;
+  }
+  #resumoPedido,
+#telaPagamento, #areaQRCode {
+    margin-top: 30px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  #resumoPedido p {
+    margin: 6px 0;
+  }
+  #resumoPedido strong {
+    font-size: 18px;
+  }
+ #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
+ #btnVoltarInicioResumo, #btnVoltarResumo {
+    background: #d63333;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+ #btnAvancarPagamento:hover,
+ #btnGerarQRCode:hover,
+ #btnNovoPedido:hover,
+ #btnVoltarInicioResumo:hover,
+ #btnVoltarResumo:hover {
+    background:
+#b52b2b;
+  }
+  #telaPagamento label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  #qrCanvas {
+    display: block;
+    margin: 20px auto;
+  }
+  #numeroPedidoDisplay {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+    color: #d63333;
+  }
+  #linkAdmin {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    font-weight: bold;
+    background: #d63333;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 10;
+  }
+  #linkAdmin:hover {
+    background: #b52b2b;
+  }
 </style>
 </head>
 <body>
-
+ 
 <a id="linkAdmin" href="admin.html" target="_blank">Administrador</a>
-
+ 
 <h1>Faça seu pedido</h1>
+ 
+<form id="formPedido">
+  <div class="produto">
+    <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
+      <input type="number" id="qtdEspeto" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
+    </div>
+  </div>
+  <div class="produto">
+    <label for="qtdSuco">Suco - R$ 4,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
+      <input type="number" id="qtdSuco" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
+    </div>
+  </div>
+  <div class="produto">
+    <label for="qtdAgua">Água - R$ 3,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
+      <input type="number" id="qtdAgua" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
+    </div>
+  </div>
+ 
+  <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
+</form>
+ 
+<div id="resumoPedido" style="display:none;">
+  <h2>Resumo do Pedido</h2>
+  <div id="itensResumo"></div>
+  <p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
+  <button id="btnAvancarPagamento">Avançar para pagamento</button>
+  <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
+</div>
+ 
+<div id="telaPagamento" style="display:none;">
+  <h2>Escolha a forma de pagamento</h2>
+  <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
+  <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
+  <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
+  <button id="btnGerarQRCode">Gerar QR Code</button>
+  <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
+</div>
+ 
+<div id="areaQRCode" style="display:none; text-align:center;">
+  <canvas id="qrCanvas" width="250" height="250"></canvas>
+  <div id="numeroPedidoDisplay"></div>
+  <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
+</div>
+ 
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  // Produtos com preço e id dos inputs
+  const produtos = [
+    { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
+    { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
+    { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
+  ];
+ 
+  // Elementos principais
+  const formPedido = document.getElementById('formPedido');
+  const resumoDiv = document.getElementById('resumoPedido');
+  const itensResumoDiv = document.getElementById('itensResumo');
+  const totalResumoSpan = document.getElementById('totalResumo');
+  const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
+  const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
+  const telaPagamento = document.getElementById('telaPagamento');
+  const btnGerarQRCode = document.getElementById('btnGerarQRCode');
+  const btnVoltarResumo = document.getElementById('btnVoltarResumo');
+  const areaQRCode = document.getElementById('areaQRCode');
+  const qrCanvas = document.getElementById('qrCanvas');
+  const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
+  const btnNovoPedido = document.getElementById('btnNovoPedido');
+  const btnQtds = document.querySelectorAll('.btnQtd');
+ 
+  // Controle pedido
+  let numeroPedido = 1;
+  // Tenta carregar número do pedido do localStorage
+  const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
+  if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
 
-<!-- todo o conteúdo foi mantido -->
-<!-- código JavaScript que estava incompleto foi completado -->
-<!-- o script completo será inserido novamente se desejar -->
+    // Carrega pedidos existentes e saldo acumulado do localStorage
+    let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+    let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
+ 
+  // Função para atualizar quantidade via botões + e -
+  btnQtds.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inputId = btn.dataset.target;
+      const input = document.getElementById(inputId);
+      let val = parseInt(input.value) || 0;
+      if (btn.textContent === '+') {
+        val++;
+      } else {
+        val = val > 0 ? val - 1 : 0;
+      }
+      input.value = val;
+    });
+  });
+ 
+  // Ao submeter o formulário, mostrar resumo
+ formPedido.addEventListener('submit', e => {
+   e.preventDefault();
+    const itensSelecionados = [];
+    let total = 0;
+    for (const p of produtos) {
+      const qtd = parseInt(document.getElementById(p.id).value) || 0;
+      if (qtd > 0) {
+        const subtotal = qtd * p.preco;
+        total += subtotal;
+       itensSelecionados.push({
+          nome: p.nome,
+          qtd,
+          preco: p.preco, // Adiciona preço para o painel de admin
+          subtotal
+        });
+      }
+    }
+    if (itensSelecionados.length === 0) {
+      alert('Selecione ao menos um item para prosseguir.');
+      return;
+    }
+    // Montar resumo
+   itensResumoDiv.innerHTML = '';
+   itensSelecionados.forEach(item => {
+      const p = document.createElement('p');
+      p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
+      itensResumoDiv.appendChild(p);
+    });
+    totalResumoSpan.textContent = total.toFixed(2);
+ 
+    // Mostrar resumo e ocultar formulário
+   formPedido.style.display = 'none';
+    resumoDiv.style.display = 'block';
+    telaPagamento.style.display = 'none';
+    areaQRCode.style.display = 'none';
+  });
+ 
+  btnAvancarPagamento.addEventListener('click',
+() => {
+    // Mostra tela pagamento
+   resumoDiv.style.display = 'none';
+    telaPagamento.style.display = 'block';
+    areaQRCode.style.display = 'none';
+  });
+ 
+ btnVoltarInicioResumo.addEventListener('click', () => {
+    // Voltar para form pedido
+    resumoDiv.style.display = 'none';
+    formPedido.style.display = 'block';
+  });
+ 
+ btnVoltarResumo.addEventListener('click', () => {
+    // Voltar para resumo pedido
+    telaPagamento.style.display = 'none';
+    resumoDiv.style.display = 'block';
+  });
+ 
+ btnGerarQRCode.addEventListener('click', () => {
+    // Verifica forma de pagamento selecionada
+    const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
+    if (!pagamentoSelecionado) {
+      alert('Selecione uma forma de pagamento.');
+      return;
+    }
+    const metodo = pagamentoSelecionado.value;
 
+    // Obtém os detalhes do pedido atual do resumo
+    const currentItemsSelected = [];
+    let currentTotal = 0;
+    for (const p of produtos) {
+        const qtd = parseInt(document.getElementById(p.id).value) || 0;
+        if (qtd > 0) {
+            const subtotal = qtd * p.preco;
+            currentTotal += subtotal;
+            currentItemsSelected.push({
+                nome: p.nome,
+                qtd,
+                preco: p.preco,
+                subtotal
+            });
+        }
+    }
+
+    // Incrementa número do pedido e salva
+    localStorage.setItem('ultimoNumeroPedido', numeroPedido);
+
+    // Salva o pedido completo para o painel de administrador
+    const orderData = {
+        numeroPedido: numeroPedido,
+        metodoPagamento: metodo,
+        data: new Date().toISOString(),
+        items: currentItemsSelected,
+        total: currentTotal
+    };
+    allOrders.push(orderData);
+    localStorage.setItem('allOrders', JSON.stringify(allOrders));
+
+    // Atualiza o saldo acumulado
+    accumulatedBalance += currentTotal;
+    localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
+ 
+    // Montar string QRCode (exemplo simples, pode ser JSON ou link real)
+    const qrString = JSON.stringify({
+        numeroPedido: numeroPedido,
+        metodoPagamento: metodo,
+        valor: currentTotal.toFixed(2)
+    });
+
+    // Verifica se as informações bancárias estão disponíveis para Pix
+    if (metodo === 'pix') {
+        const bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
+        if (bankInfo.pixKey) {
+            // Inclui a chave Pix nos dados do QR code se disponível
+            // Em um cenário real, isso geraria um link de pagamento ou um QR code dinâmico.
+            // Por enquanto, é apenas parte da informação exibida no QR.
+            const pixQrString = `pix|${bankInfo.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
+            QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
+                if (error) console.error(error);
+                else {
+                    numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
+                    telaPagamento.style.display = 'none';
+                    areaQRCode.style.display = 'block';
+                    alert(`Para pagar com Pix, use a chave: ${bankInfo.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
+                }
+            });
+        } else {
+            alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
+            return; // Não prossegue para a geração do QR code se a chave Pix estiver faltando
+        }
+    } else {
+        // Gera QR genérico para outros métodos
+        QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
+            if (error) console.error(error);
+            else {
+                numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
+                telaPagamento.style.display = 'none';
+                areaQRCode.style.display = 'block';
+            }
+        });
+    }
+
+    // Incrementa para o próximo pedido
+    numeroPedido++;
+  });
+ 
+ btnNovoPedido.addEventListener('click', () => {
+    // Resetar formulário
+    for (const p of produtos) {
+      document.getElementById(p.id).value = 0;
+    }
+    // Resetar telas
+    areaQRCode.style.display = 'none';
+    resumoDiv.style.display = 'none';
+    telaPagamento.style.display = 'none';
+    formPedido.style.display = 'block';
+ 
+    // Resetar radios de pagamento
+    const radios = document.querySelectorAll('input[name="pagamento"]');
+    radios.forEach(r => (r.checked = false));
+  });
+</script>
+ 
 </body>
 </html>
