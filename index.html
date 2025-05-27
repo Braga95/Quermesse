@@ -1,162 +1,176 @@
 <!DOCTYPE html>
-<html lang="pt-Br">
-
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PagFesta</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <title>PagFesta - Quermesse</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      text-align: center;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background-color: #2196f3;
-      color: white;
-    }
-    .produto {
-      margin: 10px auto;
-      padding: 10px;
-      background: white;
-      border-radius: 10px;
-      width: 300px;
-    }
-    .quantidade {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 5px;
-    }
-    .quantidade button {
-      width: 30px;
-      height: 30px;
-    }
-    .quantidade input {
-      width: 40px;
-      text-align: center;
-      margin: 0 5px;
-    }
-    #qr-container {
-      margin: 20px auto;
-    }
-    canvas#qr {
-      margin: auto;
-      display: block;
-      width: 200px;
-      height: 200px;
-    }
-    #novo-pedido {
-      margin-top: 10px;
-      display: none;
-    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
+    header { background-color: #d62828; color: white; padding: 20px; text-align: center; position: relative; }
+    .admin-btn { position: absolute; top: 20px; right: 20px; background: white; color: #d62828; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    .admin-btn:hover { background: #ffd6d6; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    h2 { color: #d62828; }
+    .produto { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
+    .produto span { flex: 1; }
+    .quantidade { display: flex; align-items: center; }
+    .quantidade button { width: 30px; height: 30px; background: #d62828; color: white; border: none; border-radius: 3px; }
+    .quantidade input { width: 40px; text-align: center; margin: 0 5px; }
+    .resumo, .pagamento, .qrcode { display: none; }
+    .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+    .btn:hover { background: #b71c1c; }
+    .total { font-weight: bold; margin-top: 10px; }
+    canvas { margin-top: 20px; display: block; margin-left: auto; margin-right: auto; }
+    .pedido-numero { text-align: center; font-weight: bold; font-size: 18px; margin-top: 10px; }
   </style>
 </head>
-
 <body>
   <header>
-    <h2>PagFesta</h2>
-    <button onclick="window.location.href='painel.html'">Administrador</button>
+    <h1>PagFesta</h1>
+    <p>Quermesse Nossa Senhora da Boa Esperança</p>
+    <button class="admin-btn" onclick="window.location.href='painel.html'">Administrador</button>
   </header>
 
-  <div id="produtos"></div>
-  <button onclick="realizarPedido()">Pagar</button>
+  <div class="container">
+    <section class="pedido">
+      <h2>Escolha seus produtos</h2>
+      <form id="formulario">
+        <div class="produto">
+          <span>Pastel - R$10,00</span>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('pastel', -1)">-</button>
+            <input type="number" id="pastel" value="0" min="0" data-preco="10" />
+            <button type="button" onclick="alterarQtd('pastel', 1)">+</button>
+          </div>
+        </div>
+        <div class="produto">
+          <span>HotDog - R$10,00</span>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('hotdog', -1)">-</button>
+            <input type="number" id="hotdog" value="0" min="0" data-preco="10" />
+            <button type="button" onclick="alterarQtd('hotdog', 1)">+</button>
+          </div>
+        </div>
+        <div class="produto">
+          <span>Doces - R$6,00</span>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('doces', -1)">-</button>
+            <input type="number" id="doces" value="0" min="0" data-preco="6" />
+            <button type="button" onclick="alterarQtd('doces', 1)">+</button>
+          </div>
+        </div>
+        <div class="produto">
+          <span>Caldinho - R$10,00</span>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('caldinho', -1)">-</button>
+            <input type="number" id="caldinho" value="0" min="0" data-preco="10" />
+            <button type="button" onclick="alterarQtd('caldinho', 1)">+</button>
+          </div>
+        </div>
+        <div class="produto">
+          <span>Refrigerante - R$6,00</span>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('refri', -1)">-</button>
+            <input type="number" id="refri" value="0" min="0" data-preco="6" />
+            <button type="button" onclick="alterarQtd('refri', 1)">+</button>
+          </div>
+        </div>
+        <button type="submit" class="btn">Avançar</button>
+      </form>
+    </section>
 
-  <div id="qr-container">
-    <canvas id="qr"></canvas>
-    <p id="numero-pedido"></p>
-    <button id="novo-pedido" onclick="window.location.reload()">Gerar novo pedido</button>
+    <section class="resumo">
+      <h2>Resumo do Pedido</h2>
+      <ul id="lista-resumo"></ul>
+      <p class="total" id="valor-total"></p>
+      <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+    </section>
+
+    <section class="pagamento">
+      <h2>Forma de Pagamento</h2>
+      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
+      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
+      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
+      <br>
+      <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+    </section>
+
+    <section class="qrcode">
+      <h2>Seu QR Code</h2>
+      <canvas id="qr"></canvas>
+      <p class="pedido-numero" id="pedido-numero"></p>
+      <button class="btn" onclick="novoPedido()">Gerar novo pedido</button>
+    </section>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    let pedidoFinal = [];
+    let total = 0;
+    let numeroPedido = localStorage.getItem('ultimoPedido') ? parseInt(localStorage.getItem('ultimoPedido')) + 1 : 1;
 
-    const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_DOMINIO.firebaseapp.com",
-      databaseURL: "https://SEU_BANCO.firebaseio.com",
-      projectId: "SEU_PROJETO_ID",
-      storageBucket: "SEU_BUCKET.appspot.com",
-      messagingSenderId: "SEU_SENDER_ID",
-      appId: "SUA_APP_ID"
-    };
+    const form = document.getElementById('formulario');
+    const resumo = document.querySelector('.resumo');
+    const listaResumo = document.getElementById('lista-resumo');
+    const valorTotal = document.getElementById('valor-total');
+    const pagamento = document.querySelector('.pagamento');
+    const qrcode = document.querySelector('.qrcode');
+    const pedidoNumero = document.getElementById('pedido-numero');
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const produtos = [
-      { nome: "Cachorro Quente", preco: 10 },
-      { nome: "Refrigerante", preco: 5 },
-      { nome: "Espeto de Frango", preco: 8 },
-      { nome: "Suco", preco: 4 },
-      { nome: "Água", preco: 3 }
-    ];
-
-    const container = document.getElementById('produtos');
-    produtos.forEach((produto, index) => {
-      const div = document.createElement('div');
-      div.className = 'produto';
-      div.innerHTML = `
-        <h3>${produto.nome} - R$${produto.preco}</h3>
-        <div class="quantidade">
-          <button onclick="alterarQtd(${index}, -1)">-</button>
-          <input id="qtd-${index}" type="number" value="0" min="0" readonly />
-          <button onclick="alterarQtd(${index}, 1)">+</button>
-        </div>
-      `;
-      container.appendChild(div);
-    });
-
-    window.alterarQtd = (index, delta) => {
-      const input = document.getElementById(`qtd-${index}`);
+    function alterarQtd(id, delta) {
+      const input = document.getElementById(id);
       let val = parseInt(input.value) + delta;
-      if (val < 0) val = 0;
-      input.value = val;
+      input.value = val < 0 ? 0 : val;
     }
 
-    async function obterUltimoNumeroPedido() {
-      const snapshot = await get(ref(db, 'pedidos'));
-      if (!snapshot.exists()) return 1;
-      const pedidos = snapshot.val();
-      const numeros = Object.values(pedidos).map(p => p.numero);
-      return Math.max(...numeros) + 1;
-    }
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      pedidoFinal = [];
+      total = 0;
+      listaResumo.innerHTML = '';
 
-    window.realizarPedido = async () => {
-      const pedido = {};
-      let total = 0;
-      produtos.forEach((produto, index) => {
-        const qtd = parseInt(document.getElementById(`qtd-${index}`).value);
+      document.querySelectorAll('input[type="number"]').forEach(el => {
+        const qtd = parseInt(el.value);
+        const preco = parseFloat(el.getAttribute('data-preco'));
         if (qtd > 0) {
-          pedido[produto.nome] = qtd;
-          total += qtd * produto.preco;
+          pedidoFinal.push({ nome: el.id, qtd, preco });
+          total += preco * qtd;
+          listaResumo.innerHTML += `<li>${el.id} x${qtd} - R$${(preco * qtd).toFixed(2)}</li>`;
         }
       });
-      if (total === 0) return alert('Selecione ao menos um item.');
 
-      const numero = await obterUltimoNumeroPedido();
-      const pedidoData = { numero, itens: pedido, total, pago: true };
-      const pedidoRef = push(ref(db, 'pedidos'));
-      await set(pedidoRef, pedidoData);
+      if (pedidoFinal.length === 0) {
+        alert('Selecione ao menos um produto.');
+        return;
+      }
 
-      const texto = `Pedido ${numero} - Total R$${total.toFixed(2)}`;
+      valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
+      document.querySelector('.pedido').style.display = 'none';
+      resumo.style.display = 'block';
+    });
+
+    function mostrarPagamento() {
+      resumo.style.display = 'none';
+      pagamento.style.display = 'block';
+    }
+
+    function gerarQRCode() {
+      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const texto = `Pedido ${numeroPedido} - ${pedidoFinal.map(p => `${p.nome} x${p.qtd}`).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      pagamento.style.display = 'none';
+      qrcode.style.display = 'block';
+      pedidoNumero.textContent = `Pedido nº ${numeroPedido}`;
+      localStorage.setItem('ultimoPedido', numeroPedido);
+      numeroPedido++;
       QRCode.toCanvas(document.getElementById('qr'), texto, error => {
         if (error) console.error(error);
-        document.getElementById('numero-pedido').innerText = `Pedido Nº ${numero}`;
-        document.getElementById('novo-pedido').style.display = 'inline';
       });
+    }
+
+    function novoPedido() {
+      window.location.reload();
     }
   </script>
 </body>
-
 </html>
