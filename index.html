@@ -2,202 +2,201 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PagFesta - Quermesse</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
     header { background-color: #d62828; color: white; padding: 20px; text-align: center; position: relative; }
-    .admin-link {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: white;
-      text-decoration: underline;
-      cursor: pointer;
-    }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     h2 { color: #d62828; }
-    .produto { margin: 10px 0; display: flex; align-items: center; justify-content: space-between; }
-    .quantidade-controls { display: flex; align-items: center; gap: 10px; }
+    .produto { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+    .quantidade { display: flex; align-items: center; gap: 5px; }
     .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
     .btn:hover { background: #b71c1c; }
     .total { font-weight: bold; margin-top: 10px; }
-    .pagamento label { margin-right: 15px; }
     canvas { margin: 20px auto; display: block; }
-    .pedido, .resumo, .pagamento, .qrcode { display: none; }
+    section { display: none; }
+    .pedido { display: block; }
+    .admin-link { position: absolute; top: 20px; right: 20px; color: white; text-decoration: underline; cursor: pointer; }
+    #num-pedido { text-align: center; font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
   <header>
     <h1>PagFesta</h1>
     <p>Quermesse Nossa Senhora da Boa Esperança</p>
-    <span class="admin-link" onclick="window.location.href='painel.html'">Administrador</span>
+    <div class="admin-link" onclick="window.location.href='painel.html'">Administrador</div>
   </header>
 
-  <div class="container pedido">
-    <h2>Escolha seus produtos</h2>
-    <form id="formulario">
-      <div class="produto">
-        <label>Pastel - R$10,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('pastel', -1)">-</button>
-          <input type="number" id="pastel" value="0" min="0" data-preco="10" readonly />
-          <button type="button" onclick="alterarQuantidade('pastel', 1)">+</button>
+  <div class="container">
+    <section class="pedido">
+      <h2>Escolha seus produtos</h2>
+      <form id="formulario">
+        <div class="produto">
+          <label>Pastel - R$10,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('pastel', -1)">−</button>
+            <input type="number" id="pastel" data-preco="10" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('pastel', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>HotDog - R$10,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('hotdog', -1)">-</button>
-          <input type="number" id="hotdog" value="0" min="0" data-preco="10" readonly />
-          <button type="button" onclick="alterarQuantidade('hotdog', 1)">+</button>
+        <div class="produto">
+          <label>HotDog - R$10,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('hotdog', -1)">−</button>
+            <input type="number" id="hotdog" data-preco="10" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('hotdog', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Doces - R$6,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('doces', -1)">-</button>
-          <input type="number" id="doces" value="0" min="0" data-preco="6" readonly />
-          <button type="button" onclick="alterarQuantidade('doces', 1)">+</button>
+        <div class="produto">
+          <label>Doces - R$6,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('doces', -1)">−</button>
+            <input type="number" id="doces" data-preco="6" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('doces', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Caldinho - R$10,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('caldinho', -1)">-</button>
-          <input type="number" id="caldinho" value="0" min="0" data-preco="10" readonly />
-          <button type="button" onclick="alterarQuantidade('caldinho', 1)">+</button>
+        <div class="produto">
+          <label>Caldinho - R$10,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('caldinho', -1)">−</button>
+            <input type="number" id="caldinho" data-preco="10" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('caldinho', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Refrigerante - R$6,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('refri', -1)">-</button>
-          <input type="number" id="refri" value="0" min="0" data-preco="6" readonly />
-          <button type="button" onclick="alterarQuantidade('refri', 1)">+</button>
+        <div class="produto">
+          <label>Refrigerante - R$6,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('refri', -1)">−</button>
+            <input type="number" id="refri" data-preco="6" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('refri', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Espeto de Frango - R$12,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('espeto', -1)">-</button>
-          <input type="number" id="espeto" value="0" min="0" data-preco="12" readonly />
-          <button type="button" onclick="alterarQuantidade('espeto', 1)">+</button>
+        <div class="produto">
+          <label>Espeto de Frango - R$8,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('espeto', -1)">−</button>
+            <input type="number" id="espeto" data-preco="8" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('espeto', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Suco - R$5,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('suco', -1)">-</button>
-          <input type="number" id="suco" value="0" min="0" data-preco="5" readonly />
-          <button type="button" onclick="alterarQuantidade('suco', 1)">+</button>
+        <div class="produto">
+          <label>Suco - R$5,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('suco', -1)">−</button>
+            <input type="number" id="suco" data-preco="5" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('suco', 1)">+</button>
+          </div>
         </div>
-      </div>
-      <div class="produto">
-        <label>Água - R$4,00</label>
-        <div class="quantidade-controls">
-          <button type="button" onclick="alterarQuantidade('agua', -1)">-</button>
-          <input type="number" id="agua" value="0" min="0" data-preco="4" readonly />
-          <button type="button" onclick="alterarQuantidade('agua', 1)">+</button>
+        <div class="produto">
+          <label>Água - R$4,00</label>
+          <div class="quantidade">
+            <button type="button" onclick="alterarQtd('agua', -1)">−</button>
+            <input type="number" id="agua" data-preco="4" value="0" min="0" readonly />
+            <button type="button" onclick="alterarQtd('agua', 1)">+</button>
+          </div>
         </div>
-      </div>
+        <button type="submit" class="btn">Avançar</button>
+      </form>
+    </section>
 
-      <button type="submit" class="btn">Avançar</button>
-    </form>
-  </div>
+    <section class="resumo">
+      <h2>Resumo do Pedido</h2>
+      <ul id="lista-resumo"></ul>
+      <p class="total" id="valor-total"></p>
+      <button class="btn" onclick="voltarPedido()">Voltar</button>
+      <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+    </section>
 
-  <div class="container resumo">
-    <h2>Resumo do Pedido</h2>
-    <ul id="lista-resumo"></ul>
-    <p class="total" id="valor-total"></p>
-    <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
-    <button class="btn" onclick="voltarPedido()">Voltar</button>
-  </div>
+    <section class="pagamento">
+      <h2>Forma de Pagamento</h2>
+      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
+      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
+      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro</label>
+      <br><br>
+      <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+      <button class="btn" onclick="voltarResumo()">Voltar</button>
+    </section>
 
-  <div class="container pagamento">
-    <h2>Forma de Pagamento</h2>
-    <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
-    <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
-    <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
-    <br>
-    <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
-    <button class="btn" onclick="voltarResumo()">Voltar</button>
-  </div>
-
-  <div class="container qrcode">
-    <h2>Seu QR Code</h2>
-    <canvas id="qr"></canvas>
-    <p id="numero-pedido" class="total"></p>
+    <section class="qrcode">
+      <h2>Seu QR Code</h2>
+      <canvas id="qr" width="300" height="300"></canvas>
+      <p id="num-pedido"></p>
+      <button class="btn" onclick="novoPedido()">Gerar novo pedido</button>
+    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
     let pedidoFinal = [];
     let total = 0;
-    let numeroPedido = Math.floor(Math.random() * 100000);
+    let numeroPedido = 1;
 
-    function alterarQuantidade(id, delta) {
+    function alterarQtd(id, delta) {
       const input = document.getElementById(id);
-      let valor = parseInt(input.value);
-      valor = Math.max(0, valor + delta);
-      input.value = valor;
+      let valor = parseInt(input.value) + delta;
+      input.value = Math.max(0, valor);
     }
 
-    document.getElementById('formulario').addEventListener('submit', function(e) {
+    const form = document.getElementById('formulario');
+    form.addEventListener('submit', function (e) {
       e.preventDefault();
-      total = 0;
       pedidoFinal = [];
-      const listaResumo = document.getElementById('lista-resumo');
-      listaResumo.innerHTML = '';
-
+      total = 0;
+      document.getElementById('lista-resumo').innerHTML = '';
       document.querySelectorAll('input[type="number"]').forEach(input => {
         const qtd = parseInt(input.value);
         if (qtd > 0) {
-          const nome = input.id;
+          const nome = input.id.charAt(0).toUpperCase() + input.id.slice(1);
           const preco = parseFloat(input.getAttribute('data-preco'));
           pedidoFinal.push({ nome, preco, qtd });
           total += preco * qtd;
-          listaResumo.innerHTML += `<li>${nome} x${qtd} - R$${(preco * qtd).toFixed(2)}</li>`;
+          document.getElementById('lista-resumo').innerHTML += `<li>${nome} x${qtd} - R$${(preco * qtd).toFixed(2)}</li>`;
         }
       });
 
       if (pedidoFinal.length === 0) {
-        alert('Selecione ao menos um produto.');
+        alert('Selecione pelo menos um item.');
         return;
       }
 
       document.getElementById('valor-total').textContent = `Total: R$${total.toFixed(2)}`;
-      document.querySelector('.pedido').style.display = 'none';
-      document.querySelector('.resumo').style.display = 'block';
+      mostrarSecao('resumo');
     });
 
-    function mostrarPagamento() {
-      document.querySelector('.resumo').style.display = 'none';
-      document.querySelector('.pagamento').style.display = 'block';
+    function mostrarSecao(classe) {
+      document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+      document.querySelector(`.${classe}`).style.display = 'block';
     }
 
-    function voltarPedido() {
-      document.querySelector('.resumo').style.display = 'none';
-      document.querySelector('.pedido').style.display = 'block';
+    function mostrarPagamento() {
+      mostrarSecao('pagamento');
     }
 
     function voltarResumo() {
-      document.querySelector('.pagamento').style.display = 'none';
-      document.querySelector('.resumo').style.display = 'block';
+      mostrarSecao('resumo');
+    }
+
+    function voltarPedido() {
+      mostrarSecao('pedido');
     }
 
     function gerarQRCode() {
       const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
-      const texto = `Pedido #${numeroPedido}\nProdutos:\n` + pedidoFinal.map(p => `${p.nome} x${p.qtd}`).join(', ') + `\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
-
-      document.querySelector('.pagamento').style.display = 'none';
-      document.querySelector('.qrcode').style.display = 'block';
-      document.getElementById('numero-pedido').textContent = `Número do Pedido: #${numeroPedido}`;
-
+      const texto = `Pedido #${numeroPedido}\n${pedidoFinal.map(p => `${p.nome} x${p.qtd}`).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      mostrarSecao('qrcode');
+      document.getElementById('num-pedido').textContent = `Número do pedido: ${numeroPedido}`;
       QRCode.toCanvas(document.getElementById('qr'), texto, error => {
         if (error) console.error(error);
       });
+    }
+
+    function novoPedido() {
+      numeroPedido++;
+      document.querySelectorAll('input[type="number"]').forEach(i => i.value = 0);
+      document.querySelector('input[name="pagamento"][value="Pix"]').checked = true;
+      mostrarSecao('pedido');
     }
   </script>
 </body>
