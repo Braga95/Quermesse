@@ -3,623 +3,761 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PagFesta - Compra e Administração</title>
+<title>PagFesta - Quermesse</title>
 <style>
+  /* Reset básico */
+  * {
+    box-sizing: border-box;
+  }
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0; padding: 0;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
     background: #fffaf0;
     color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
   header {
-    background: #d62828;
+    background-color: #d62828;
     color: white;
-    padding: 15px;
-    text-align: center;
-    position: relative;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
   }
-  header button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: white;
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+  header p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  #btnAdmin {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #btnAdmin:hover {
+    background-color: white;
     color: #d62828;
-    border: none;
-    padding: 8px 14px;
-    font-weight: bold;
-    border-radius: 4px;
+  }
+  .container {
+    max-width: 640px;
+    margin: 20px auto 40px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgb(0 0 0 / 0.1);
+  }
+  h2 {
+    color: #d62828;
+    margin-top: 0;
+  }
+  /* Produtos */
+  .produto {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+    justify-content: space-between;
+  }
+  .produto-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  .produto input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
     cursor: pointer;
   }
-  header button:hover {
-    background: #f8f1f1;
+  .produto label {
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
   }
+  /* Quantidade */
+  .quantidade-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-quantidade {
+    background: #d62828;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-quantidade:active {
+    background: #b71c1c;
+  }
+  input.quantidade {
+    width: 40px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 30px;
+  }
+  /* Botão principal */
+  .btn {
+    background: #d62828;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 25px;
+    transition: background-color 0.3s ease;
+  }
+  .btn:hover {
+    background: #b71c1c;
+  }
+  /* Seções */
   section {
     display: none;
-    padding: 20px;
   }
   section.active {
     display: block;
   }
-  /* Estilo Formulário */
-  form label {
+  ul#lista-resumo {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  ul#lista-resumo li {
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    font-weight: 600;
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
   }
-  form label span {
-    width: 120px;
+  p.total {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-top: 15px;
   }
-  input[type="number"] {
-    width: 40px;
-    text-align: center;
-    font-size: 1rem;
-    margin: 0 8px;
-  }
-  button.mais, button.menos {
-    background: #d62828;
-    border: none;
-    color: white;
-    font-weight: bold;
-    width: 26px;
-    height: 26px;
+  /* Pagamento */
+  .pagamento label {
+    margin-right: 20px;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 4px;
+    user-select: none;
   }
-  button.mais:hover, button.menos:hover {
+  /* QR Code */
+  .qrcode {
+    text-align: center;
+  }
+  canvas#qr {
+    margin-top: 20px;
+    width: 280px !important;
+    height: 280px !important;
+    border: 2px solid #d62828;
+    border-radius: 12px;
+  }
+  p#numero-pedido {
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #d62828;
+  }
+  /* Modal login admin */
+  #modalLogin {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+  }
+  #modalLogin.active {
+    display: flex;
+  }
+  #modalLogin .modal-content {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.2);
+  }
+  #modalLogin h3 {
+    margin-top: 0;
+    color: #d62828;
+    text-align: center;
+  }
+  #modalLogin label {
+    font-weight: 600;
+    display: block;
+    margin-top: 15px;
+  }
+  #modalLogin input[type="text"],
+  #modalLogin input[type="password"] {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  #modalLogin button {
+    margin-top: 20px;
+    background: #d62828;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px 0;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #modalLogin button:hover {
     background: #b71c1c;
   }
-  /* Botões gerais */
-  button.btn {
+  #modalLogin .erro {
+    margin-top: 10px;
+    color: #b71c1c;
+    font-weight: 700;
+    text-align: center;
+  }
+  /* Painel Admin */
+  #painelAdmin {
+    max-width: 900px;
+    margin: 20px auto 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.1);
+    padding: 20px 30px;
+    display: none;
+    flex-direction: column;
+  }
+  #painelAdmin.active {
+    display: flex;
+  }
+  #painelAdmin nav {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+  #painelAdmin nav button {
     background: #d62828;
     color: white;
     border: none;
     padding: 10px 18px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
-    margin-top: 20px;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
   }
-  button.btn:hover {
+  #painelAdmin nav button:hover {
     background: #b71c1c;
   }
-  /* Resumo */
-  ul#lista-resumo {
-    list-style: none;
-    padding-left: 0;
-  }
-  ul#lista-resumo li {
-    margin-bottom: 6px;
-  }
-  #valor-total {
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  /* QR Code */
-  #qr {
-    margin: 0 auto;
-    display: block;
-    width: 280px !important;
-    height: 280px !important;
-  }
-  #numero-pedido {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-  /* Tabela Admin */
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 15px;
-  }
-  th, td {
-    border: 1px solid #d62828;
-    padding: 8px;
-    text-align: center;
-  }
-  th {
-    background: #d62828;
-    color: white;
-  }
-  /* Seções Admin internas */
-  nav.admin-menu {
-    margin-bottom: 15px;
-  }
-  nav.admin-menu button {
-    background: #d62828;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    margin-right: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  nav.admin-menu button:hover {
-    background: #b71c1c;
-  }
-  /* Form banco e sacar */
-  .admin-page {
+  /* Conteúdo interno painel */
+  #painelAdmin section.admin-page {
     display: none;
   }
-  .admin-page.active {
+  #painelAdmin section.admin-page.active {
     display: block;
   }
-  .input-group {
-    margin-bottom: 10px;
-  }
-  .input-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  .input-group input, .input-group textarea {
+  /* Tabela pedidos */
+  table {
     width: 100%;
-    padding: 6px;
-    box-sizing: border-box;
-    border-radius: 4px;
+    border-collapse: collapse;
+  }
+  table thead {
+    background: #d62828;
+    color: white;
+  }
+  table th, table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+  }
+  table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  table button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  table button:hover {
+    background: #0049b5;
+  }
+  /* Form banco */
+  form#formBanco label {
+    display: block;
+    margin: 12px 0 5px;
+    font-weight: 600;
+  }
+  form#formBanco input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 1rem;
+    border-radius: 6px;
     border: 1px solid #ccc;
+  }
+  form#formBanco button {
+    margin-top: 15px;
+  }
+  /* Form sacar */
+  form#formSacar label {
+    font-weight: 600;
+  }
+  form#formSacar input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1.1rem;
+  }
+  /* Voltar botão */
+  #btnVoltarPedido {
+    margin-top: 30px;
+    background: #555;
+  }
+  #btnVoltarPedido:hover {
+    background: #222;
+  }
+  /* Responsividade */
+  @media (max-width: 480px) {
+    .produto-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>PagFesta</h1>
-  <button id="btn-admin">Administrador</button>
-  <button id="btn-voltar-inicio" style="display:none; position:absolute; left:15px; top:15px;">← Início</button>
+  <h1>PagFesta - Quermesse</h1>
+  <button id="btnAdmin">Administrador</button>
 </header>
 
-<!-- TELA DE COMPRA (CLIENTE) -->
-<section id="sec-pedido" class="active">
-  <form id="formulario">
-    <label><span>Pastel</span>
-      <button type="button" class="menos" data-produto="pastel">-</button>
-      <input type="number" name="pastel" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="pastel">+</button>
-    </label>
-    <label><span>Hot Dog</span>
-      <button type="button" class="menos" data-produto="hotdog">-</button>
-      <input type="number" name="hotdog" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="hotdog">+</button>
-    </label>
-    <label><span>Doces</span>
-      <button type="button" class="menos" data-produto="doces">-</button>
-      <input type="number" name="doces" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="doces">+</button>
-    </label>
-    <label><span>Caldinho</span>
-      <button type="button" class="menos" data-produto="caldinho">-</button>
-      <input type="number" name="caldinho" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="caldinho">+</button>
-    </label>
-    <label><span>Refrigerante</span>
-      <button type="button" class="menos" data-produto="refri">-</button>
-      <input type="number" name="refri" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="refri">+</button>
-    </label>
-    <label><span>Espeto</span>
-      <button type="button" class="menos" data-produto="espeto">-</button>
-      <input type="number" name="espeto" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="espeto">+</button>
-    </label>
-    <label><span>Suco</span>
-      <button type="button" class="menos" data-produto="suco">-</button>
-      <input type="number" name="suco" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="suco">+</button>
-    </label>
-    <label><span>Água</span>
-      <button type="button" class="menos" data-produto="agua">-</button>
-      <input type="number" name="agua" value="0" min="0" readonly />
-      <button type="button" class="mais" data-produto="agua">+</button>
-    </label>
+<div class="container" id="telaPedido">
 
-    <button type="submit" class="btn">Avançar para Resumo</button>
+  <h2>Faça seu pedido</h2>
+  
+  <form id="formPedido">
+
+    <div class="produto">
+      <div class="produto-info">
+        <input type="checkbox" id="prod1" data-preco="5.00" />
+        <label for="prod1">Refrigerante - R$ 5,00</label>
+      </div>
+      <div class="quantidade-container">
+        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd1">−</button>
+        <input type="number" id="qtd1" class="quantidade" min="0" value="0" />
+        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd1">+</button>
+      </div>
+    </div>
+
+    <div class="produto">
+      <div class="produto-info">
+        <input type="checkbox" id="prod2" data-preco="3.00" />
+        <label for="prod2">Pipoca - R$ 3,00</label>
+      </div>
+      <div class="quantidade-container">
+        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd2">−</button>
+        <input type="number" id="qtd2" class="quantidade" min="0" value="0" />
+        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd2">+</button>
+      </div>
+    </div>
+
+    <div class="produto">
+      <div class="produto-info">
+        <input type="checkbox" id="prod3" data-preco="2.00" />
+        <label for="prod3">Salgadinho - R$ 2,00</label>
+      </div>
+      <div class="quantidade-container">
+        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd3">−</button>
+        <input type="number" id="qtd3" class="quantidade" min="0" value="0" />
+        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd3">+</button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Gerar Pagamento</button>
   </form>
-</section>
 
-<!-- TELA DE RESUMO -->
-<section id="sec-resumo">
-  <h2>Resumo do Pedido</h2>
-  <ul id="lista-resumo"></ul>
-  <div id="valor-total"></div>
-
-  <button id="btn-voltar-pedido" class="btn">Voltar</button>
-  <button id="btn-ir-pagamento" class="btn">Ir para Pagamento</button>
-</section>
-
-<!-- TELA DE PAGAMENTO -->
-<section id="sec-pagamento">
-  <h2>Forma de Pagamento</h2>
-  <form id="form-pagamento">
-    <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label><br/>
-    <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label><br/>
-  </form>
-  <button id="btn-voltar-resumo" class="btn">Voltar</button>
-  <button id="btn-gerar-pedido" class="btn">Gerar Pedido</button>
-
-  <div id="qrcode" style="margin-top:20px;"></div>
-  <div id="numero-pedido"></div>
-  <button id="btn-novo-pedido" class="btn" style="display:none; margin-top:20px;">Gerar Novo Pedido</button>
-</section>
-
-<!-- TELA ADMINISTRADOR -->
-<section id="sec-admin">
-  <nav class="admin-menu">
-    <button data-adminpage="resumo-vendas">Resumo</button>
-    <button data-adminpage="lista-pedidos">Pedidos</button>
-    <button data-adminpage="cadastro-banco">Cadastro de Banco</button>
-    <button data-adminpage="sacar">Sacar</button>
-  </nav>
-  <!-- Páginas Admin -->
-  <div id="resumo-vendas" class="admin-page active">
-    <h2>Resumo de Vendas</h2>
-    <ul id="resumo-itens"></ul>
-    <div id="resumo-total"></div>
+  <div class="qrcode" id="areaQRCode" style="display:none;">
+    <canvas id="qr"></canvas>
+    <p id="numero-pedido"></p>
+    <button class="btn" id="btnNovoPedido" style="margin-top: 15px;">Gerar Novo Pedido</button>
   </div>
-  <div id="lista-pedidos" class="admin-page">
-    <h2>Pedidos</h2>
+
+</div>
+
+<!-- Modal Login Admin -->
+<div id="modalLogin">
+  <div class="modal-content">
+    <h3>Login Administrador</h3>
+    <form id="formLogin">
+      <label for="usuario">Usuário:</label>
+      <input type="text" id="usuario" autocomplete="username" required />
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" autocomplete="current-password" required />
+      <button type="submit">Entrar</button>
+      <p class="erro" id="erroLogin" style="display:none;"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Painel Admin -->
+<div id="painelAdmin">
+  <nav>
+    <button data-page="resumo">Resumo</button>
+    <button data-page="pedidos">Pedidos</button>
+    <button data-page="banco">Cadastro de banco</button>
+    <button data-page="sacar">Sacar</button>
+    <button id="btnVoltarPedido">Voltar ao Pedido</button>
+  </nav>
+
+  <section id="pageResumo" class="admin-page active">
+    <h2>Resumo das Vendas</h2>
+    <ul id="lista-resumo"></ul>
+    <p class="total" id="totalGeral">Total Arrecadado: R$ 0,00</p>
+  </section>
+
+  <section id="pagePedidos" class="admin-page">
+    <h2>Pedidos Realizados</h2>
     <table>
       <thead>
-        <tr><th>Número</th><th>Data</th><th>Itens</th><th>Pagamento</th><th>Total (R$)</th><th>Gerar NF</th></tr>
+        <tr>
+          <th>Nº Pedido</th>
+          <th>Itens</th>
+          <th>Quantidade</th>
+          <th>Valor Total</th>
+          <th>Ação</th>
+        </tr>
       </thead>
-      <tbody id="tabela-pedidos"></tbody>
+      <tbody id="tbodyPedidos"></tbody>
     </table>
-  </div>
-  <div id="cadastro-banco" class="admin-page">
+  </section>
+
+  <section id="pageBanco" class="admin-page">
     <h2>Cadastro de Banco</h2>
-    <form id="form-banco">
-      <div class="input-group">
-        <label for="banco-nome">Nome do Banco</label>
-        <input id="banco-nome" type="text" required />
-      </div>
-      <div class="input-group">
-        <label for="banco-agencia">Agência</label>
-        <input id="banco-agencia" type="text" required />
-      </div>
-      <div class="input-group">
-        <label for="banco-conta">Conta</label>
-        <input id="banco-conta" type="text" required />
-      </div>
-      <div class="input-group">
-        <label for="banco-titular">Titular</label>
-        <input id="banco-titular" type="text" required />
-      </div>
+    <form id="formBanco">
+      <label for="banco">Banco:</label>
+      <input type="text" id="banco" required />
+      <label for="agencia">Agência:</label>
+      <input type="text" id="agencia" required />
+      <label for="conta">Conta:</label>
+      <input type="text" id="conta" required />
       <button type="submit" class="btn">Salvar Dados</button>
     </form>
-    <div id="msg-banco" style="margin-top:10px; color:green;"></div>
-  </div>
-  <div id="sacar" class="admin-page">
+    <div id="msgBanco" style="margin-top: 12px; color: green; font-weight: 600;"></div>
+  </section>
+
+  <section id="pageSacar" class="admin-page">
     <h2>Sacar</h2>
-    <p>Aqui você pode registrar saques (simulação).</p>
-    <form id="form-sacar">
-      <div class="input-group">
-        <label for="valor-saque">Valor a sacar (R$)</label>
-        <input id="valor-saque" type="number" min="0" step="0.01" required />
-      </div>
-      <button type="submit" class="btn">Registrar Saque</button>
+    <form id="formSacar">
+      <label for="valorSaque">Valor para saque (R$):</label>
+      <input type="number" id="valorSaque" min="0" step="0.01" required />
+      <button type="submit" class="btn">Solicitar Saque</button>
     </form>
-    <div id="msg-saque" style="margin-top:10px; color:green;"></div>
-  </div>
-</section>
+    <div id="msgSaque" style="margin-top: 12px; color: green; font-weight: 600;"></div>
+  </section>
+</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-<!-- QRCode.js -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-
 <script>
-  // Config Firebase (substitua pelos seus dados)
-  const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    databaseURL: "SUA_DATABASE_URL",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-    appId: "SEU_APP_ID"
-  };
+(() => {
+  // Constantes para login
+  const USUARIO_ADMIN = 'lpalmeira';
+  const SENHA_ADMIN = '123';
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  // Elementos principais
+  const btnAdmin = document.getElementById('btnAdmin');
+  const modalLogin = document.getElementById('modalLogin');
+  const formLogin = document.getElementById('formLogin');
+  const erroLogin = document.getElementById('erroLogin');
 
-  // ELEMENTOS PRINCIPAIS
-  const btnAdmin = document.getElementById('btn-admin');
-  const btnVoltarInicio = document.getElementById('btn-voltar-inicio');
+  const telaPedido = document.getElementById('telaPedido');
+  const painelAdmin = document.getElementById('painelAdmin');
+  const btnVoltarPedido = document.getElementById('btnVoltarPedido');
 
-  const secPedido = document.getElementById('sec-pedido');
-  const secResumo = document.getElementById('sec-resumo');
-  const secPagamento = document.getElementById('sec-pagamento');
-  const secAdmin = document.getElementById('sec-admin');
+  const formPedido = document.getElementById('formPedido');
+  const areaQRCode = document.getElementById('areaQRCode');
+  const qrCanvas = document.getElementById('qr');
+  const numeroPedidoDisplay = document.getElementById('numero-pedido');
+  const btnNovoPedido = document.getElementById('btnNovoPedido');
 
-  // BOTÕES DE NAVEGAÇÃO INTERNA ADMIN
-  const adminButtons = document.querySelectorAll('nav.admin-menu button');
-  const adminPages = document.querySelectorAll('.admin-page');
+  // Produtos
+  const produtos = [
+    { id: 'prod1', nome: 'Refrigerante', preco: 5.00, qtdInput: 'qtd1' },
+    { id: 'prod2', nome: 'Pipoca', preco: 3.00, qtdInput: 'qtd2' },
+    { id: 'prod3', nome: 'Salgadinho', preco: 2.00, qtdInput: 'qtd3' },
+  ];
 
-  // FORMULÁRIOS E CAMPOS
-  const formulario = document.getElementById('formulario');
-  const listaResumo = document.getElementById('lista-resumo');
-  const valorTotal = document.getElementById('valor-total');
-
-  const btnVoltarPedido = document.getElementById('btn-voltar-pedido');
-  const btnIrPagamento = document.getElementById('btn-ir-pagamento');
-
-  const formPagamento = document.getElementById('form-pagamento');
-  const btnVoltarResumo = document.getElementById('btn-voltar-resumo');
-  const btnGerarPedido = document.getElementById('btn-gerar-pedido');
-
-  const qrcodeContainer = document.getElementById('qrcode');
-  const numeroPedidoEl = document.getElementById('numero-pedido');
-  const btnNovoPedido = document.getElementById('btn-novo-pedido');
-
-  const tabelaPedidosBody = document.getElementById('tabela-pedidos');
-
-  // BANCO
-  const formBanco = document.getElementById('form-banco');
-  const msgBanco = document.getElementById('msg-banco');
-
-  // SACAR
-  const formSacar = document.getElementById('form-sacar');
-  const msgSaque = document.getElementById('msg-saque');
-
-  // RESUMO VENDAS
-  const resumoItens = document.getElementById('resumo-itens');
-  const resumoTotal = document.getElementById('resumo-total');
-
-  // Controle visibilidade das seções
-  function mostrarSecao(sec) {
-    // esconder todas
-    [secPedido, secResumo, secPagamento, secAdmin].forEach(s => s.classList.remove('active'));
-    sec.classList.add('active');
+  // Controle de número do pedido
+  function getUltimoPedidoNum() {
+    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+    if (pedidos.length === 0) return 0;
+    return pedidos[pedidos.length - 1].numero;
+  }
+  function getProximoPedidoNum() {
+    return getUltimoPedidoNum() + 1;
   }
 
-  // Controle páginas admin internas
-  function mostrarPaginaAdmin(paginaId) {
-    adminPages.forEach(p => p.classList.remove('active'));
-    document.getElementById(paginaId).classList.add('active');
-  }
+  // Atualiza resumo no painel admin
+  function atualizarResumo() {
+    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+    const resumoMap = new Map();
+    let totalGeral = 0;
 
-  // Mudar tela para admin
-  btnAdmin.addEventListener('click', () => {
-    mostrarSecao(secAdmin);
-    btnAdmin.style.display = 'none';
-    btnVoltarInicio.style.display = 'inline-block';
-    mostrarPaginaAdmin('resumo-vendas');
-    carregarResumoVendas();
-  });
-
-  // Voltar para tela cliente
-  btnVoltarInicio.addEventListener('click', () => {
-    mostrarSecao(secPedido);
-    btnAdmin.style.display = 'inline-block';
-    btnVoltarInicio.style.display = 'none';
-  });
-
-  // Navegação interna admin
-  adminButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      mostrarPaginaAdmin(btn.getAttribute('data-adminpage'));
-      if(btn.getAttribute('data-adminpage') === 'lista-pedidos') carregarPedidos();
+    pedidos.forEach(pedido => {
+      pedido.itens.forEach(item => {
+        if (!resumoMap.has(item.nome)) {
+          resumoMap.set(item.nome, 0);
+        }
+        resumoMap.set(item.nome, resumoMap.get(item.nome) + item.quantidade);
+      });
+      totalGeral += pedido.valorTotal;
     });
-  });
 
-  // + e - para quantidade dos produtos
-  document.querySelectorAll('button.mais').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const produto = btn.getAttribute('data-produto');
-      const input = formulario.elements[produto];
-      input.value = Number(input.value) + 1;
-    });
-  });
-  document.querySelectorAll('button.menos').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const produto = btn.getAttribute('data-produto');
-      const input = formulario.elements[produto];
-      if (Number(input.value) > 0) input.value = Number(input.value) - 1;
-    });
-  });
-
-  // Avançar para resumo
-  formulario.addEventListener('submit', e => {
-    e.preventDefault();
-    const itensSelecionados = {};
-    let total = 0;
-    // preços fixos para exemplo
-    const precos = {
-      pastel: 5.0,
-      hotdog: 7.0,
-      doces: 4.0,
-      caldinho: 6.0,
-      refri: 3.0,
-      espeto: 4.5,
-      suco: 4.0,
-      agua: 2.0
-    };
+    const listaResumo = document.getElementById('lista-resumo');
     listaResumo.innerHTML = '';
-    for (const nome in precos) {
-      const qtd = Number(formulario.elements[nome].value);
-      if (qtd > 0) {
-        itensSelecionados[nome] = qtd;
-        const li = document.createElement('li');
-        li.textContent = `${nome.charAt(0).toUpperCase() + nome.slice(1)}: ${qtd} x R$${precos[nome].toFixed(2)}`;
-        listaResumo.appendChild(li);
-        total += qtd * precos[nome];
-      }
-    }
-    if (Object.keys(itensSelecionados).length === 0) {
-      alert('Selecione pelo menos um item.');
-      return;
-    }
-    valorTotal.textContent = `Total: R$ ${total.toFixed(2)}`;
-    mostrarSecao(secResumo);
-
-    // salvar dados temporariamente
-    window.itensSelecionados = itensSelecionados;
-    window.totalPedido = total;
-  });
-
-  // Voltar para pedido
-  btnVoltarPedido.addEventListener('click', () => {
-    mostrarSecao(secPedido);
-  });
-
-  // Ir para pagamento
-  btnIrPagamento.addEventListener('click', () => {
-    mostrarSecao(secPagamento);
-  });
-
-  // Voltar para resumo
-  btnVoltarResumo.addEventListener('click', () => {
-    mostrarSecao(secResumo);
-  });
-
-  // Gerar pedido no Firebase
-  btnGerarPedido.addEventListener('click', async () => {
-    btnGerarPedido.disabled = true;
-    // buscar último número salvo
-    let ultimoNum = 0;
-    const numSnap = await db.ref('ultimoNumeroPedido').get();
-    if (numSnap.exists()) ultimoNum = numSnap.val();
-    const novoNum = ultimoNum + 1;
-
-    const pedido = {
-      numero: novoNum,
-      data: new Date().toISOString(),
-      itens: window.itensSelecionados,
-      total: window.totalPedido,
-      pagamento: 'pendente',
-      qrCodeGerado: false
-    };
-
-    // salvar pedido
-    await db.ref('pedidos/' + novoNum).set(pedido);
-    await db.ref('ultimoNumeroPedido').set(novoNum);
-
-    // gerar QR Code (exemplo de link de pagamento)
-    const linkPagamento = `https://pagamento.exemplo.com/pagar?pedido=${novoNum}&valor=${pedido.total.toFixed(2)}`;
-    qrcodeContainer.innerHTML = '';
-    QRCode.toCanvas(qrcodeContainer, linkPagamento, { width: 200 }, function (error) {
-      if (error) console.error(error);
+    resumoMap.forEach((qtd, nome) => {
+      const li = document.createElement('li');
+      li.textContent = `${nome}: ${qtd}`;
+      listaResumo.appendChild(li);
     });
 
-    numeroPedidoEl.textContent = `Número do Pedido: ${novoNum}`;
-    btnNovoPedido.style.display = 'inline-block';
-    mostrarSecao(secPagamento);
-  });
+    document.getElementById('totalGeral').textContent = `Total Arrecadado: R$ ${totalGeral.toFixed(2)}`;
+  }
 
-  // Gerar novo pedido (resetar)
-  btnNovoPedido.addEventListener('click', () => {
-    formulario.reset();
-    qrcodeContainer.innerHTML = '';
-    numeroPedidoEl.textContent = '';
-    btnNovoPedido.style.display = 'none';
-    btnGerarPedido.disabled = false;
-    mostrarSecao(secPedido);
-  });
+  // Atualiza tabela de pedidos no painel admin
+  function atualizarTabelaPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+    const tbody = document.getElementById('tbodyPedidos');
+    tbody.innerHTML = '';
 
-  // Carregar lista de pedidos para admin
-  async function carregarPedidos() {
-    tabelaPedidosBody.innerHTML = '';
-    const pedidosSnap = await db.ref('pedidos').get();
-    if (!pedidosSnap.exists()) return;
-    const pedidos = pedidosSnap.val();
-    for (const num in pedidos) {
-      const p = pedidos[num];
+    pedidos.forEach(pedido => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${p.numero}</td>
-        <td>${new Date(p.data).toLocaleString()}</td>
-        <td>${Object.entries(p.itens).map(([k,v]) => `${k}(${v})`).join(', ')}</td>
-        <td>${p.pagamento}</td>
-        <td>${p.total.toFixed(2)}</td>
-        <td><button onclick="gerarNF(${p.numero})">Gerar NF</button></td>
-      `;
-      tabelaPedidosBody.appendChild(tr);
+
+      const tdNum = document.createElement('td');
+      tdNum.textContent = pedido.numero;
+      tr.appendChild(tdNum);
+
+      const tdItens = document.createElement('td');
+      tdItens.textContent = pedido.itens.map(i => i.nome).join(', ');
+      tr.appendChild(tdItens);
+
+      const tdQtd = document.createElement('td');
+      tdQtd.textContent = pedido.itens.reduce((acc, i) => acc + i.quantidade, 0);
+      tr.appendChild(tdQtd);
+
+      const tdValor = document.createElement('td');
+      tdValor.textContent = `R$ ${pedido.valorTotal.toFixed(2)}`;
+      tr.appendChild(tdValor);
+
+      const tdAcao = document.createElement('td');
+      const btnGerarNF = document.createElement('button');
+      btnGerarNF.textContent = 'Gerar NF';
+      btnGerarNF.className = 'btn';
+      btnGerarNF.addEventListener('click', () => {
+        alert(`Nota fiscal do pedido #${pedido.numero} gerada!`);
+      });
+      tdAcao.appendChild(btnGerarNF);
+      tr.appendChild(tdAcao);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Alterna páginas no painel admin
+  function mudarPaginaAdmin(pagina) {
+    const paginas = document.querySelectorAll('.admin-page');
+    paginas.forEach(p => p.classList.remove('active'));
+    document.getElementById(`page${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.add('active');
+  }
+
+  // Mostrar modal login
+  btnAdmin.addEventListener('click', () => {
+    modalLogin.style.display = 'flex';
+  });
+
+  // Login admin
+  formLogin.addEventListener('submit', e => {
+    e.preventDefault();
+    const usuario = document.getElementById('usuario').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+
+    if (usuario === USUARIO_ADMIN && senha === SENHA_ADMIN) {
+      modalLogin.style.display = 'none';
+      telaPedido.style.display = 'none';
+      painelAdmin.style.display = 'block';
+      atualizarResumo();
+      atualizarTabelaPedidos();
+      mudarPaginaAdmin('resumo');
+      formLogin.reset();
+      erroLogin.style.display = 'none';
+    } else {
+      erroLogin.textContent = 'Usuário ou senha incorretos.';
+      erroLogin.style.display = 'block';
     }
-  }
-
-  // Função para gerar NF (simulação)
-  function gerarNF(numero) {
-    alert(`Nota Fiscal gerada para o pedido ${numero}`);
-  }
-
-  // Cadastro banco
-  formBanco.addEventListener('submit', async e => {
-    e.preventDefault();
-    const dadosBanco = {
-      nome: formBanco['banco-nome'].value,
-      agencia: formBanco['banco-agencia'].value,
-      conta: formBanco['banco-conta'].value,
-      titular: formBanco['banco-titular'].value
-    };
-    await db.ref('dadosBanco').set(dadosBanco);
-    msgBanco.textContent = 'Dados salvos com sucesso!';
-    formBanco.reset();
-    setTimeout(() => { msgBanco.textContent = ''; }, 3000);
   });
 
-  // Registrar saque (simulação)
-  formSacar.addEventListener('submit', async e => {
-    e.preventDefault();
-    const valorSaque = Number(formSacar['valor-saque'].value);
-    // para simular, só armazenar o saque
-    await db.ref('saques').push({ valor: valorSaque, data: new Date().toISOString() });
-    msgSaque.textContent = 'Saque registrado com sucesso!';
-    formSacar.reset();
-    setTimeout(() => { msgSaque.textContent = ''; }, 3000);
+  // Botão voltar para tela pedido
+  btnVoltarPedido.addEventListener('click', () => {
+    painelAdmin.style.display = 'none';
+    telaPedido.style.display = 'block';
   });
 
-  // Carregar resumo vendas
-  async function carregarResumoVendas() {
-    resumoItens.innerHTML = '';
-    resumoTotal.textContent = '';
-    const pedidosSnap = await db.ref('pedidos').get();
-    if (!pedidosSnap.exists()) {
-      resumoItens.textContent = 'Nenhuma venda registrada.';
+  // Controle botões quantidade
+  document.querySelectorAll('.btn-quantidade').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.getAttribute('data-action');
+      const target = btn.getAttribute('data-target');
+      const input = document.getElementById(target);
+      let val = parseInt(input.value) || 0;
+      if (action === 'inc') val++;
+      else if (action === 'dec' && val > 0) val--;
+      input.value = val;
+    });
+  });
+
+  // Gerar pedido e QR code
+  formPedido.addEventListener('submit', e => {
+    e.preventDefault();
+
+    // Coletar itens selecionados com quantidade > 0
+    const itensSelecionados = produtos
+      .map(p => {
+        const checkbox = document.getElementById(p.id);
+        const qtd = parseInt(document.getElementById(p.qtdInput).value) || 0;
+        return {
+          id: p.id,
+          nome: p.nome,
+          preco: p.preco,
+          quantidade: qtd,
+          selecionado: checkbox.checked
+        };
+      })
+      .filter(item => item.selecionado && item.quantidade > 0);
+
+    if (itensSelecionados.length === 0) {
+      alert('Selecione pelo menos um item com quantidade maior que zero.');
       return;
     }
-    const pedidos = pedidosSnap.val();
-    const totais = {};
-    let somaTotal = 0;
-    for (const num in pedidos) {
-      const p = pedidos[num];
-      for (const item in p.itens) {
-        if (!totais[item]) totais[item] = 0;
-        totais[item] += p.itens[item];
+
+    const numeroPedido = getProximoPedidoNum();
+
+    const valorTotal = itensSelecionados.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+
+    // Criar dados para QR Code (simples string JSON)
+    const dadosQRCode = JSON.stringify({
+      pedido: numeroPedido,
+      itens: itensSelecionados.map(i => ({ nome: i.nome, quantidade: i.quantidade })),
+      total: valorTotal.toFixed(2)
+    });
+
+    QRCode.toCanvas(qrCanvas, dadosQRCode, { width: 220 }, err => {
+      if (err) {
+        alert('Erro ao gerar QR Code: ' + err);
+        return;
       }
-      somaTotal += p.total;
+      areaQRCode.style.display = 'block';
+      formPedido.style.display = 'none';
+      numeroPedidoDisplay.textContent = `Número do Pedido: ${numeroPedido}`;
+    });
+
+    // Salvar pedido no localStorage
+    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+    pedidos.push({
+      numero: numeroPedido,
+      itens: itensSelecionados,
+      valorTotal: valorTotal
+    });
+    localStorage.setItem('pedidos', JSON.stringify(pedidos));
+  });
+
+  // Gerar novo pedido
+  btnNovoPedido.addEventListener('click', () => {
+    areaQRCode.style.display = 'none';
+    formPedido.style.display = 'block';
+    formPedido.reset();
+    // Reset quantidades para zero
+    produtos.forEach(p => {
+      document.getElementById(p.qtdInput).value = 0;
+      document.getElementById(p.id).checked = false;
+    });
+  });
+
+  // Navegação no painel admin
+  document.querySelectorAll('#painelAdmin nav button[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mudarPaginaAdmin(btn.getAttribute('data-page'));
+    });
+  });
+
+  // Formulário banco (simplesmente salva e mostra mensagem)
+  const formBanco = document.getElementById('formBanco');
+  const msgBanco = document.getElementById('msgBanco');
+
+  formBanco.addEventListener('submit', e => {
+    e.preventDefault();
+    const banco = document.getElementById('banco').value.trim();
+    const agencia = document.getElementById('agencia').value.trim();
+    const conta = document.getElementById('conta').value.trim();
+
+    localStorage.setItem('dadosBanco', JSON.stringify({ banco, agencia, conta }));
+    msgBanco.textContent = 'Dados do banco salvos com sucesso!';
+    formBanco.reset();
+  });
+
+  // Formulário sacar (simples, só mostra mensagem)
+  const formSacar = document.getElementById('formSacar');
+  const msgSaque = document.getElementById('msgSaque');
+
+  formSacar.addEventListener('submit', e => {
+    e.preventDefault();
+    const valorSaque = parseFloat(document.getElementById('valorSaque').value);
+    if (isNaN(valorSaque) || valorSaque <= 0) {
+      alert('Informe um valor válido para saque.');
+      return;
     }
-    for (const item in totais) {
-      const li = document.createElement('li');
-      li.textContent = `${item.charAt(0).toUpperCase() + item.slice(1)}: ${totais[item]}`;
-      resumoItens.appendChild(li);
-    }
-    resumoTotal.textContent = `Total arrecadado: R$ ${somaTotal.toFixed(2)}`;
-  }
+    msgSaque.textContent = `Solicitação de saque de R$ ${valorSaque.toFixed(2)} recebida.`;
+    formSacar.reset();
+  });
+
+})();
 </script>
 
-<style>
-  /* estilos similares, ajuste para layout único */
-  body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
-  section { display: none; }
-  section.active { display: block; }
-  h1, h2 { color: #333; }
-  form { margin-bottom: 15px; }
-  label { display: block; margin-top: 10px; }
-  input[type="number"], input[type="text"] { width: 60px; }
-  button { margin: 5px; padding: 6px 12px; cursor: pointer; }
-  nav.admin-menu { margin-bottom: 15px; }
-  nav.admin-menu button { background-color: #007BFF; color: white; border: none; padding: 6px 12px; margin-right: 5px; }
-  nav.admin-menu button:hover { background-color: #0056b3; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  table, th, td { border: 1px solid #ccc; }
-  th, td { padding: 8px; text-align: left; }
-</style>
 </body>
 </html>
