@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PagFesta - Quermesse</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
+    header { background-color: #d62828; color: white; padding: 20px; text-align: center; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    h2 { color: #d62828; }
+    .produto { margin: 10px 0; }
+    .resumo, .pagamento, .qrcode { display: none; }
+    .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+    .btn:hover { background: #b71c1c; }
+    .total { font-weight: bold; margin-top: 10px; }
+    .pagamento label { margin-right: 15px; }
+    canvas { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PagFesta</h1>
+    <p>Quermesse Nossa Senhora da Boa Esperança</p>
+  </header>
+
+  <div class="container">
+    <section class="pedido">
+      <h2>Escolha seus produtos</h2>
+      <form id="formulario">
+        <div class="produto">
+          <input type="checkbox" id="pastel" value="Pastel" data-preco="10" /> <label for="pastel">Pastel - R$10,00</label>
+        </div>
+        <div class="produto">
+          <input type="checkbox" id="hotdog" value="HotDog" data-preco="10" /> <label for="hotdog">HotDog - R$10,00</label>
+        </div>
+        <div class="produto">
+          <input type="checkbox" id="doces" value="Doces" data-preco="6" /> <label for="doces">Doces - R$6,00</label>
+        </div>
+        <div class="produto">
+          <input type="checkbox" id="caldinho" value="Caldinho" data-preco="10" /> <label for="caldinho">Caldinho - R$10,00</label>
+        </div>
+        <div class="produto">
+          <input type="checkbox" id="refri" value="Refrigerante" data-preco="6" /> <label for="refri">Refrigerante - R$6,00</label>
+        </div>
+        <button type="submit" class="btn">Avançar</button>
+      </form>
+    </section>
+
+    <section class="resumo">
+      <h2>Resumo do Pedido</h2>
+      <ul id="lista-resumo"></ul>
+      <p class="total" id="valor-total"></p>
+      <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+    </section>
+
+    <section class="pagamento">
+      <h2>Forma de Pagamento</h2>
+      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
+      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
+      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
+      <br>
+      <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+    </section>
+
+    <section class="qrcode">
+      <h2>Seu QR Code</h2>
+      <canvas id="qr"></canvas>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    const form = document.getElementById('formulario');
+    const resumo = document.querySelector('.resumo');
+    const listaResumo = document.getElementById('lista-resumo');
+    const valorTotal = document.getElementById('valor-total');
+    const pagamento = document.querySelector('.pagamento');
+    const qrcode = document.querySelector('.qrcode');
+    let pedidoFinal = [];
+    let total = 0;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const selecionados = [];
+      total = 0;
+      listaResumo.innerHTML = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+        if (el.checked) {
+          const nome = el.value;
+          const preco = parseFloat(el.getAttribute('data-preco'));
+          selecionados.push({ nome, preco });
+          total += preco;
+          listaResumo.innerHTML += `<li>${nome} - R$${preco.toFixed(2)}</li>`;
+        }
+      });
+
+      if (selecionados.length === 0) {
+        alert('Selecione ao menos um produto.');
+        return;
+      }
+
+      pedidoFinal = selecionados;
+      valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
+      document.querySelector('.pedido').style.display = 'none';
+      resumo.style.display = 'block';
+    });
+
+    function mostrarPagamento() {
+      resumo.style.display = 'none';
+      pagamento.style.display = 'block';
+    }
+
+    function gerarQRCode() {
+      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const texto = `Pedido:\n${pedidoFinal.map(p => p.nome).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      pagamento.style.display = 'none';
+      qrcode.style.display = 'block';
+      QRCode.toCanvas(document.getElementById('qr'), texto, error => {
+        if (error) console.error(error);
+      });
+    }
+  </script>
+</body>
+</html>
