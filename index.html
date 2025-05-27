@@ -1,490 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PagFesta - Pedido</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        max-width: 650px; /* Aumentado para melhor visualização */
-        margin: 20px auto; /* Centraliza o conteúdo e adiciona margem superior */
-        padding: 25px;
-        background: #f7f7f7;
-        color: #333;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para destacar o corpo */
-        border-radius: 12px;
-    }
-    .header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    .header h1 {
-        color: #d63333;
-        font-size: 2.8em; /* Tamanho maior para o título */
-        margin-bottom: 5px;
-        letter-spacing: 1px;
-    }
-    .header p {
-        color: #666;
-        font-size: 1.1em;
-        margin-top: 0;
-    }
-    .produto {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 15px;
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        background: white;
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-    .produto:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    }
-    .produto label {
-        flex: 1;
-        font-size: 1.1em;
-        color: #555;
-    }
-    .qtd-container {
-        display: flex;
-        align-items: center;
-    }
-    .qtd-container button {
-        width: 32px;
-        height: 32px;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        border: 1px solid #d63333;
-        background: #ffe0e0; /* Tom mais suave de vermelho */
-        color: #d63333;
-        border-radius: 50%; /* Botões redondos */
-        margin: 0 8px;
-        user-select: none;
-        transition: background 0.2s;
-    }
-    .qtd-container button:hover {
-        background: #d63333;
-        color: white;
-    }
-    .qtd-container input[type=number] {
-        width: 50px; /* Largura ajustada */
-        text-align: center;
-        border: 1px solid #d63333;
-        border-radius: 6px;
-        font-size: 18px;
-        padding: 6px 0;
-        -moz-appearance: textfield; /* Remove setas padrão do Firefox */
-    }
-    /* Remove setas padrão do Chrome/Safari */
-    .qtd-container input[type=number]::-webkit-outer-spin-button,
-    .qtd-container input[type=number]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    button#btnGerarPagamento {
-        display: block;
-        margin: 30px auto 0;
-        background: #d63333;
-        color: white;
-        font-size: 20px; /* Maior */
-        padding: 12px 30px; /* Maior */
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
-    button#btnGerarPagamento:hover {
-        background: #b52b2b;
-        transform: translateY(-2px);
-    }
-    #resumoPedido,
-    #telaPagamento, #areaQRCode {
-        margin-top: 30px;
-        padding: 20px;
-        background: white;
-        border-radius: 8px;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        text-align: center; /* Centraliza o conteúdo destas seções */
-    }
-    #resumoPedido h2, #telaPagamento h2, #areaQRCode h2 {
-        color: #d63333;
-        margin-bottom: 20px;
-    }
-    #resumoPedido p {
-        margin: 8px 0;
-        font-size: 1.1em;
-    }
-    #resumoPedido strong {
-        font-size: 20px;
-        color: #333;
-    }
-    #resumoPedido #itensResumo {
-        margin-bottom: 15px;
-    }
-    #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
-    #btnVoltarInicioResumo, #btnVoltarResumo {
-        background: #d63333;
-        color: white;
-        border: none;
-        padding: 10px 22px;
-        font-size: 17px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 20px; /* Aumenta a margem */
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
-    #btnAvancarPagamento:hover,
-    #btnGerarQRCode:hover,
-    #btnNovoPedido:hover,
-    #btnVoltarInicioResumo:hover,
-    #btnVoltarResumo:hover {
-        background: #b52b2b;
-        transform: translateY(-2px);
-    }
-    #telaPagamento label {
-        display: block;
-        margin-bottom: 12px;
-        font-size: 1.1em;
-        cursor: pointer;
-        text-align: left; /* Alinha o texto do label à esquerda */
-        padding-left: 50px; /* Espaçamento para centralizar visualmente */
-    }
-    #telaPagamento input[type="radio"] {
-        margin-right: 8px;
-        transform: scale(1.2); /* Aumenta o tamanho do radio button */
-        vertical-align: middle;
-    }
-    #qrCanvas {
-        display: block;
-        margin: 25px auto; /* Centraliza a imagem do QR Code */
-        border: 1px solid #eee; /* Borda leve para o canvas */
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-    #numeroPedidoDisplay {
-        text-align: center;
-        font-size: 22px;
-        font-weight: bold;
-        margin-top: 15px;
-        color: #d63333;
-    }
-    #linkAdmin {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        font-weight: bold;
-        background: #5c677d; /* Cor mais neutra */
-        color: white;
-        padding: 8px 15px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 15px;
-        z-index: 10;
-        transition: background 0.3s ease, transform 0.2s ease;
-    }
-    #linkAdmin:hover {
-        background: #4a5264;
-        transform: translateY(-2px);
-    }
-</style>
-</head>
-<body>
- 
-<a id="linkAdmin" href="admin.html" target="_blank">Administrador</a>
- 
-<div class="header">
-    <h1>PagFesta</h1>
-    <p>Seu pedido simplificado, seu evento garantido!</p>
-</div>
- 
-<form id="formPedido">
-  <div class="produto">
-    <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
-    <div class="qtd-container">
-      <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
-      <input type="number" id="qtdEspeto" min="0" value="0" />
-      <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
-    </div>
-  </div>
-  <div class="produto">
-    <label for="qtdSuco">Suco - R$ 4,00</label>
-    <div class="qtd-container">
-      <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
-      <input type="number" id="qtdSuco" min="0" value="0" />
-      <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
-    </div>
-  </div>
-  <div class="produto">
-    <label for="qtdAgua">Água - R$ 3,00</label>
-    <div class="qtd-container">
-      <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
-      <input type="number" id="qtdAgua" min="0" value="0" />
-      <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
-    </div>
-  </div>
- 
-  <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
-</form>
- 
-<div id="resumoPedido" style="display:none;">
-  <h2>Resumo do Pedido</h2>
-  <div id="itensResumo"></div>
-  <p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
-  <button id="btnAvancarPagamento">Avançar para pagamento</button>
-  <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
-</div>
- 
-<div id="telaPagamento" style="display:none;">
-  <h2>Escolha a forma de pagamento</h2>
-  <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
-  <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
-  <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
-  <button id="btnGerarQRCode">Gerar QR Code</button>
-  <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
-</div>
- 
-<div id="areaQRCode" style="display:none;">
-  <h2>Pagamento QR Code</h2>
-  <canvas id="qrCanvas" width="250" height="250"></canvas>
-  <div id="numeroPedidoDisplay"></div>
-  <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
-</div>
- 
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<script>
-  // Produtos com preço e id dos inputs
-  const produtos = [
-    { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
-    { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
-    { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
-  ];
- 
-  // Elementos principais
-  const formPedido = document.getElementById('formPedido');
-  const resumoDiv = document.getElementById('resumoPedido');
-  const itensResumoDiv = document.getElementById('itensResumo');
-  const totalResumoSpan = document.getElementById('totalResumo');
-  const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
-  const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
-  const telaPagamento = document.getElementById('telaPagamento');
-  const btnGerarQRCode = document.getElementById('btnGerarQRCode');
-  const btnVoltarResumo = document.getElementById('btnVoltarResumo');
-  const areaQRCode = document.getElementById('areaQRCode');
-  const qrCanvas = document.getElementById('qrCanvas');
-  const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
-  const btnNovoPedido = document.getElementById('btnNovoPedido');
-  const btnQtds = document.querySelectorAll('.btnQtd');
- 
-  // Controle pedido
-  let numeroPedido = 1;
-  // Tenta carregar número do pedido do localStorage
-  const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
-  if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
-
-    // Carrega pedidos existentes e saldo acumulado do localStorage
-    let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-    let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
- 
-  // Função para atualizar quantidade via botões + e -
-  btnQtds.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const inputId = btn.dataset.target;
-      const input = document.getElementById(inputId);
-      let val = parseInt(input.value) || 0;
-      if (btn.textContent === '+') {
-        val++;
-      } else {
-        val = val > 0 ? val - 1 : 0;
-      }
-      input.value = val;
-    });
-  });
- 
-  // Ao submeter o formulário, mostrar resumo
- formPedido.addEventListener('submit', e => {
-   e.preventDefault();
-    const itensSelecionados = [];
-    let total = 0;
-    for (const p of produtos) {
-      const qtd = parseInt(document.getElementById(p.id).value) || 0;
-      if (qtd > 0) {
-        const subtotal = qtd * p.preco;
-        total += subtotal;
-       itensSelecionados.push({
-          nome: p.nome,
-          qtd,
-          preco: p.preco, // Adiciona preço para o painel de admin
-          subtotal
-        });
-      }
-    }
-    if (itensSelecionados.length === 0) {
-      alert('Selecione ao menos um item para prosseguir.');
-      return;
-    }
-    // Montar resumo
-   itensResumoDiv.innerHTML = '';
-   itensSelecionados.forEach(item => {
-      const p = document.createElement('p');
-      p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
-      itensResumoDiv.appendChild(p);
-    });
-    totalResumoSpan.textContent = total.toFixed(2);
- 
-    // Mostrar resumo e ocultar formulário
-   formPedido.style.display = 'none';
-    resumoDiv.style.display = 'block';
-    telaPagamento.style.display = 'none';
-    areaQRCode.style.display = 'none';
-  });
- 
-  btnAvancarPagamento.addEventListener('click',
-() => {
-    // Mostra tela pagamento
-   resumoDiv.style.display = 'none';
-    telaPagamento.style.display = 'block';
-    areaQRCode.style.display = 'none';
-  });
- 
- btnVoltarInicioResumo.addEventListener('click', () => {
-    // Voltar para form pedido
-    resumoDiv.style.display = 'none';
-    formPedido.style.display = 'block';
-  });
- 
- btnVoltarResumo.addEventListener('click', () => {
-    // Voltar para resumo pedido
-    telaPagamento.style.display = 'none';
-    resumoDiv.style.display = 'block';
-  });
- 
- btnGerarQRCode.addEventListener('click', () => {
-    // Verifica forma de pagamento selecionada
-    const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
-    if (!pagamentoSelecionado) {
-      alert('Selecione uma forma de pagamento.');
-      return;
-    }
-    const metodo = pagamentoSelecionado.value;
-
-    // Obtém os detalhes do pedido atual do resumo
-    const currentItemsSelected = [];
-    let currentTotal = 0;
-    for (const p of produtos) {
-        const qtd = parseInt(document.getElementById(p.id).value) || 0;
-        if (qtd > 0) {
-            const subtotal = qtd * p.preco;
-            currentTotal += subtotal;
-            currentItemsSelected.push({
-                nome: p.nome,
-                qtd,
-                preco: p.preco,
-                subtotal
-            });
-        }
-    }
-
-    // Incrementa número do pedido e salva
-    localStorage.setItem('ultimoNumeroPedido', numeroPedido);
-
-    // Salva o pedido completo para o painel de administrador
-    const orderData = {
-        numeroPedido: numeroPedido,
-        metodoPagamento: metodo,
-        data: new Date().toISOString(),
-        items: currentItemsSelected,
-        total: currentTotal
-    };
-    allOrders.push(orderData);
-    localStorage.setItem('allOrders', JSON.stringify(allOrders));
-
-    // Atualiza o saldo acumulado
-    accumulatedBalance += currentTotal;
-    localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
- 
-    // Montar string QRCode (exemplo simples, pode ser JSON ou link real)
-    const qrString = JSON.stringify({
-        numeroPedido: numeroPedido,
-        metodoPagamento: metodo,
-        valor: currentTotal.toFixed(2)
-    });
-
-    // Verifica se as informações bancárias estão disponíveis para Pix
-    if (metodo === 'pix') {
-        const bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
-        if (bankInfo.pixKey) {
-            // Inclui a chave Pix nos dados do QR code se disponível
-            const pixQrString = `pix|${bankInfo.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
-            QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
-                if (error) console.error(error);
-                else {
-                    numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                    telaPagamento.style.display = 'none';
-                    areaQRCode.style.display = 'block';
-                    alert(`Para pagar com Pix, use a chave: ${bankInfo.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
-                }
-            });
-        } else {
-            alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
-            return; // Não prossegue para a geração do QR code se a chave Pix estiver faltando
-        }
-    } else {
-        // Gera QR genérico para outros métodos
-        QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
-            if (error) console.error(error);
-            else {
-                numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                telaPagamento.style.display = 'none';
-                areaQRCode.style.display = 'block';
-            }
-        });
-    }
-
-    // Incrementa para o próximo pedido
-    numeroPedido++;
-  });
- 
- btnNovoPedido.addEventListener('click', () => {
-    // Resetar formulário
-    for (const p of produtos) {
-      document.getElementById(p.id).value = 0;
-    }
-    // Resetar telas
-    areaQRCode.style.display = 'none';
-    resumoDiv.style.display = 'none';
-    telaPagamento.style.display = 'none';
-    formPedido.style.display = 'block';
- 
-    // Resetar radios de pagamento
-    const radios = document.querySelectorAll('input[name="pagamento"]');
-    radios.forEach(r => (r.checked = false));
-  });
-</script>
- 
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PagFesta - Administração</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PagFesta - Pedido e Administração</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 850px; /* Largura ajustada */
-            margin: 20px auto; /* Centraliza o conteúdo e adiciona margem superior */
+            max-width: 850px; /* Largura ajustada para acomodar ambos os layouts */
+            margin: 20px auto;
             padding: 25px;
             background: #f7f7f7;
             color: #333;
@@ -506,14 +30,187 @@
             font-size: 1.1em;
             margin-top: 0;
         }
-        .admin-section {
+
+        /* Estilos da Página de Pedido */
+        #order-section {
+            display: block; /* Visível por padrão ao carregar */
+        }
+        .produto {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .produto:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .produto label {
+            flex: 1;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .qtd-container {
+            display: flex;
+            align-items: center;
+        }
+        .qtd-container button {
+            width: 32px;
+            height: 32px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid #d63333;
+            background: #ffe0e0;
+            color: #d63333;
+            border-radius: 50%;
+            margin: 0 8px;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .qtd-container button:hover {
+            background: #d63333;
+            color: white;
+        }
+        .qtd-container input[type=number] {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #d63333;
+            border-radius: 6px;
+            font-size: 18px;
+            padding: 6px 0;
+            -moz-appearance: textfield;
+        }
+        .qtd-container input[type=number]::-webkit-outer-spin-button,
+        .qtd-container input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        button#btnGerarPagamento {
+            display: block;
+            margin: 30px auto 0;
+            background: #d63333;
+            color: white;
+            font-size: 20px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        button#btnGerarPagamento:hover {
+            background: #b52b2b;
+            transform: translateY(-2px);
+        }
+        #resumoPedido, #telaPagamento, #areaQRCode {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        #resumoPedido h2, #telaPagamento h2, #areaQRCode h2 {
+            color: #d63333;
+            margin-bottom: 20px;
+        }
+        #resumoPedido p {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+        #resumoPedido strong {
+            font-size: 20px;
+            color: #333;
+        }
+        #resumoPedido #itensResumo {
+            margin-bottom: 15px;
+        }
+        #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
+        #btnVoltarInicioResumo, #btnVoltarResumo {
+            background: #d63333;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            font-size: 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #btnAvancarPagamento:hover,
+        #btnGerarQRCode:hover,
+        #btnNovoPedido:hover,
+        #btnVoltarInicioResumo:hover,
+        #btnVoltarResumo:hover {
+            background: #b52b2b;
+            transform: translateY(-2px);
+        }
+        #telaPagamento label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 50px;
+        }
+        #telaPagamento input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+            vertical-align: middle;
+        }
+        #qrCanvas {
+            display: block;
+            margin: 25px auto;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        #numeroPedidoDisplay {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #d63333;
+        }
+
+        /* Botão Administrador */
+        #btnAdminArea {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-weight: bold;
+            background: #5c677d;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            z-index: 10;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #btnAdminArea:hover {
+            background: #4a5264;
+            transform: translateY(-2px);
+        }
+
+        /* Estilos do Painel de Administração */
+        #admin-section {
+            display: none; /* Oculto por padrão */
             background: white;
             padding: 25px;
             border-radius: 10px;
             border: 1px solid #e0e0e0;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center; /* Centraliza o conteúdo das seções */
+            text-align: center;
         }
         #login-form {
             text-align: center;
@@ -521,12 +218,12 @@
         }
         #login-form input {
             padding: 12px;
-            margin: 8px auto; /* Centraliza inputs */
-            width: 80%; /* Largura ajustada */
+            margin: 8px auto;
+            width: 80%;
             max-width: 300px;
             border: 1px solid #ccc;
             border-radius: 6px;
-            display: block; /* Para que os inputs fiquem em blocos */
+            display: block;
         }
         #login-form button {
             background: #d63333;
@@ -545,7 +242,7 @@
         }
         .tabs {
             display: flex;
-            justify-content: center; /* Centraliza os botões das abas */
+            justify-content: center;
             margin-bottom: 25px;
             border-bottom: 2px solid #ddd;
         }
@@ -557,7 +254,7 @@
             font-size: 17px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
-            margin: 0 3px; /* Espaçamento entre abas */
+            margin: 0 3px;
             transition: background 0.3s ease, color 0.3s ease;
             font-weight: bold;
             color: #666;
@@ -565,15 +262,15 @@
         .tabs button.active {
             background: #d63333;
             color: white;
-            border-bottom: 2px solid #d63333; /* Destaca a aba ativa */
+            border-bottom: 2px solid #d63333;
         }
         .tabs button:hover:not(.active) {
             background: #e5e5e5;
         }
         .tab-content {
             display: none;
-            text-align: left; /* Alinha o conteúdo das abas à esquerda */
-            padding: 15px 0; /* Espaçamento interno */
+            text-align: left;
+            padding: 15px 0;
         }
         .tab-content.active {
             display: block;
@@ -642,13 +339,13 @@
         .bank-info input[type="text"],
         .bank-info input[type="number"] {
             width: calc(100% - 20px);
-            max-width: 400px; /* Limita a largura dos inputs */
+            max-width: 400px;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 6px;
-            display: block; /* Para que os inputs fiquem em blocos */
-            margin-left: auto; /* Centraliza inputs */
+            display: block;
+            margin-left: auto;
             margin-right: auto;
         }
         .bank-info button, .withdraw-info button {
@@ -675,7 +372,7 @@
             font-size: 1em;
             text-align: center;
         }
-        #backToHome {
+        #backToOrder {
             display: block;
             margin: 30px auto 0;
             background: #6c757d;
@@ -690,99 +387,182 @@
             width: fit-content;
             transition: background 0.3s ease, transform 0.2s ease;
         }
-        #backToHome:hover {
+        #backToOrder:hover {
             background: #5a6268;
             transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>PagFesta - Administração</h1>
-        <p>Gerencie seus pedidos e finanças com facilidade.</p>
-    </div>
 
-    <div id="login-screen" class="admin-section">
-        <h2>Login</h2>
-        <form id="login-form">
-            <input type="text" id="username" placeholder="Usuário" required /><br />
-            <input type="password" id="password" placeholder="Senha" required /><br />
-            <button type="submit">Entrar</button>
+    <button id="btnAdminArea">Administrador</button>
+
+    <div id="order-section">
+        <div class="header">
+            <h1>PagFesta</h1>
+            <p>Seu pedido simplificado, seu evento garantido!</p>
+        </div>
+
+        <form id="formPedido">
+            <div class="produto">
+                <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
+                <div class="qtd-container">
+                    <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
+                    <input type="number" id="qtdEspeto" min="0" value="0" />
+                    <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
+                </div>
+            </div>
+            <div class="produto">
+                <label for="qtdSuco">Suco - R$ 4,00</label>
+                <div class="qtd-container">
+                    <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
+                    <input type="number" id="qtdSuco" min="0" value="0" />
+                    <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
+                </div>
+            </div>
+            <div class="produto">
+                <label for="qtdAgua">Água - R$ 3,00</label>
+                <div class="qtd-container">
+                    <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
+                    <input type="number" id="qtdAgua" min="0" value="0" />
+                    <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
+                </div>
+            </div>
+
+            <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
         </form>
-        <p id="login-message" style="color: red; margin-top: 10px;"></p>
+
+        <div id="resumoPedido" style="display:none;">
+            <h2>Resumo do Pedido</h2>
+            <div id="itensResumo"></div>
+            <p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
+            <button id="btnAvancarPagamento">Avançar para pagamento</button>
+            <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
+        </div>
+
+        <div id="telaPagamento" style="display:none;">
+            <h2>Escolha a forma de pagamento</h2>
+            <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
+            <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
+            <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
+            <button id="btnGerarQRCode">Gerar QR Code</button>
+            <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
+        </div>
+
+        <div id="areaQRCode" style="display:none;">
+            <h2>Pagamento QR Code</h2>
+            <canvas id="qrCanvas" width="250" height="250"></canvas>
+            <div id="numeroPedidoDisplay"></div>
+            <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
+        </div>
     </div>
 
-    <div id="admin-panel" style="display: none;">
-        <div class="tabs">
-            <button class="tab-button active" data-tab="summary">Resumo</button>
-            <button class="tab-button" data-tab="orders">Pedidos</button>
-            <button class="tab-button" data-tab="bank">Banco</button>
-            <button class="tab-button" data-tab="withdraw">Sacar</button>
+    <div id="admin-section">
+        <div class="header">
+            <h1>PagFesta - Administração</h1>
+            <p>Gerencie seus pedidos e finanças com facilidade.</p>
         </div>
-
-        <div id="summary-tab" class="tab-content active admin-section">
-            <h2>Resumo das Vendas</h2>
-            <div id="sales-summary">
-                <p>Nenhuma venda registrada ainda.</p>
+        <div id="login-screen" class="admin-section-inner">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Usuário" required /><br />
+                <input type="password" id="password" placeholder="Senha" required /><br />
+                <button type="submit">Entrar</button>
+            </form>
+            <p id="login-message" style="color: red; margin-top: 10px;"></p>
+        </div>
+        <div id="admin-panel" style="display: none;">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="summary">Resumo</button>
+                <button class="tab-button" data-tab="orders">Pedidos</button>
+                <button class="tab-button" data-tab="bank">Banco</button>
+                <button class="tab-button" data-tab="withdraw">Sacar</button>
             </div>
-            <p><strong>Total de Itens Vendidos: <span id="total-items-sold">0</span></strong></p>
-            <p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
-        </div>
-
-        <div id="orders-tab" class="tab-content admin-section">
-            <h2>Pedidos</h2>
-            <div id="orders-list">
-                <p>Nenhum pedido registrado ainda.</p>
+            <div id="summary-tab" class="tab-content active admin-section-inner">
+                <h2>Resumo das Vendas</h2>
+                <div id="sales-summary">
+                    <p>Nenhuma venda registrada ainda.</p>
+                </div>
+                <p><strong>Total de Itens Vendidos: <span id="total-items-sold">0</span></strong></p>
+                <p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
             </div>
-        </div>
-
-        <div id="bank-tab" class="tab-content admin-section">
-            <h2>Configurações do Banco</h2>
-            <div class="bank-info">
-                <p><strong>Nome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
-                <p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
-                <p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
-                <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
-
-                <h3>Cadastrar/Atualizar Informações Bancárias</h3>
-                <input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
-                <input type="text" id="inputBankAgency" placeholder="Agência" /><br />
-                <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
-                <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
-                <button id="saveBankInfo">Salvar Informações Bancárias</button>
+            <div id="orders-tab" class="tab-content admin-section-inner">
+                <h2>Pedidos</h2>
+                <div id="orders-list">
+                    <p>Nenhum pedido registrado ainda.</p>
+                </div>
             </div>
-        </div>
-
-        <div id="withdraw-tab" class="tab-content admin-section">
-            <h2>Sacar Dinheiro</h2>
-            <div class="withdraw-info">
-                <p><strong>Saldo Disponível: R$ <span id="availableBalance">0.00</span></strong></p>
-                <p>Insira o valor a sacar:</p>
-                <input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" />
-                <button id="processWithdraw">Sacar</button>
-                <p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
+            <div id="bank-tab" class="tab-content admin-section-inner">
+                <h2>Configurações do Banco</h2>
+                <div class="bank-info">
+                    <p><strong>Nome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
+                    <p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
+                    <p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
+                    <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
+                    <h3>Cadastrar/Atualizar Informações Bancárias</h3>
+                    <input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
+                    <input type="text" id="inputBankAgency" placeholder="Agência" /><br />
+                    <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
+                    <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
+                    <button id="saveBankInfo">Salvar Informações Bancárias</button>
+                </div>
             </div>
+            <div id="withdraw-tab" class="tab-content admin-section-inner">
+                <h2>Sacar Dinheiro</h2>
+                <div class="withdraw-info">
+                    <p><strong>Saldo Disponível: R$ <span id="availableBalance">0.00</span></strong></p>
+                    <p>Insira o valor a sacar:</p>
+                    <input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" />
+                    <button id="processWithdraw">Sacar</button>
+                    <p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
+                </div>
+            </div>
+            <button id="backToOrder">Voltar aos Pedidos</button>
         </div>
-        <a id="backToHome" href="index.html">Voltar ao Início</a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script>
+        // --- Variáveis Globais e Constantes ---
         const ADMIN_USERNAME = 'lpalmeira';
         const ADMIN_PASSWORD = '123';
 
+        // Elementos da Seção de Pedidos
+        const produtos = [
+            { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
+            { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
+            { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
+        ];
+
+        const orderSection = document.getElementById('order-section');
+        const formPedido = document.getElementById('formPedido');
+        const resumoDiv = document.getElementById('resumoPedido');
+        const itensResumoDiv = document.getElementById('itensResumo');
+        const totalResumoSpan = document.getElementById('totalResumo');
+        const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
+        const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
+        const telaPagamento = document.getElementById('telaPagamento');
+        const btnGerarQRCode = document.getElementById('btnGerarQRCode');
+        const btnVoltarResumo = document.getElementById('btnVoltarResumo');
+        const areaQRCode = document.getElementById('areaQRCode');
+        const qrCanvas = document.getElementById('qrCanvas');
+        const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
+        const btnNovoPedido = document.getElementById('btnNovoPedido');
+        const btnQtds = document.querySelectorAll('.btnQtd');
+
+        // Elementos da Seção de Administração
+        const btnAdminArea = document.getElementById('btnAdminArea');
+        const adminSection = document.getElementById('admin-section');
         const loginScreen = document.getElementById('login-screen');
         const adminPanel = document.getElementById('admin-panel');
         const loginForm = document.getElementById('login-form');
         const loginMessage = document.getElementById('login-message');
-
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
-
         const salesSummaryDiv = document.getElementById('sales-summary');
         const totalItemsSoldSpan = document.getElementById('total-items-sold');
         const totalSalesValueSpan = document.getElementById('total-sales-value');
         const ordersListDiv = document.getElementById('orders-list');
-
         const displayBankName = document.getElementById('displayBankName');
         const displayBankAgency = document.getElementById('displayBankAgency');
         const displayBankAccount = document.getElementById('displayBankAccount');
@@ -792,225 +572,388 @@
         const inputBankAccount = document.getElementById('inputBankAccount');
         const inputPixKey = document.getElementById('inputPixKey');
         const saveBankInfoBtn = document.getElementById('saveBankInfo');
-
         const availableBalanceSpan = document.getElementById('availableBalance');
         const withdrawAmountInput = document.getElementById('withdrawAmount');
         const processWithdrawBtn = document.getElementById('processWithdraw');
         const withdrawMessage = document.getElementById('withdrawMessage');
+        const backToOrderBtn = document.getElementById('backToOrder');
 
-        // Carrega os dados do localStorage (Pedidos, Informações Bancárias, Saldo)
-        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
-        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
-        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
+        // Dados persistentes (usando localStorage)
+        let numeroPedido = 1; [cite: 242]
+        const pedidoLS = localStorage.getItem('ultimoNumeroPedido'); [cite: 243]
+        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1; [cite: 243]
 
-        // --- Lógica de Login ---
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || []; [cite: 244, 330]
+        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 256, 331]
+        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0; [cite: 245, 331]
 
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                loginScreen.style.display = 'none';
-                adminPanel.style.display = 'block';
-                loginMessage.textContent = '';
-                updateAdminPanel(); // Atualiza o painel após o login
-            } else {
-                loginMessage.textContent = 'Usuário ou senha incorretos.';
-            }
-        });
+        // --- Funções de Visibilidade das Seções ---
+        function showOrderSection() {
+            orderSection.style.display = 'block';
+            adminSection.style.display = 'none';
+        }
 
-        // --- Lógica de Troca de Abas ---
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
+        function showAdminSection() {
+            orderSection.style.display = 'none';
+            adminSection.style.display = 'block';
+            loginScreen.style.display = 'block'; // Sempre volta para a tela de login ao acessar Admin
+            adminPanel.style.display = 'none';
+            loginForm.reset(); // Limpa o formulário de login
+            loginMessage.textContent = ''; // Limpa mensagens de login
+            updateAdminPanel(); // Atualiza o painel para refletir os dados mais recentes
+        }
 
-                button.classList.add('active');
-                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
-                updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
+        // --- Lógica da Página de Pedidos ---
+
+        // Função para atualizar quantidade via botões + e -
+        btnQtds.forEach(btn => { [cite: 245]
+            btn.addEventListener('click', () => { [cite: 245]
+                const inputId = btn.dataset.target; [cite: 245]
+                const input = document.getElementById(inputId); [cite: 245]
+                let val = parseInt(input.value) || 0; [cite: 245]
+                if (btn.textContent === '+') { [cite: 245]
+                    val++; [cite: 245]
+                } else {
+                    val = val > 0 ? val - 1 : 0; [cite: 245]
+                }
+                input.value = val; [cite: 245]
             });
         });
 
-        // --- Persistência de Dados (usando localStorage) ---
-        function saveOrders() {
-            localStorage.setItem('allOrders', JSON.stringify(allOrders));
-        }
-
-        function saveBankInfo() {
-            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
-            updateBankInfoDisplay(); // Atualiza a exibição imediatamente
-        }
-
-        function saveAccumulatedBalance() {
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente
-        }
-
-        // --- Função para Atualizar o Painel Administrativo ---
-        function updateAdminPanel() {
-            updateSummary();
-            updateOrdersList();
-            updateBankInfoDisplay();
-            updateWithdrawSection();
-        }
-
-        // --- Lógica da Aba Resumo ---
-        function updateSummary() {
-            let totalItems = 0;
-            let totalSales = 0;
-            salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior
-
-            if (allOrders.length === 0) {
-                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>';
-            } else {
-                const productSales = {}; // Ex: { 'Espeto de Frango': { quantity: 0, value: 0 } }
-
-                allOrders.forEach(order => {
-                    order.items.forEach(item => {
-                        if (!productSales[item.nome]) {
-                            productSales[item.nome] = { quantity: 0, value: 0 };
-                        }
-                        productSales[item.nome].quantity += item.qtd;
-                        productSales[item.nome].value += item.subtotal;
-                        totalItems += item.qtd;
-                        totalSales += item.subtotal;
+        // Ao submeter o formulário, mostrar resumo
+        formPedido.addEventListener('submit', e => { [cite: 246]
+            e.preventDefault(); [cite: 246]
+            const itensSelecionados = []; [cite: 246]
+            let total = 0; [cite: 246]
+            for (const p of produtos) { [cite: 246]
+                const qtd = parseInt(document.getElementById(p.id).value) || 0; [cite: 246]
+                if (qtd > 0) { [cite: 246]
+                    const subtotal = qtd * p.preco; [cite: 246]
+                    total += subtotal; [cite: 246]
+                    itensSelecionados.push({ [cite: 246]
+                        nome: p.nome,
+                        qtd,
+                        preco: p.preco,
+                        subtotal
                     });
-                });
+                }
+            }
+            if (itensSelecionados.length === 0) { [cite: 246]
+                alert('Selecione ao menos um item para prosseguir.'); [cite: 246]
+                return; [cite: 246]
+            }
+            itensResumoDiv.innerHTML = ''; [cite: 246]
+            itensSelecionados.forEach(item => { [cite: 246]
+                const p = document.createElement('p'); [cite: 246]
+                p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`; [cite: 246]
+                itensResumoDiv.appendChild(p); [cite: 246]
+            });
+            totalResumoSpan.textContent = total.toFixed(2); [cite: 246]
 
-                for (const productName in productSales) {
-                    const data = productSales[productName];
-                    const p = document.createElement('p');
-                    p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`;
-                    salesSummaryDiv.appendChild(p);
+            formPedido.style.display = 'none'; [cite: 247]
+            resumoDiv.style.display = 'block'; [cite: 247]
+            telaPagamento.style.display = 'none'; [cite: 247]
+            areaQRCode.style.display = 'none'; [cite: 247]
+        });
+
+        btnAvancarPagamento.addEventListener('click', () => { [cite: 248]
+            resumoDiv.style.display = 'none'; [cite: 248]
+            telaPagamento.style.display = 'block'; [cite: 248]
+            areaQRCode.style.display = 'none'; [cite: 248]
+        });
+
+        btnVoltarInicioResumo.addEventListener('click', () => { [cite: 249]
+            resumoDiv.style.display = 'none'; [cite: 249]
+            formPedido.style.display = 'block'; [cite: 249]
+        });
+
+        btnVoltarResumo.addEventListener('click', () => { [cite: 250]
+            telaPagamento.style.display = 'none'; [cite: 250]
+            resumoDiv.style.display = 'block'; [cite: 250]
+        });
+
+        btnGerarQRCode.addEventListener('click', () => { [cite: 251]
+            const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked'); [cite: 251]
+            if (!pagamentoSelecionado) { [cite: 251]
+                alert('Selecione uma forma de pagamento.'); [cite: 251]
+                return; [cite: 251]
+            }
+            const metodo = pagamentoSelecionado.value; [cite: 251]
+
+            const currentItemsSelected = [];
+            let currentTotal = 0;
+            for (const p of produtos) {
+                const qtd = parseInt(document.getElementById(p.id).value) || 0;
+                if (qtd > 0) {
+                    const subtotal = qtd * p.preco; [cite: 252]
+                    currentTotal += subtotal;
+                    currentItemsSelected.push({
+                        nome: p.nome,
+                        qtd,
+                        preco: p.preco,
+                        subtotal
+                    });
                 }
             }
 
-            totalItemsSoldSpan.textContent = totalItems;
-            totalSalesValueSpan.textContent = totalSales.toFixed(2);
-        }
+            localStorage.setItem('ultimoNumeroPedido', numeroPedido); [cite: 253]
+            const orderData = { [cite: 253]
+                numeroPedido: numeroPedido,
+                metodoPagamento: metodo,
+                data: new Date().toISOString(),
+                items: currentItemsSelected,
+                total: currentTotal
+            };
+            allOrders.push(orderData); [cite: 254]
+            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 254]
 
-        // --- Lógica da Aba Pedidos ---
-        function updateOrdersList() {
-            ordersListDiv.innerHTML = ''; // Limpa os pedidos anteriores
+            accumulatedBalance += currentTotal; [cite: 254]
+            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2)); [cite: 254]
 
-            if (allOrders.length === 0) {
-                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>';
-                return;
-            }
-
-            allOrders.forEach(order => {
-                const orderDiv = document.createElement('div');
-                orderDiv.classList.add('order-item');
-                orderDiv.innerHTML = `
-                    <h3>Pedido #${order.numeroPedido}</h3>
-                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
-                    <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
-                    <h4>Itens:</h4>
-                    <ul>
-                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
-                    </ul>
-                    <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p>
-                    <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button>
-                `;
-                ordersListDiv.appendChild(orderDiv);
+            const qrString = JSON.stringify({ [cite: 255]
+                numeroPedido: numeroPedido,
+                metodoPagamento: metodo,
+                valor: currentTotal.toFixed(2)
             });
-        }
 
-        function printOrder(orderNumber) {
-            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
-            if (!orderToPrint) {
-                alert('Pedido não encontrado para impressão.');
-                return;
+            if (metodo === 'pix') { [cite: 256]
+                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 256, 257]
+                if (bankInfoStored.pixKey) { [cite: 257]
+                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`; [cite: 257]
+                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) { [cite: 258]
+                        if (error) console.error(error);
+                        else {
+                            numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`; [cite: 258]
+                            telaPagamento.style.display = 'none'; [cite: 258]
+                            areaQRCode.style.display = 'block'; [cite: 259]
+                            alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`); [cite: 259]
+                        }
+                    });
+                } else {
+                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.'); [cite: 260]
+                    return; [cite: 261]
+                }
+            } else {
+                QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) { [cite: 261]
+                    if (error) console.error(error);
+                    else {
+                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`; [cite: 262]
+                        telaPagamento.style.display = 'none'; [cite: 262]
+                        areaQRCode.style.display = 'block'; [cite: 262]
+                    }
+                });
             }
-
-            let printContent = `
-                <h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
-                <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
-                <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
-                <hr>
-                <h3>Itens:</h3>
-                <ul>
-                    ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
-                </ul>
-                <hr>
-                <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
-                <p>Obrigado pela preferência!</p>
-            `;
-
-            const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<html><head><title>Nota Fiscal</title>');
-            printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        // --- Lógica da Aba Banco ---
-        function updateBankInfoDisplay() {
-            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
-            displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada';
-            displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada';
-            displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada';
-
-            inputBankName.value = bankInfo.bankName || '';
-            inputBankAgency.value = bankInfo.bankAgency || '';
-            inputBankAccount.value = bankInfo.bankAccount || '';
-            inputPixKey.value = bankInfo.pixKey || '';
-        }
-
-        saveBankInfoBtn.addEventListener('click', () => {
-            bankInfo.bankName = inputBankName.value.trim();
-            bankInfo.bankAgency = inputBankAgency.value.trim();
-            bankInfo.bankAccount = inputBankAccount.value.trim();
-            bankInfo.pixKey = inputPixKey.value.trim();
-
-            saveBankInfo(); // Salva e atualiza a exibição
-            alert('Informações bancárias salvas com sucesso!');
+            numeroPedido++; [cite: 263]
         });
 
-        // --- Lógica da Aba Sacar ---
-        function updateWithdrawSection() {
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2);
-            withdrawMessage.textContent = ''; // Limpa mensagens anteriores
-            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2)); // Define o valor máximo do input de saque
+        btnNovoPedido.addEventListener('click', () => { [cite: 263]
+            for (const p of produtos) { [cite: 263]
+                document.getElementById(p.id).value = 0; [cite: 263]
+            }
+            areaQRCode.style.display = 'none'; [cite: 263]
+            resumoDiv.style.display = 'none'; [cite: 263]
+            telaPagamento.style.display = 'none'; [cite: 263]
+            formPedido.style.display = 'block'; [cite: 263]
+
+            const radios = document.querySelectorAll('input[name="pagamento"]'); [cite: 263]
+            radios.forEach(r => (r.checked = false)); [cite: 263]
+        });
+
+        // --- Lógica do Painel de Administração ---
+
+        // Mostrar painel de admin ao clicar no botão "Administrador"
+        btnAdminArea.addEventListener('click', showAdminSection);
+
+        // Voltar para a seção de pedidos
+        backToOrderBtn.addEventListener('click', showOrderSection);
+
+        // Lógica de Login
+        loginForm.addEventListener('submit', (e) => { [cite: 332]
+            e.preventDefault(); [cite: 332]
+            const username = document.getElementById('username').value; [cite: 332]
+            const password = document.getElementById('password').value; [cite: 332]
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) { [cite: 332]
+                loginScreen.style.display = 'none'; [cite: 333]
+                adminPanel.style.display = 'block'; [cite: 333]
+                loginMessage.textContent = ''; [cite: 333]
+                updateAdminPanel(); // Atualiza o painel após o login [cite: 333]
+            } else {
+                loginMessage.textContent = 'Usuário ou senha incorretos.'; [cite: 334]
+            }
+        });
+
+        // Lógica de Troca de Abas
+        tabButtons.forEach(button => { [cite: 335]
+            button.addEventListener('click', () => { [cite: 335]
+                tabButtons.forEach(btn => btn.classList.remove('active')); [cite: 335]
+                tabContents.forEach(content => content.classList.remove('active')); [cite: 335]
+                button.classList.add('active'); [cite: 335]
+                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active'); [cite: 336]
+                updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar [cite: 336]
+            });
+        });
+
+        // Persistência de Dados (usando localStorage)
+        function saveOrders() { [cite: 337]
+            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 337]
+        }
+        function saveBankInfo() { [cite: 338]
+            localStorage.setItem('bankInfo', JSON.stringify(bankInfo)); [cite: 338]
+            updateBankInfoDisplay(); // Atualiza a exibição imediatamente [cite: 339]
+        }
+        function saveAccumulatedBalance() { [cite: 339]
+            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2)); [cite: 339]
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente [cite: 340]
         }
 
-        processWithdrawBtn.addEventListener('click', () => {
-            const withdrawAmount = parseFloat(withdrawAmountInput.value);
+        // Função para Atualizar o Painel Administrativo
+        function updateAdminPanel() { [cite: 340]
+            updateSummary(); [cite: 341]
+            updateOrdersList(); [cite: 341]
+            updateBankInfoDisplay(); [cite: 341]
+            updateWithdrawSection(); [cite: 341]
+        }
 
-            if (!bankInfo.bankName || !bankInfo.bankAccount) {
-                withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.';
-                withdrawMessage.style.color = 'red';
-                return;
+        // Lógica da Aba Resumo
+        function updateSummary() { [cite: 341]
+            let totalItems = 0; [cite: 342]
+            let totalSales = 0; [cite: 342]
+            salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior [cite: 342]
+            if (allOrders.length === 0) { [cite: 342]
+                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>'; [cite: 342]
+            } else {
+                const productSales = {}; [cite: 343, 344]
+                allOrders.forEach(order => { [cite: 344]
+                    order.items.forEach(item => { [cite: 344]
+                        if (!productSales[item.nome]) { [cite: 344]
+                            productSales[item.nome] = { quantity: 0, value: 0 }; [cite: 345]
+                        }
+                        productSales[item.nome].quantity += item.qtd; [cite: 345]
+                        productSales[item.nome].value += item.subtotal; [cite: 345]
+                        totalItems += item.qtd; [cite: 346]
+                        totalSales += item.subtotal; [cite: 346]
+                    });
+                });
+                for (const productName in productSales) { [cite: 347]
+                    const data = productSales[productName]; [cite: 347]
+                    const p = document.createElement('p'); [cite: 348]
+                    p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`; [cite: 348]
+                    salesSummaryDiv.appendChild(p); [cite: 348]
+                }
             }
+            totalItemsSoldSpan.textContent = totalItems; [cite: 349]
+            totalSalesValueSpan.textContent = totalSales.toFixed(2); [cite: 350]
+        }
 
-            if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
-                withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.';
-                withdrawMessage.style.color = 'red';
-                return;
+        // Lógica da Aba Pedidos
+        function updateOrdersList() { [cite: 350]
+            ordersListDiv.innerHTML = ''; [cite: 351]
+            if (allOrders.length === 0) { [cite: 351]
+                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>'; [cite: 351]
+                return; [cite: 352]
             }
-
-            if (withdrawAmount > accumulatedBalance) {
-                withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`;
-                withdrawMessage.style.color = 'red';
-                return;
+            allOrders.forEach(order => { [cite: 352]
+                const orderDiv = document.createElement('div'); [cite: 352]
+                orderDiv.classList.add('order-item'); [cite: 352]
+                orderDiv.innerHTML = `
+                    <h3>Pedido #${order.numeroPedido}</h3>
+                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p> [cite: 353]
+                    <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p> [cite: 353]
+                    <h4>Itens:</h4>
+                    <ul>
+                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')} [cite: 354]
+                    </ul>
+                    <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p> [cite: 354]
+                    <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button> [cite: 354]
+                `;
+                ordersListDiv.appendChild(orderDiv); [cite: 355]
+            });
+        }
+        function printOrder(orderNumber) { [cite: 356]
+            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber); [cite: 356]
+            if (!orderToPrint) { [cite: 357]
+                alert('Pedido não encontrado para impressão.'); [cite: 357]
+                return; [cite: 358]
             }
+            let printContent = `
+                <h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
+                <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p> [cite: 359]
+                <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p> [cite: 359]
+                <hr>
+                <h3>Itens:</h3> [cite: 359]
+                <ul>
+                    ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')} [cite: 359]
+                </ul>
+                <hr>
+                <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p> [cite: 359]
+                <p>Obrigado pela preferência!</p> [cite: 360]
+            `;
+            const printWindow = window.open('', '', 'height=600,width=800'); [cite: 361]
+            printWindow.document.write('<html><head><title>Nota Fiscal</title>'); [cite: 361]
+            printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>'); [cite: 361]
+            printWindow.document.write('</head><body>'); [cite: 361]
+            printWindow.document.write(printContent); [cite: 361]
+            printWindow.document.write('</body></html>'); [cite: 361]
+            printWindow.document.close(); [cite: 361]
+            printWindow.print(); [cite: 361]
+        }
 
-            accumulatedBalance -= withdrawAmount;
-            saveAccumulatedBalance(); // Salva e atualiza o saldo
-            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`;
-            withdrawMessage.style.color = 'green';
-            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
+        // Lógica da Aba Banco
+        function updateBankInfoDisplay() { [cite: 362]
+            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado'; [cite: 363]
+            displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada'; [cite: 363]
+            displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada'; [cite: 363]
+            displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada'; [cite: 363]
+            inputBankName.value = bankInfo.bankName || ''; [cite: 364]
+            inputBankAgency.value = bankInfo.bankAgency || ''; [cite: 364]
+            inputBankAccount.value = bankInfo.bankAccount || ''; [cite: 364]
+            inputPixKey.value = bankInfo.pixKey || ''; [cite: 364]
+        }
+        saveBankInfoBtn.addEventListener('click', () => { [cite: 365]
+            bankInfo.bankName = inputBankName.value.trim(); [cite: 365]
+            bankInfo.bankAgency = inputBankAgency.value.trim(); [cite: 365]
+            bankInfo.bankAccount = inputBankAccount.value.trim(); [cite: 365]
+            bankInfo.pixKey = inputPixKey.value.trim(); [cite: 365]
+            saveBankInfo(); // Salva e atualiza a exibição [cite: 365]
+            alert('Informações bancárias salvas com sucesso!'); [cite: 366]
+        });
+
+        // Lógica da Aba Sacar
+        function updateWithdrawSection() { [cite: 367]
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); [cite: 367]
+            withdrawMessage.textContent = ''; // Limpa mensagens anteriores [cite: 368]
+            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2)); [cite: 368]
+        }
+        processWithdrawBtn.addEventListener('click', () => { [cite: 369]
+            const withdrawAmount = parseFloat(withdrawAmountInput.value); [cite: 369]
+            if (!bankInfo.bankName || !bankInfo.bankAccount) { [cite: 369]
+                withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.'; [cite: 369]
+                withdrawMessage.style.color = 'red'; [cite: 370]
+                return; [cite: 370]
+            }
+            if (isNaN(withdrawAmount) || withdrawAmount <= 0) { [cite: 370]
+                withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.'; [cite: 370]
+                withdrawMessage.style.color = 'red'; [cite: 370]
+                return; [cite: 371]
+            }
+            if (withdrawAmount > accumulatedBalance) { [cite: 371]
+                withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`; [cite: 371]
+                withdrawMessage.style.color = 'red'; [cite: 372]
+                return; [cite: 372]
+            }
+            accumulatedBalance -= withdrawAmount; [cite: 372]
+            saveAccumulatedBalance(); // Salva e atualiza o saldo [cite: 373]
+            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`; [cite: 373]
+            withdrawMessage.style.color = 'green'; [cite: 374]
+            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor [cite: 374]
         });
 
         // --- Carregamento Inicial ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ao carregar a página admin, inicialmente mostra a tela de login.
-            // O updateAdminPanel() é chamado após o login bem-sucedido.
-            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página
+        document.addEventListener('DOMContentLoaded', () => { [cite: 375]
+            showOrderSection(); // Mostra a seção de pedidos por padrão
+            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página [cite: 375]
         });
     </script>
+
 </body>
 </html>
