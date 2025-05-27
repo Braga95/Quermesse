@@ -548,7 +548,9 @@
         const qrCanvas = document.getElementById('qrCanvas');
         const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
         const btnNovoPedido = document.getElementById('btnNovoPedido');
-        const btnQtds = document.querySelectorAll('.btnQtd');
+        
+        // CORREÇÃO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded
+        let btnQtds; 
 
         // Elementos da Seção de Administração
         const btnAdminArea = document.getElementById('btnAdminArea');
@@ -579,13 +581,13 @@
         const backToOrderBtn = document.getElementById('backToOrder');
 
         // Dados persistentes (usando localStorage)
-        let numeroPedido = 1; [cite: 242]
-        const pedidoLS = localStorage.getItem('ultimoNumeroPedido'); [cite: 243]
-        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1; [cite: 243]
+        let numeroPedido = 1;
+        const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
+        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
 
-        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || []; [cite: 244, 330]
-        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 256, 331]
-        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0; [cite: 245, 331]
+        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
+        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
 
         // --- Funções de Visibilidade das Seções ---
         function showOrderSection() {
@@ -600,37 +602,22 @@
             adminPanel.style.display = 'none';
             loginForm.reset(); // Limpa o formulário de login
             loginMessage.textContent = ''; // Limpa mensagens de login
-            updateAdminPanel(); // Atualiza o painel para refletir os dados mais recentes
+            // Nao chamar updateAdminPanel() aqui, ele sera chamado apos o login
         }
 
         // --- Lógica da Página de Pedidos ---
 
-        // Função para atualizar quantidade via botões + e -
-        btnQtds.forEach(btn => { [cite: 245]
-            btn.addEventListener('click', () => { [cite: 245]
-                const inputId = btn.dataset.target; [cite: 245]
-                const input = document.getElementById(inputId); [cite: 245]
-                let val = parseInt(input.value) || 0; [cite: 245]
-                if (btn.textContent === '+') { [cite: 245]
-                    val++; [cite: 245]
-                } else {
-                    val = val > 0 ? val - 1 : 0; [cite: 245]
-                }
-                input.value = val; [cite: 245]
-            });
-        });
-
         // Ao submeter o formulário, mostrar resumo
-        formPedido.addEventListener('submit', e => { [cite: 246]
-            e.preventDefault(); [cite: 246]
-            const itensSelecionados = []; [cite: 246]
-            let total = 0; [cite: 246]
-            for (const p of produtos) { [cite: 246]
-                const qtd = parseInt(document.getElementById(p.id).value) || 0; [cite: 246]
-                if (qtd > 0) { [cite: 246]
-                    const subtotal = qtd * p.preco; [cite: 246]
-                    total += subtotal; [cite: 246]
-                    itensSelecionados.push({ [cite: 246]
+        formPedido.addEventListener('submit', e => {
+            e.preventDefault();
+            const itensSelecionados = [];
+            let total = 0;
+            for (const p of produtos) {
+                const qtd = parseInt(document.getElementById(p.id).value) || 0;
+                if (qtd > 0) {
+                    const subtotal = qtd * p.preco;
+                    total += subtotal;
+                    itensSelecionados.push({
                         nome: p.nome,
                         qtd,
                         preco: p.preco,
@@ -638,54 +625,54 @@
                     });
                 }
             }
-            if (itensSelecionados.length === 0) { [cite: 246]
-                alert('Selecione ao menos um item para prosseguir.'); [cite: 246]
-                return; [cite: 246]
+            if (itensSelecionados.length === 0) {
+                alert('Selecione ao menos um item para prosseguir.');
+                return;
             }
-            itensResumoDiv.innerHTML = ''; [cite: 246]
-            itensSelecionados.forEach(item => { [cite: 246]
-                const p = document.createElement('p'); [cite: 246]
-                p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`; [cite: 246]
-                itensResumoDiv.appendChild(p); [cite: 246]
+            itensResumoDiv.innerHTML = '';
+            itensSelecionados.forEach(item => {
+                const p = document.createElement('p');
+                p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
+                itensResumoDiv.appendChild(p);
             });
-            totalResumoSpan.textContent = total.toFixed(2); [cite: 246]
+            totalResumoSpan.textContent = total.toFixed(2);
 
-            formPedido.style.display = 'none'; [cite: 247]
-            resumoDiv.style.display = 'block'; [cite: 247]
-            telaPagamento.style.display = 'none'; [cite: 247]
-            areaQRCode.style.display = 'none'; [cite: 247]
+            formPedido.style.display = 'none';
+            resumoDiv.style.display = 'block';
+            telaPagamento.style.display = 'none';
+            areaQRCode.style.display = 'none';
         });
 
-        btnAvancarPagamento.addEventListener('click', () => { [cite: 248]
-            resumoDiv.style.display = 'none'; [cite: 248]
-            telaPagamento.style.display = 'block'; [cite: 248]
-            areaQRCode.style.display = 'none'; [cite: 248]
+        btnAvancarPagamento.addEventListener('click', () => {
+            resumoDiv.style.display = 'none';
+            telaPagamento.style.display = 'block';
+            areaQRCode.style.display = 'none';
         });
 
-        btnVoltarInicioResumo.addEventListener('click', () => { [cite: 249]
-            resumoDiv.style.display = 'none'; [cite: 249]
-            formPedido.style.display = 'block'; [cite: 249]
+        btnVoltarInicioResumo.addEventListener('click', () => {
+            resumoDiv.style.display = 'none';
+            formPedido.style.display = 'block';
         });
 
-        btnVoltarResumo.addEventListener('click', () => { [cite: 250]
-            telaPagamento.style.display = 'none'; [cite: 250]
-            resumoDiv.style.display = 'block'; [cite: 250]
+        btnVoltarResumo.addEventListener('click', () => {
+            telaPagamento.style.display = 'none';
+            resumoDiv.style.display = 'block';
         });
 
-        btnGerarQRCode.addEventListener('click', () => { [cite: 251]
-            const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked'); [cite: 251]
-            if (!pagamentoSelecionado) { [cite: 251]
-                alert('Selecione uma forma de pagamento.'); [cite: 251]
-                return; [cite: 251]
+        btnGerarQRCode.addEventListener('click', () => {
+            const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
+            if (!pagamentoSelecionado) {
+                alert('Selecione uma forma de pagamento.');
+                return;
             }
-            const metodo = pagamentoSelecionado.value; [cite: 251]
+            const metodo = pagamentoSelecionado.value;
 
             const currentItemsSelected = [];
             let currentTotal = 0;
             for (const p of produtos) {
                 const qtd = parseInt(document.getElementById(p.id).value) || 0;
                 if (qtd > 0) {
-                    const subtotal = qtd * p.preco; [cite: 252]
+                    const subtotal = qtd * p.preco;
                     currentTotal += subtotal;
                     currentItemsSelected.push({
                         nome: p.nome,
@@ -696,67 +683,67 @@
                 }
             }
 
-            localStorage.setItem('ultimoNumeroPedido', numeroPedido); [cite: 253]
-            const orderData = { [cite: 253]
+            localStorage.setItem('ultimoNumeroPedido', numeroPedido);
+            const orderData = {
                 numeroPedido: numeroPedido,
                 metodoPagamento: metodo,
                 data: new Date().toISOString(),
                 items: currentItemsSelected,
                 total: currentTotal
             };
-            allOrders.push(orderData); [cite: 254]
-            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 254]
+            allOrders.push(orderData);
+            localStorage.setItem('allOrders', JSON.stringify(allOrders));
 
-            accumulatedBalance += currentTotal; [cite: 254]
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2)); [cite: 254]
+            accumulatedBalance += currentTotal;
+            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
 
-            const qrString = JSON.stringify({ [cite: 255]
+            const qrString = JSON.stringify({
                 numeroPedido: numeroPedido,
                 metodoPagamento: metodo,
                 valor: currentTotal.toFixed(2)
             });
 
-            if (metodo === 'pix') { [cite: 256]
-                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 256, 257]
-                if (bankInfoStored.pixKey) { [cite: 257]
-                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`; [cite: 257]
-                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) { [cite: 258]
+            if (metodo === 'pix') {
+                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {};
+                if (bankInfoStored.pixKey) {
+                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
+                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
                         if (error) console.error(error);
                         else {
-                            numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`; [cite: 258]
-                            telaPagamento.style.display = 'none'; [cite: 258]
-                            areaQRCode.style.display = 'block'; [cite: 259]
-                            alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`); [cite: 259]
+                            numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
+                            telaPagamento.style.display = 'none';
+                            areaQRCode.style.display = 'block';
+                            alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
                         }
                     });
                 } else {
-                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.'); [cite: 260]
-                    return; [cite: 261]
+                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
+                    return;
                 }
             } else {
-                QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) { [cite: 261]
+                QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
                     if (error) console.error(error);
                     else {
-                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`; [cite: 262]
-                        telaPagamento.style.display = 'none'; [cite: 262]
-                        areaQRCode.style.display = 'block'; [cite: 262]
+                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
+                        telaPagamento.style.display = 'none';
+                        areaQRCode.style.display = 'block';
                     }
                 });
             }
-            numeroPedido++; [cite: 263]
+            numeroPedido++;
         });
 
-        btnNovoPedido.addEventListener('click', () => { [cite: 263]
-            for (const p of produtos) { [cite: 263]
-                document.getElementById(p.id).value = 0; [cite: 263]
+        btnNovoPedido.addEventListener('click', () => {
+            for (const p of produtos) {
+                document.getElementById(p.id).value = 0;
             }
-            areaQRCode.style.display = 'none'; [cite: 263]
-            resumoDiv.style.display = 'none'; [cite: 263]
-            telaPagamento.style.display = 'none'; [cite: 263]
-            formPedido.style.display = 'block'; [cite: 263]
+            areaQRCode.style.display = 'none';
+            resumoDiv.style.display = 'none';
+            telaPagamento.style.display = 'none';
+            formPedido.style.display = 'block';
 
-            const radios = document.querySelectorAll('input[name="pagamento"]'); [cite: 263]
-            radios.forEach(r => (r.checked = false)); [cite: 263]
+            const radios = document.querySelectorAll('input[name="pagamento"]');
+            radios.forEach(r => (r.checked = false));
         });
 
         // --- Lógica do Painel de Administração ---
@@ -768,190 +755,206 @@
         backToOrderBtn.addEventListener('click', showOrderSection);
 
         // Lógica de Login
-        loginForm.addEventListener('submit', (e) => { [cite: 332]
-            e.preventDefault(); [cite: 332]
-            const username = document.getElementById('username').value; [cite: 332]
-            const password = document.getElementById('password').value; [cite: 332]
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) { [cite: 332]
-                loginScreen.style.display = 'none'; [cite: 333]
-                adminPanel.style.display = 'block'; [cite: 333]
-                loginMessage.textContent = ''; [cite: 333]
-                updateAdminPanel(); // Atualiza o painel após o login [cite: 333]
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                loginScreen.style.display = 'none';
+                adminPanel.style.display = 'block';
+                loginMessage.textContent = '';
+                updateAdminPanel(); // Atualiza o painel após o login
             } else {
-                loginMessage.textContent = 'Usuário ou senha incorretos.'; [cite: 334]
+                loginMessage.textContent = 'Usuário ou senha incorretos.';
             }
         });
 
         // Lógica de Troca de Abas
-        tabButtons.forEach(button => { [cite: 335]
-            button.addEventListener('click', () => { [cite: 335]
-                tabButtons.forEach(btn => btn.classList.remove('active')); [cite: 335]
-                tabContents.forEach(content => content.classList.remove('active')); [cite: 335]
-                button.classList.add('active'); [cite: 335]
-                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active'); [cite: 336]
-                updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar [cite: 336]
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
+                updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
             });
         });
 
         // Persistência de Dados (usando localStorage)
-        function saveOrders() { [cite: 337]
-            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 337]
+        function saveOrders() {
+            localStorage.setItem('allOrders', JSON.stringify(allOrders));
         }
-        function saveBankInfo() { [cite: 338]
-            localStorage.setItem('bankInfo', JSON.stringify(bankInfo)); [cite: 338]
-            updateBankInfoDisplay(); // Atualiza a exibição imediatamente [cite: 339]
+        function saveBankInfo() {
+            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+            updateBankInfoDisplay(); // Atualiza a exibição imediatamente
         }
-        function saveAccumulatedBalance() { [cite: 339]
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2)); [cite: 339]
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente [cite: 340]
+        function saveAccumulatedBalance() {
+            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente
         }
 
         // Função para Atualizar o Painel Administrativo
-        function updateAdminPanel() { [cite: 340]
-            updateSummary(); [cite: 341]
-            updateOrdersList(); [cite: 341]
-            updateBankInfoDisplay(); [cite: 341]
-            updateWithdrawSection(); [cite: 341]
+        function updateAdminPanel() {
+            updateSummary();
+            updateOrdersList();
+            updateBankInfoDisplay();
+            updateWithdrawSection();
         }
 
         // Lógica da Aba Resumo
-        function updateSummary() { [cite: 341]
-            let totalItems = 0; [cite: 342]
-            let totalSales = 0; [cite: 342]
-            salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior [cite: 342]
-            if (allOrders.length === 0) { [cite: 342]
-                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>'; [cite: 342]
+        function updateSummary() {
+            let totalItems = 0;
+            let totalSales = 0;
+            salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior
+            if (allOrders.length === 0) {
+                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>';
             } else {
-                const productSales = {}; [cite: 343, 344]
-                allOrders.forEach(order => { [cite: 344]
-                    order.items.forEach(item => { [cite: 344]
-                        if (!productSales[item.nome]) { [cite: 344]
-                            productSales[item.nome] = { quantity: 0, value: 0 }; [cite: 345]
+                const productSales = {};
+                allOrders.forEach(order => {
+                    order.items.forEach(item => {
+                        if (!productSales[item.nome]) {
+                            productSales[item.nome] = { quantity: 0, value: 0 };
                         }
-                        productSales[item.nome].quantity += item.qtd; [cite: 345]
-                        productSales[item.nome].value += item.subtotal; [cite: 345]
-                        totalItems += item.qtd; [cite: 346]
-                        totalSales += item.subtotal; [cite: 346]
+                        productSales[item.nome].quantity += item.qtd;
+                        productSales[item.nome].value += item.subtotal;
+                        totalItems += item.qtd;
+                        totalSales += item.subtotal;
                     });
                 });
-                for (const productName in productSales) { [cite: 347]
-                    const data = productSales[productName]; [cite: 347]
-                    const p = document.createElement('p'); [cite: 348]
-                    p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`; [cite: 348]
-                    salesSummaryDiv.appendChild(p); [cite: 348]
+                for (const productName in productSales) {
+                    const data = productSales[productName];
+                    const p = document.createElement('p');
+                    p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`;
+                    salesSummaryDiv.appendChild(p);
                 }
             }
-            totalItemsSoldSpan.textContent = totalItems; [cite: 349]
-            totalSalesValueSpan.textContent = totalSales.toFixed(2); [cite: 350]
+            totalItemsSoldSpan.textContent = totalItems;
+            totalSalesValueSpan.textContent = totalSales.toFixed(2);
         }
 
         // Lógica da Aba Pedidos
-        function updateOrdersList() { [cite: 350]
-            ordersListDiv.innerHTML = ''; [cite: 351]
-            if (allOrders.length === 0) { [cite: 351]
-                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>'; [cite: 351]
-                return; [cite: 352]
+        function updateOrdersList() {
+            ordersListDiv.innerHTML = '';
+            if (allOrders.length === 0) {
+                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>';
+                return;
             }
-            allOrders.forEach(order => { [cite: 352]
-                const orderDiv = document.createElement('div'); [cite: 352]
-                orderDiv.classList.add('order-item'); [cite: 352]
+            allOrders.forEach(order => {
+                const orderDiv = document.createElement('div');
+                orderDiv.classList.add('order-item');
                 orderDiv.innerHTML = `
                     <h3>Pedido #${order.numeroPedido}</h3>
-                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p> [cite: 353]
-                    <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p> [cite: 353]
+                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
+                    <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
                     <h4>Itens:</h4>
                     <ul>
-                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')} [cite: 354]
+                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
                     </ul>
-                    <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p> [cite: 354]
-                    <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button> [cite: 354]
+                    <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p>
+                    <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button>
                 `;
-                ordersListDiv.appendChild(orderDiv); [cite: 355]
+                ordersListDiv.appendChild(orderDiv);
             });
         }
-        function printOrder(orderNumber) { [cite: 356]
-            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber); [cite: 356]
-            if (!orderToPrint) { [cite: 357]
-                alert('Pedido não encontrado para impressão.'); [cite: 357]
-                return; [cite: 358]
+        function printOrder(orderNumber) {
+            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
+            if (!orderToPrint) {
+                alert('Pedido não encontrado para impressão.');
+                return;
             }
             let printContent = `
                 <h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
-                <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p> [cite: 359]
-                <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p> [cite: 359]
+                <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
+                <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
                 <hr>
-                <h3>Itens:</h3> [cite: 359]
+                <h3>Itens:</h3>
                 <ul>
-                    ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')} [cite: 359]
+                    ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
                 </ul>
                 <hr>
-                <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p> [cite: 359]
-                <p>Obrigado pela preferência!</p> [cite: 360]
+                <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
+                <p>Obrigado pela preferência!</p>
             `;
-            const printWindow = window.open('', '', 'height=600,width=800'); [cite: 361]
-            printWindow.document.write('<html><head><title>Nota Fiscal</title>'); [cite: 361]
-            printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>'); [cite: 361]
-            printWindow.document.write('</head><body>'); [cite: 361]
-            printWindow.document.write(printContent); [cite: 361]
-            printWindow.document.write('</body></html>'); [cite: 361]
-            printWindow.document.close(); [cite: 361]
-            printWindow.print(); [cite: 361]
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Nota Fiscal</title>');
+            printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(printContent);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
         }
 
         // Lógica da Aba Banco
-        function updateBankInfoDisplay() { [cite: 362]
-            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado'; [cite: 363]
-            displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada'; [cite: 363]
-            displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada'; [cite: 363]
-            displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada'; [cite: 363]
-            inputBankName.value = bankInfo.bankName || ''; [cite: 364]
-            inputBankAgency.value = bankInfo.bankAgency || ''; [cite: 364]
-            inputBankAccount.value = bankInfo.bankAccount || ''; [cite: 364]
-            inputPixKey.value = bankInfo.pixKey || ''; [cite: 364]
+        function updateBankInfoDisplay() {
+            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
+            displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada';
+            displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada';
+            displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada';
+            inputBankName.value = bankInfo.bankName || '';
+            inputBankAgency.value = bankInfo.bankAgency || '';
+            inputBankAccount.value = bankInfo.bankAccount || '';
+            inputPixKey.value = bankInfo.pixKey || '';
         }
-        saveBankInfoBtn.addEventListener('click', () => { [cite: 365]
-            bankInfo.bankName = inputBankName.value.trim(); [cite: 365]
-            bankInfo.bankAgency = inputBankAgency.value.trim(); [cite: 365]
-            bankInfo.bankAccount = inputBankAccount.value.trim(); [cite: 365]
-            bankInfo.pixKey = inputPixKey.value.trim(); [cite: 365]
-            saveBankInfo(); // Salva e atualiza a exibição [cite: 365]
-            alert('Informações bancárias salvas com sucesso!'); [cite: 366]
+        saveBankInfoBtn.addEventListener('click', () => {
+            bankInfo.bankName = inputBankName.value.trim();
+            bankInfo.bankAgency = inputBankAgency.value.trim();
+            bankInfo.bankAccount = inputBankAccount.value.trim();
+            bankInfo.pixKey = inputPixKey.value.trim();
+            saveBankInfo(); // Salva e atualiza a exibição
+            alert('Informações bancárias salvas com sucesso!');
         });
 
         // Lógica da Aba Sacar
-        function updateWithdrawSection() { [cite: 367]
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); [cite: 367]
-            withdrawMessage.textContent = ''; // Limpa mensagens anteriores [cite: 368]
-            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2)); [cite: 368]
+        function updateWithdrawSection() {
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2);
+            withdrawMessage.textContent = ''; // Limpa mensagens anteriores
+            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2));
         }
-        processWithdrawBtn.addEventListener('click', () => { [cite: 369]
-            const withdrawAmount = parseFloat(withdrawAmountInput.value); [cite: 369]
-            if (!bankInfo.bankName || !bankInfo.bankAccount) { [cite: 369]
-                withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.'; [cite: 369]
-                withdrawMessage.style.color = 'red'; [cite: 370]
-                return; [cite: 370]
+        processWithdrawBtn.addEventListener('click', () => {
+            const withdrawAmount = parseFloat(withdrawAmountInput.value);
+            if (!bankInfo.bankName || !bankInfo.bankAccount) {
+                withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.';
+                withdrawMessage.style.color = 'red';
+                return;
             }
-            if (isNaN(withdrawAmount) || withdrawAmount <= 0) { [cite: 370]
-                withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.'; [cite: 370]
-                withdrawMessage.style.color = 'red'; [cite: 370]
-                return; [cite: 371]
+            if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+                withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.';
+                withdrawMessage.style.color = 'red';
+                return;
             }
-            if (withdrawAmount > accumulatedBalance) { [cite: 371]
-                withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`; [cite: 371]
-                withdrawMessage.style.color = 'red'; [cite: 372]
-                return; [cite: 372]
+            if (withdrawAmount > accumulatedBalance) {
+                withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`;
+                withdrawMessage.style.color = 'red';
+                return;
             }
-            accumulatedBalance -= withdrawAmount; [cite: 372]
-            saveAccumulatedBalance(); // Salva e atualiza o saldo [cite: 373]
-            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`; [cite: 373]
-            withdrawMessage.style.color = 'green'; [cite: 374]
-            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor [cite: 374]
+            accumulatedBalance -= withdrawAmount;
+            saveAccumulatedBalance(); // Salva e atualiza o saldo
+            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`;
+            withdrawMessage.style.color = 'green';
+            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
         });
 
-        // --- Carregamento Inicial ---
-        document.addEventListener('DOMContentLoaded', () => { [cite: 375]
+        // --- Carregamento Inicial e Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa os event listeners para os botões de quantidade aqui
+            btnQtds = document.querySelectorAll('.btnQtd'); // Garante que btnQtds seja definido
+            btnQtds.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const inputId = btn.dataset.target;
+                    const input = document.getElementById(inputId);
+                    let val = parseInt(input.value) || 0;
+                    if (btn.textContent === '+') {
+                        val++;
+                    } else {
+                        val = val > 0 ? val - 1 : 0;
+                    }
+                    input.value = val;
+                });
+            });
+
             showOrderSection(); // Mostra a seção de pedidos por padrão
-            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página [cite: 375]
+            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página
         });
     </script>
 
