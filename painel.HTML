@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PagFesta - Painel</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f0f0f0; color: #333; }
+    header { background: #333; color: white; padding: 20px; text-align: center; }
+    .container { max-width: 800px; margin: auto; padding: 20px; }
+    .pedido { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Painel de Pedidos - PagFesta</h1>
+  </header>
+  <div class="container" id="lista-pedidos">
+    <p>Carregando pedidos...</p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SUA_AUTH_DOMAIN",
+      projectId: "SUA_PROJECT_ID",
+      storageBucket: "SUA_BUCKET",
+      messagingSenderId: "SEU_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const lista = document.getElementById('lista-pedidos');
+    db.collection("pedidos").where("evento", "==", "Quermesse Boa Esperança").orderBy("data", "desc")
+      .onSnapshot(snapshot => {
+        lista.innerHTML = '';
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const produtos = p.produtos.map(x => `${x.qtd}x ${x.nome}`).join(', ');
+          const div = document.createElement('div');
+          div.className = 'pedido';
+          div.innerHTML = `
+            <p><strong>Produtos:</strong> ${produtos}</p>
+            <p><strong>Total:</strong> R$${p.total.toFixed(2)}</p>
+            <p><strong>Pagamento:</strong> ${p.pagamento}</p>
+            <p><small>${p.data.toDate().toLocaleString()}</small></p>
+          `;
+          lista.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
