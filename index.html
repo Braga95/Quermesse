@@ -2,26 +2,23 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PagFesta</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
     header { background-color: #d62828; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-    header h1, header p { margin: 0; }
-    .admin-btn { background: white; color: #d62828; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    .admin-btn:hover { background: #ffd6d6; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     h2 { color: #d62828; }
-    .resumo, .pagamento, .qrcode, .admin-login, .painel { display: none; }
+    .produto { margin: 10px 0; }
+    .resumo, .pagamento, .qrcode, .admin, .admin-painel, .admin-banco, .admin-saque, .admin-pedidos { display: none; }
     .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
     .btn:hover { background: #b71c1c; }
-    .voltar { background-color: #777; margin-left: 10px; }
     .total { font-weight: bold; margin-top: 10px; }
-    canvas { display: block; margin: 20px auto; width: 250px !important; height: 250px !important; }
-    input[type="text"], input[type="password"] { padding: 8px; width: 100%; margin: 10px 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+    .qrcode canvas { display: block; margin: 20px auto; width: 220px !important; height: 220px !important; }
+    nav a { color: white; margin-left: 20px; cursor: pointer; text-decoration: underline; }
+    .admin-nav button { margin: 10px; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -30,103 +27,142 @@
       <h1>PagFesta</h1>
       <p>Quermesse Nossa Senhora da Boa Esperança</p>
     </div>
-    <button class="admin-btn" onclick="abrirLogin()">Administrador</button>
+    <nav>
+      <a onclick="abrirLoginAdmin()">Administrador</a>
+    </nav>
   </header>
 
   <div class="container">
-
-    <!-- Etapa 1 - Pedido -->
     <section class="pedido">
       <h2>Escolha seus produtos</h2>
       <form id="formulario">
-        <label><input type="checkbox" name="Pastel" data-preco="10" /> Pastel - R$10</label><br>
-        <label><input type="checkbox" name="HotDog" data-preco="10" /> HotDog - R$10</label><br>
-        <label><input type="checkbox" name="Doces" data-preco="6" /> Doces - R$6</label><br>
-        <label><input type="checkbox" name="Caldinho" data-preco="10" /> Caldinho - R$10</label><br>
-        <label><input type="checkbox" name="Refrigerante" data-preco="6" /> Refrigerante - R$6</label><br>
-        <label><input type="checkbox" name="Espeto de Frango" data-preco="12" /> Espeto de Frango - R$12</label><br>
-        <label><input type="checkbox" name="Suco" data-preco="5" /> Suco - R$5</label><br>
-        <label><input type="checkbox" name="Água" data-preco="3" /> Água - R$3</label><br><br>
+        <div class="produto">
+          <label>Pastel - R$10,00 <input type="number" min="0" value="0" data-nome="Pastel" data-preco="10"></label>
+        </div>
+        <div class="produto">
+          <label>HotDog - R$10,00 <input type="number" min="0" value="0" data-nome="HotDog" data-preco="10"></label>
+        </div>
+        <div class="produto">
+          <label>Doces - R$6,00 <input type="number" min="0" value="0" data-nome="Doces" data-preco="6"></label>
+        </div>
+        <div class="produto">
+          <label>Caldinho - R$10,00 <input type="number" min="0" value="0" data-nome="Caldinho" data-preco="10"></label>
+        </div>
+        <div class="produto">
+          <label>Refrigerante - R$6,00 <input type="number" min="0" value="0" data-nome="Refrigerante" data-preco="6"></label>
+        </div>
+        <div class="produto">
+          <label>Espeto de Frango - R$12,00 <input type="number" min="0" value="0" data-nome="Espeto de Frango" data-preco="12"></label>
+        </div>
+        <div class="produto">
+          <label>Suco - R$5,00 <input type="number" min="0" value="0" data-nome="Suco" data-preco="5"></label>
+        </div>
+        <div class="produto">
+          <label>Água - R$4,00 <input type="number" min="0" value="0" data-nome="Água" data-preco="4"></label>
+        </div>
         <button type="submit" class="btn">Avançar</button>
       </form>
     </section>
 
-    <!-- Etapa 2 - Resumo -->
     <section class="resumo">
       <h2>Resumo do Pedido</h2>
       <ul id="lista-resumo"></ul>
       <p class="total" id="valor-total"></p>
       <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
-      <button class="btn voltar" onclick="voltarPedido()">Voltar</button>
+      <button class="btn" onclick="voltarParaPedido()">Voltar</button>
     </section>
 
-    <!-- Etapa 3 - Pagamento -->
     <section class="pagamento">
       <h2>Forma de Pagamento</h2>
-      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label><br>
-      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label><br>
-      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label><br>
+      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
+      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
+      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
+      <br>
       <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
-      <button class="btn voltar" onclick="voltarResumo()">Voltar</button>
+      <button class="btn" onclick="voltarParaResumo()">Voltar</button>
     </section>
 
-    <!-- Etapa 4 - QR Code -->
     <section class="qrcode">
       <h2>Seu QR Code</h2>
       <canvas id="qr"></canvas>
-      <button class="btn" onclick="voltarInicio()">Novo Pedido</button>
+      <p style="text-align: center; font-weight: bold;" id="numero-pedido"></p>
     </section>
 
-    <!-- Login do Admin -->
-    <section class="admin-login">
-      <h2>Login Administrador</h2>
-      <input type="text" id="usuario" placeholder="Usuário" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button class="btn" onclick="fazerLogin()">Entrar</button>
-      <button class="btn voltar" onclick="fecharLogin()">Cancelar</button>
+    <section class="admin">
+      <h2>Login do Administrador</h2>
+      <label>Usuário: <input type="text" id="admin-user"></label><br>
+      <label>Senha: <input type="password" id="admin-pass"></label><br>
+      <button class="btn" onclick="loginAdmin()">Entrar</button>
     </section>
 
-    <!-- Painel do Administrador -->
-    <section class="painel">
-      <h2>Painel do Organizador</h2>
-      <table>
-        <thead>
-          <tr><th>Produtos</th><th>Total</th><th>Pagamento</th></tr>
-        </thead>
-        <tbody id="lista-pedidos"></tbody>
-      </table>
-      <button class="btn voltar" onclick="fecharPainel()">Sair</button>
+    <section class="admin-painel">
+      <h2>Painel do Administrador</h2>
+      <div class="admin-nav">
+        <button onclick="mostrarResumo()">Resumo</button>
+        <button onclick="mostrarPedidos()">Pedidos</button>
+        <button onclick="mostrarBanco()">Cadastro de Banco</button>
+        <button onclick="mostrarSaque()">Sacar</button>
+      </div>
+      <div class="admin-resumo">
+        <h3>Resumo de Vendas</h3>
+        <ul id="resumo-vendas"></ul>
+        <p class="total" id="resumo-total"></p>
+      </div>
     </section>
 
+    <section class="admin-pedidos">
+      <h2>Pedidos</h2>
+      <ul id="lista-pedidos"></ul>
+    </section>
+
+    <section class="admin-banco">
+      <h2>Cadastro de Dados Bancários</h2>
+      <input type="text" placeholder="Banco" id="banco" /><br>
+      <input type="text" placeholder="Agência" id="agencia" /><br>
+      <input type="text" placeholder="Conta" id="conta" /><br>
+      <button class="btn" onclick="salvarBanco()">Salvar</button>
+    </section>
+
+    <section class="admin-saque">
+      <h2>Saque</h2>
+      <p>Saldo disponível: <span id="saldo"></span></p>
+      <button class="btn">Sacar</button>
+    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
+    let pedidoFinal = [];
+    let total = 0;
+    let pedidos = [];
+    let pedidoId = 1;
+    let bancoInfo = {};
+
     const form = document.getElementById('formulario');
     const listaResumo = document.getElementById('lista-resumo');
     const valorTotal = document.getElementById('valor-total');
-    let pedidoFinal = [];
-    let total = 0;
-    const pedidos = [];
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       pedidoFinal = [];
       total = 0;
       listaResumo.innerHTML = '';
-      document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-        if (el.checked) {
-          const nome = el.name;
-          const preco = parseFloat(el.dataset.preco);
-          pedidoFinal.push({ nome, preco });
-          total += preco;
-          listaResumo.innerHTML += `<li>${nome} - R$${preco.toFixed(2)}</li>`;
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        const quantidade = parseInt(input.value);
+        if (quantidade > 0) {
+          const nome = input.getAttribute('data-nome');
+          const preco = parseFloat(input.getAttribute('data-preco'));
+          pedidoFinal.push({ nome, preco, quantidade });
+          total += preco * quantidade;
+          listaResumo.innerHTML += `<li>${quantidade}x ${nome} - R$${(preco * quantidade).toFixed(2)}</li>`;
         }
       });
+
       if (pedidoFinal.length === 0) {
-        alert("Selecione ao menos um produto.");
+        alert('Selecione ao menos um produto.');
         return;
       }
+
       valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
       document.querySelector('.pedido').style.display = 'none';
       document.querySelector('.resumo').style.display = 'block';
@@ -137,71 +173,96 @@
       document.querySelector('.pagamento').style.display = 'block';
     }
 
-    function gerarQRCode() {
-      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
-      const texto = `Pedido:\n${pedidoFinal.map(p => p.nome).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
-      document.querySelector('.pagamento').style.display = 'none';
-      document.querySelector('.qrcode').style.display = 'block';
-      QRCode.toCanvas(document.getElementById('qr'), texto, error => {
-        if (error) console.error(error);
-      });
-      pedidos.push({ produtos: pedidoFinal.map(p => p.nome).join(', '), total: total.toFixed(2), pagamento: formaPagamento });
-    }
-
-    function voltarPedido() {
+    function voltarParaPedido() {
       document.querySelector('.resumo').style.display = 'none';
       document.querySelector('.pedido').style.display = 'block';
     }
 
-    function voltarResumo() {
+    function voltarParaResumo() {
       document.querySelector('.pagamento').style.display = 'none';
       document.querySelector('.resumo').style.display = 'block';
     }
 
-    function voltarInicio() {
-      document.querySelector('.qrcode').style.display = 'none';
-      document.querySelector('.pedido').style.display = 'block';
-      document.getElementById('formulario').reset();
-    }
-
-    function abrirLogin() {
-      document.querySelector('.admin-login').style.display = 'block';
-      document.querySelector('.pedido').style.display = 'none';
-      document.querySelector('.resumo').style.display = 'none';
+    function gerarQRCode() {
+      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const numero = pedidoId++;
+      const texto = `Pedido #${numero}\n${pedidoFinal.map(p => `${p.quantidade}x ${p.nome}`).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      QRCode.toCanvas(document.getElementById('qr'), texto, error => {
+        if (error) console.error(error);
+      });
+      document.getElementById('numero-pedido').textContent = `Pedido nº ${numero}`;
       document.querySelector('.pagamento').style.display = 'none';
-      document.querySelector('.qrcode').style.display = 'none';
+      document.querySelector('.qrcode').style.display = 'block';
+      pedidos.push({ numero, pedidoFinal, total });
+      atualizarResumoAdmin();
     }
 
-    function fecharLogin() {
-      document.querySelector('.admin-login').style.display = 'none';
-      document.querySelector('.pedido').style.display = 'block';
+    function abrirLoginAdmin() {
+      document.querySelector('.pedido').style.display = 'none';
+      document.querySelector('.admin').style.display = 'block';
     }
 
-    function fazerLogin() {
-      const user = document.getElementById('usuario').value;
-      const pass = document.getElementById('senha').value;
+    function loginAdmin() {
+      const user = document.getElementById('admin-user').value;
+      const pass = document.getElementById('admin-pass').value;
       if (user === 'lpalmeira' && pass === '123') {
-        document.querySelector('.admin-login').style.display = 'none';
-        document.querySelector('.painel').style.display = 'block';
-        atualizarPainel();
+        document.querySelector('.admin').style.display = 'none';
+        document.querySelector('.admin-painel').style.display = 'block';
+        mostrarResumo();
       } else {
-        alert('Login ou senha incorretos!');
+        alert('Login incorreto');
       }
     }
 
-    function atualizarPainel() {
-      const tbody = document.getElementById('lista-pedidos');
-      tbody.innerHTML = '';
+    function mostrarResumo() {
+      document.querySelectorAll('.admin-pedidos, .admin-banco, .admin-saque').forEach(el => el.style.display = 'none');
+      document.querySelector('.admin-resumo').style.display = 'block';
+    }
+
+    function mostrarPedidos() {
+      document.querySelector('.admin-resumo').style.display = 'none';
+      document.querySelectorAll('.admin-banco, .admin-saque').forEach(el => el.style.display = 'none');
+      document.querySelector('.admin-pedidos').style.display = 'block';
+      const ul = document.getElementById('lista-pedidos');
+      ul.innerHTML = '';
       pedidos.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${p.produtos}</td><td>R$${p.total}</td><td>${p.pagamento}</td>`;
-        tbody.appendChild(tr);
+        ul.innerHTML += `<li>Pedido ${p.numero} - R$${p.total.toFixed(2)} <button onclick="alert('NF Pedido ${p.numero} gerada')">Gerar NF</button></li>`;
       });
     }
 
-    function fecharPainel() {
-      document.querySelector('.painel').style.display = 'none';
-      document.querySelector('.pedido').style.display = 'block';
+    function mostrarBanco() {
+      document.querySelectorAll('.admin-resumo, .admin-pedidos, .admin-saque').forEach(el => el.style.display = 'none');
+      document.querySelector('.admin-banco').style.display = 'block';
+    }
+
+    function mostrarSaque() {
+      document.querySelectorAll('.admin-resumo, .admin-pedidos, .admin-banco').forEach(el => el.style.display = 'none');
+      document.querySelector('.admin-saque').style.display = 'block';
+      document.getElementById('saldo').textContent = `R$${pedidos.reduce((acc, p) => acc + p.total, 0).toFixed(2)}`;
+    }
+
+    function salvarBanco() {
+      bancoInfo = {
+        banco: document.getElementById('banco').value,
+        agencia: document.getElementById('agencia').value,
+        conta: document.getElementById('conta').value,
+      };
+      alert('Dados salvos com sucesso!');
+    }
+
+    function atualizarResumoAdmin() {
+      const resumo = {};
+      pedidos.forEach(p => {
+        p.pedidoFinal.forEach(item => {
+          resumo[item.nome] = (resumo[item.nome] || 0) + item.quantidade;
+        });
+      });
+      const ul = document.getElementById('resumo-vendas');
+      ul.innerHTML = '';
+      for (let item in resumo) {
+        ul.innerHTML += `<li>${item}: ${resumo[item]}x</li>`;
+      }
+      document.getElementById('resumo-total').textContent = `Total arrecadado: R$${pedidos.reduce((acc, p) => acc + p.total, 0).toFixed(2)}`;
     }
   </script>
 </body>
