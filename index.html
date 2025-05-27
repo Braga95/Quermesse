@@ -3,760 +3,351 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PagFesta - Quermesse</title>
+<title>PagFesta - Pedido</title>
 <style>
-  /* Reset básico */
-  * {
-    box-sizing: border-box;
-  }
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
-    background: #fffaf0;
-    color: #333;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background-color: #d62828;
-    color: white;
-    padding: 20px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  header h1 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 1.8rem;
-  }
-  header p {
-    margin: 0;
-    font-size: 1rem;
-  }
-  #btnAdmin {
-    background: transparent;
-    border: 2px solid white;
-    color: white;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  #btnAdmin:hover {
-    background-color: white;
-    color: #d62828;
-  }
-  .container {
-    max-width: 640px;
-    margin: 20px auto 40px;
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 15px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 6px 14px rgb(0 0 0 / 0.1);
+    background: #fafafa;
   }
-  h2 {
-    color: #d62828;
-    margin-top: 0;
+  h1 {
+    text-align: center;
+    color: #d63333;
   }
-  /* Produtos */
   .produto {
     display: flex;
     align-items: center;
-    margin: 12px 0;
     justify-content: space-between;
-  }
-  .produto-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-  }
-  .produto input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
   }
   .produto label {
-    cursor: pointer;
-    font-weight: 600;
-    user-select: none;
+    flex: 1;
   }
-  /* Quantidade */
-  .quantidade-container {
+  .qtd-container {
     display: flex;
     align-items: center;
-    gap: 5px;
   }
-  .btn-quantidade {
-    background: #d62828;
-    color: white;
-    border: none;
-    width: 30px;
-    height: 30px;
+  .qtd-container button {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid #d63333;
+    background: #fff0f0;
+    color: #d63333;
     border-radius: 4px;
-    font-weight: 700;
-    cursor: pointer;
+    margin: 0 5px;
     user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
-  .btn-quantidade:active {
-    background: #b71c1c;
-  }
-  input.quantidade {
+  .qtd-container input[type=number] {
     width: 40px;
     text-align: center;
-    font-weight: 600;
-    border: 1px solid #ddd;
+    border: 1px solid #d63333;
     border-radius: 4px;
-    height: 30px;
+    font-size: 16px;
+    padding: 4px;
   }
-  /* Botão principal */
-  .btn {
-    background: #d62828;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-top: 25px;
-    transition: background-color 0.3s ease;
-  }
-  .btn:hover {
-    background: #b71c1c;
-  }
-  /* Seções */
-  section {
-    display: none;
-  }
-  section.active {
+  button#btnGerarPagamento {
     display: block;
-  }
-  ul#lista-resumo {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-  }
-  ul#lista-resumo li {
-    border-bottom: 1px solid #eee;
-    padding: 8px 0;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-  }
-  p.total {
-    font-weight: 700;
-    font-size: 1.3rem;
-    margin-top: 15px;
-  }
-  /* Pagamento */
-  .pagamento label {
-    margin-right: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-  }
-  /* QR Code */
-  .qrcode {
-    text-align: center;
-  }
-  canvas#qr {
-    margin-top: 20px;
-    width: 280px !important;
-    height: 280px !important;
-    border: 2px solid #d62828;
-    border-radius: 12px;
-  }
-  p#numero-pedido {
-    margin-top: 15px;
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #d62828;
-  }
-  /* Modal login admin */
-  #modalLogin {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.55);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 5000;
-  }
-  #modalLogin.active {
-    display: flex;
-  }
-  #modalLogin .modal-content {
-    background: white;
-    padding: 25px 30px;
-    border-radius: 12px;
-    width: 320px;
-    box-shadow: 0 6px 20px rgb(0 0 0 / 0.2);
-  }
-  #modalLogin h3 {
-    margin-top: 0;
-    color: #d62828;
-    text-align: center;
-  }
-  #modalLogin label {
-    font-weight: 600;
-    display: block;
-    margin-top: 15px;
-  }
-  #modalLogin input[type="text"],
-  #modalLogin input[type="password"] {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 6px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-  }
-  #modalLogin button {
-    margin-top: 20px;
-    background: #d62828;
+    margin: 20px auto 0;
+    background: #d63333;
     color: white;
+    font-size: 18px;
+    padding: 10px 25px;
     border: none;
-    width: 100%;
-    padding: 10px 0;
-    font-weight: 700;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  #modalLogin button:hover {
-    background: #b71c1c;
-  }
-  #modalLogin .erro {
-    margin-top: 10px;
-    color: #b71c1c;
-    font-weight: 700;
-    text-align: center;
-  }
-  /* Painel Admin */
-  #painelAdmin {
-    max-width: 900px;
-    margin: 20px auto 40px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgb(0 0 0 / 0.1);
-    padding: 20px 30px;
-    display: none;
-    flex-direction: column;
-  }
-  #painelAdmin.active {
-    display: flex;
-  }
-  #painelAdmin nav {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-  }
-  #painelAdmin nav button {
-    background: #d62828;
-    color: white;
-    border: none;
-    padding: 10px 18px;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 700;
-    transition: background-color 0.3s ease;
   }
-  #painelAdmin nav button:hover {
-    background: #b71c1c;
+  button#btnGerarPagamento:hover {
+    background: #b52b2b;
   }
-  /* Conteúdo interno painel */
-  #painelAdmin section.admin-page {
-    display: none;
+  #resumoPedido, #telaPagamento, #areaQRCode {
+    margin-top: 30px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ccc;
   }
-  #painelAdmin section.admin-page.active {
-    display: block;
+  #resumoPedido p {
+    margin: 6px 0;
   }
-  /* Tabela pedidos */
-  table {
-    width: 100%;
-    border-collapse: collapse;
+  #resumoPedido strong {
+    font-size: 18px;
   }
-  table thead {
-    background: #d62828;
-    color: white;
-  }
-  table th, table td {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-    vertical-align: middle;
-  }
-  table tbody tr:nth-child(even) {
-    background: #f9f9f9;
-  }
-  table button {
-    background: #1a73e8;
+  #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
+  #btnVoltarInicioResumo, #btnVoltarResumo {
+    background: #d63333;
     color: white;
     border: none;
-    padding: 6px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-  table button:hover {
-    background: #0049b5;
-  }
-  /* Form banco */
-  form#formBanco label {
-    display: block;
-    margin: 12px 0 5px;
-    font-weight: 600;
-  }
-  form#formBanco input {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    font-size: 16px;
     border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  form#formBanco button {
+    cursor: pointer;
     margin-top: 15px;
   }
-  /* Form sacar */
-  form#formSacar label {
-    font-weight: 600;
+  #btnAvancarPagamento:hover,
+  #btnGerarQRCode:hover,
+  #btnNovoPedido:hover,
+  #btnVoltarInicioResumo:hover,
+  #btnVoltarResumo:hover {
+    background: #b52b2b;
   }
-  form#formSacar input[type="number"] {
-    width: 100%;
-    padding: 10px 12px;
+  #telaPagamento label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  #qrCanvas {
+    display: block;
+    margin: 20px auto;
+  }
+  #numeroPedidoDisplay {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+    color: #d63333;
+  }
+  #linkAdmin {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    font-weight: bold;
+    background: #d63333;
+    color: white;
+    padding: 6px 12px;
     border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 1.1rem;
+    text-decoration: none;
+    font-size: 14px;
+    z-index: 10;
   }
-  /* Voltar botão */
-  #btnVoltarPedido {
-    margin-top: 30px;
-    background: #555;
-  }
-  #btnVoltarPedido:hover {
-    background: #222;
-  }
-  /* Responsividade */
-  @media (max-width: 480px) {
-    .produto-info {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-    }
-    header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
+  #linkAdmin:hover {
+    background: #b52b2b;
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>PagFesta - Quermesse</h1>
-  <button id="btnAdmin">Administrador</button>
-</header>
+<a id="linkAdmin" href="admin.html" target="_blank">Administrador</a>
 
-<div class="container" id="telaPedido">
+<h1>Faça seu pedido</h1>
 
-  <h2>Faça seu pedido</h2>
-  
-  <form id="formPedido">
-
-    <div class="produto">
-      <div class="produto-info">
-        <input type="checkbox" id="prod1" data-preco="5.00" />
-        <label for="prod1">Refrigerante - R$ 5,00</label>
-      </div>
-      <div class="quantidade-container">
-        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd1">−</button>
-        <input type="number" id="qtd1" class="quantidade" min="0" value="0" />
-        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd1">+</button>
-      </div>
+<form id="formPedido">
+  <div class="produto">
+    <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
+      <input type="number" id="qtdEspeto" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
     </div>
-
-    <div class="produto">
-      <div class="produto-info">
-        <input type="checkbox" id="prod2" data-preco="3.00" />
-        <label for="prod2">Pipoca - R$ 3,00</label>
-      </div>
-      <div class="quantidade-container">
-        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd2">−</button>
-        <input type="number" id="qtd2" class="quantidade" min="0" value="0" />
-        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd2">+</button>
-      </div>
+  </div>
+  <div class="produto">
+    <label for="qtdSuco">Suco - R$ 4,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
+      <input type="number" id="qtdSuco" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
     </div>
-
-    <div class="produto">
-      <div class="produto-info">
-        <input type="checkbox" id="prod3" data-preco="2.00" />
-        <label for="prod3">Salgadinho - R$ 2,00</label>
-      </div>
-      <div class="quantidade-container">
-        <button type="button" class="btn-quantidade" data-action="dec" data-target="qtd3">−</button>
-        <input type="number" id="qtd3" class="quantidade" min="0" value="0" />
-        <button type="button" class="btn-quantidade" data-action="inc" data-target="qtd3">+</button>
-      </div>
+  </div>
+  <div class="produto">
+    <label for="qtdAgua">Água - R$ 3,00</label>
+    <div class="qtd-container">
+      <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
+      <input type="number" id="qtdAgua" min="0" value="0" />
+      <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
     </div>
-
-    <button type="submit" class="btn">Gerar Pagamento</button>
-  </form>
-
-  <div class="qrcode" id="areaQRCode" style="display:none;">
-    <canvas id="qr"></canvas>
-    <p id="numero-pedido"></p>
-    <button class="btn" id="btnNovoPedido" style="margin-top: 15px;">Gerar Novo Pedido</button>
   </div>
 
+  <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
+</form>
+
+<!-- Tela resumo do pedido -->
+<div id="resumoPedido" style="display:none;">
+  <h2>Resumo do Pedido</h2>
+  <div id="itensResumo"></div>
+  <p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
+  <button id="btnAvancarPagamento">Avançar para pagamento</button>
+  <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
 </div>
 
-<!-- Modal Login Admin -->
-<div id="modalLogin">
-  <div class="modal-content">
-    <h3>Login Administrador</h3>
-    <form id="formLogin">
-      <label for="usuario">Usuário:</label>
-      <input type="text" id="usuario" autocomplete="username" required />
-      <label for="senha">Senha:</label>
-      <input type="password" id="senha" autocomplete="current-password" required />
-      <button type="submit">Entrar</button>
-      <p class="erro" id="erroLogin" style="display:none;"></p>
-    </form>
-  </div>
+<!-- Tela de seleção pagamento -->
+<div id="telaPagamento" style="display:none;">
+  <h2>Escolha a forma de pagamento</h2>
+  <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
+  <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
+  <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
+  <button id="btnGerarQRCode">Gerar QR Code</button>
+  <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
 </div>
 
-<!-- Painel Admin -->
-<div id="painelAdmin">
-  <nav>
-    <button data-page="resumo">Resumo</button>
-    <button data-page="pedidos">Pedidos</button>
-    <button data-page="banco">Cadastro de banco</button>
-    <button data-page="sacar">Sacar</button>
-    <button id="btnVoltarPedido">Voltar ao Pedido</button>
-  </nav>
-
-  <section id="pageResumo" class="admin-page active">
-    <h2>Resumo das Vendas</h2>
-    <ul id="lista-resumo"></ul>
-    <p class="total" id="totalGeral">Total Arrecadado: R$ 0,00</p>
-  </section>
-
-  <section id="pagePedidos" class="admin-page">
-    <h2>Pedidos Realizados</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Nº Pedido</th>
-          <th>Itens</th>
-          <th>Quantidade</th>
-          <th>Valor Total</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody id="tbodyPedidos"></tbody>
-    </table>
-  </section>
-
-  <section id="pageBanco" class="admin-page">
-    <h2>Cadastro de Banco</h2>
-    <form id="formBanco">
-      <label for="banco">Banco:</label>
-      <input type="text" id="banco" required />
-      <label for="agencia">Agência:</label>
-      <input type="text" id="agencia" required />
-      <label for="conta">Conta:</label>
-      <input type="text" id="conta" required />
-      <button type="submit" class="btn">Salvar Dados</button>
-    </form>
-    <div id="msgBanco" style="margin-top: 12px; color: green; font-weight: 600;"></div>
-  </section>
-
-  <section id="pageSacar" class="admin-page">
-    <h2>Sacar</h2>
-    <form id="formSacar">
-      <label for="valorSaque">Valor para saque (R$):</label>
-      <input type="number" id="valorSaque" min="0" step="0.01" required />
-      <button type="submit" class="btn">Solicitar Saque</button>
-    </form>
-    <div id="msgSaque" style="margin-top: 12px; color: green; font-weight: 600;"></div>
-  </section>
+<!-- Área do QR Code -->
+<div id="areaQRCode" style="display:none; text-align:center;">
+  <canvas id="qrCanvas" width="250" height="250"></canvas>
+  <div id="numeroPedidoDisplay"></div>
+  <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
-(() => {
-  // Constantes para login
-  const USUARIO_ADMIN = 'lpalmeira';
-  const SENHA_ADMIN = '123';
-
-  // Elementos principais
-  const btnAdmin = document.getElementById('btnAdmin');
-  const modalLogin = document.getElementById('modalLogin');
-  const formLogin = document.getElementById('formLogin');
-  const erroLogin = document.getElementById('erroLogin');
-
-  const telaPedido = document.getElementById('telaPedido');
-  const painelAdmin = document.getElementById('painelAdmin');
-  const btnVoltarPedido = document.getElementById('btnVoltarPedido');
-
-  const formPedido = document.getElementById('formPedido');
-  const areaQRCode = document.getElementById('areaQRCode');
-  const qrCanvas = document.getElementById('qr');
-  const numeroPedidoDisplay = document.getElementById('numero-pedido');
-  const btnNovoPedido = document.getElementById('btnNovoPedido');
-
-  // Produtos
+  // Produtos com preço e id dos inputs
   const produtos = [
-    { id: 'prod1', nome: 'Refrigerante', preco: 5.00, qtdInput: 'qtd1' },
-    { id: 'prod2', nome: 'Pipoca', preco: 3.00, qtdInput: 'qtd2' },
-    { id: 'prod3', nome: 'Salgadinho', preco: 2.00, qtdInput: 'qtd3' },
+    { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
+    { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
+    { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
   ];
 
-  // Controle de número do pedido
-  function getUltimoPedidoNum() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-    if (pedidos.length === 0) return 0;
-    return pedidos[pedidos.length - 1].numero;
-  }
-  function getProximoPedidoNum() {
-    return getUltimoPedidoNum() + 1;
-  }
+  // Elementos principais
+  const formPedido = document.getElementById('formPedido');
+  const resumoDiv = document.getElementById('resumoPedido');
+  const itensResumoDiv = document.getElementById('itensResumo');
+  const totalResumoSpan = document.getElementById('totalResumo');
+  const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
+  const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
+  const telaPagamento = document.getElementById('telaPagamento');
+  const btnGerarQRCode = document.getElementById('btnGerarQRCode');
+  const btnVoltarResumo = document.getElementById('btnVoltarResumo');
+  const areaQRCode = document.getElementById('areaQRCode');
+  const qrCanvas = document.getElementById('qrCanvas');
+  const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
+  const btnNovoPedido = document.getElementById('btnNovoPedido');
+  const btnQtds = document.querySelectorAll('.btnQtd');
 
-  // Atualiza resumo no painel admin
-  function atualizarResumo() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-    const resumoMap = new Map();
-    let totalGeral = 0;
+  // Controle pedido
+  let numeroPedido = 1;
+  // Tenta carregar número do pedido do localStorage
+  const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
+  if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
 
-    pedidos.forEach(pedido => {
-      pedido.itens.forEach(item => {
-        if (!resumoMap.has(item.nome)) {
-          resumoMap.set(item.nome, 0);
-        }
-        resumoMap.set(item.nome, resumoMap.get(item.nome) + item.quantidade);
-      });
-      totalGeral += pedido.valorTotal;
-    });
-
-    const listaResumo = document.getElementById('lista-resumo');
-    listaResumo.innerHTML = '';
-    resumoMap.forEach((qtd, nome) => {
-      const li = document.createElement('li');
-      li.textContent = `${nome}: ${qtd}`;
-      listaResumo.appendChild(li);
-    });
-
-    document.getElementById('totalGeral').textContent = `Total Arrecadado: R$ ${totalGeral.toFixed(2)}`;
-  }
-
-  // Atualiza tabela de pedidos no painel admin
-  function atualizarTabelaPedidos() {
-    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-    const tbody = document.getElementById('tbodyPedidos');
-    tbody.innerHTML = '';
-
-    pedidos.forEach(pedido => {
-      const tr = document.createElement('tr');
-
-      const tdNum = document.createElement('td');
-      tdNum.textContent = pedido.numero;
-      tr.appendChild(tdNum);
-
-      const tdItens = document.createElement('td');
-      tdItens.textContent = pedido.itens.map(i => i.nome).join(', ');
-      tr.appendChild(tdItens);
-
-      const tdQtd = document.createElement('td');
-      tdQtd.textContent = pedido.itens.reduce((acc, i) => acc + i.quantidade, 0);
-      tr.appendChild(tdQtd);
-
-      const tdValor = document.createElement('td');
-      tdValor.textContent = `R$ ${pedido.valorTotal.toFixed(2)}`;
-      tr.appendChild(tdValor);
-
-      const tdAcao = document.createElement('td');
-      const btnGerarNF = document.createElement('button');
-      btnGerarNF.textContent = 'Gerar NF';
-      btnGerarNF.className = 'btn';
-      btnGerarNF.addEventListener('click', () => {
-        alert(`Nota fiscal do pedido #${pedido.numero} gerada!`);
-      });
-      tdAcao.appendChild(btnGerarNF);
-      tr.appendChild(tdAcao);
-
-      tbody.appendChild(tr);
-    });
-  }
-
-  // Alterna páginas no painel admin
-  function mudarPaginaAdmin(pagina) {
-    const paginas = document.querySelectorAll('.admin-page');
-    paginas.forEach(p => p.classList.remove('active'));
-    document.getElementById(`page${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.add('active');
-  }
-
-  // Mostrar modal login
-  btnAdmin.addEventListener('click', () => {
-    modalLogin.style.display = 'flex';
-  });
-
-  // Login admin
-  formLogin.addEventListener('submit', e => {
-    e.preventDefault();
-    const usuario = document.getElementById('usuario').value.trim();
-    const senha = document.getElementById('senha').value.trim();
-
-    if (usuario === USUARIO_ADMIN && senha === SENHA_ADMIN) {
-      modalLogin.style.display = 'none';
-      telaPedido.style.display = 'none';
-      painelAdmin.style.display = 'block';
-      atualizarResumo();
-      atualizarTabelaPedidos();
-      mudarPaginaAdmin('resumo');
-      formLogin.reset();
-      erroLogin.style.display = 'none';
-    } else {
-      erroLogin.textContent = 'Usuário ou senha incorretos.';
-      erroLogin.style.display = 'block';
-    }
-  });
-
-  // Botão voltar para tela pedido
-  btnVoltarPedido.addEventListener('click', () => {
-    painelAdmin.style.display = 'none';
-    telaPedido.style.display = 'block';
-  });
-
-  // Controle botões quantidade
-  document.querySelectorAll('.btn-quantidade').forEach(btn => {
+  // Função para atualizar quantidade via botões + e -
+  btnQtds.forEach(btn => {
     btn.addEventListener('click', () => {
-      const action = btn.getAttribute('data-action');
-      const target = btn.getAttribute('data-target');
-      const input = document.getElementById(target);
+      const inputId = btn.dataset.target;
+      const input = document.getElementById(inputId);
       let val = parseInt(input.value) || 0;
-      if (action === 'inc') val++;
-      else if (action === 'dec' && val > 0) val--;
+      if (btn.textContent === '+') {
+        val++;
+      } else {
+        val = val > 0 ? val - 1 : 0;
+      }
       input.value = val;
     });
   });
 
-  // Gerar pedido e QR code
+  // Ao submeter o formulário, mostrar resumo
   formPedido.addEventListener('submit', e => {
     e.preventDefault();
-
-    // Coletar itens selecionados com quantidade > 0
-    const itensSelecionados = produtos
-      .map(p => {
-        const checkbox = document.getElementById(p.id);
-        const qtd = parseInt(document.getElementById(p.qtdInput).value) || 0;
-        return {
-          id: p.id,
+    const itensSelecionados = [];
+    let total = 0;
+    for (const p of produtos) {
+      const qtd = parseInt(document.getElementById(p.id).value) || 0;
+      if (qtd > 0) {
+        const subtotal = qtd * p.preco;
+        total += subtotal;
+        itensSelecionados.push({
           nome: p.nome,
-          preco: p.preco,
-          quantidade: qtd,
-          selecionado: checkbox.checked
-        };
-      })
-      .filter(item => item.selecionado && item.quantidade > 0);
-
-    if (itensSelecionados.length === 0) {
-      alert('Selecione pelo menos um item com quantidade maior que zero.');
-      return;
-    }
-
-    const numeroPedido = getProximoPedidoNum();
-
-    const valorTotal = itensSelecionados.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
-
-    // Criar dados para QR Code (simples string JSON)
-    const dadosQRCode = JSON.stringify({
-      pedido: numeroPedido,
-      itens: itensSelecionados.map(i => ({ nome: i.nome, quantidade: i.quantidade })),
-      total: valorTotal.toFixed(2)
-    });
-
-    QRCode.toCanvas(qrCanvas, dadosQRCode, { width: 220 }, err => {
-      if (err) {
-        alert('Erro ao gerar QR Code: ' + err);
-        return;
+          qtd,
+          subtotal
+        });
       }
-      areaQRCode.style.display = 'block';
-      formPedido.style.display = 'none';
-      numeroPedidoDisplay.textContent = `Número do Pedido: ${numeroPedido}`;
-    });
-
-    // Salvar pedido no localStorage
-    const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-    pedidos.push({
-      numero: numeroPedido,
-      itens: itensSelecionados,
-      valorTotal: valorTotal
-    });
-    localStorage.setItem('pedidos', JSON.stringify(pedidos));
-  });
-
-  // Gerar novo pedido
-  btnNovoPedido.addEventListener('click', () => {
-    areaQRCode.style.display = 'none';
-    formPedido.style.display = 'block';
-    formPedido.reset();
-    // Reset quantidades para zero
-    produtos.forEach(p => {
-      document.getElementById(p.qtdInput).value = 0;
-      document.getElementById(p.id).checked = false;
-    });
-  });
-
-  // Navegação no painel admin
-  document.querySelectorAll('#painelAdmin nav button[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      mudarPaginaAdmin(btn.getAttribute('data-page'));
-    });
-  });
-
-  // Formulário banco (simplesmente salva e mostra mensagem)
-  const formBanco = document.getElementById('formBanco');
-  const msgBanco = document.getElementById('msgBanco');
-
-  formBanco.addEventListener('submit', e => {
-    e.preventDefault();
-    const banco = document.getElementById('banco').value.trim();
-    const agencia = document.getElementById('agencia').value.trim();
-    const conta = document.getElementById('conta').value.trim();
-
-    localStorage.setItem('dadosBanco', JSON.stringify({ banco, agencia, conta }));
-    msgBanco.textContent = 'Dados do banco salvos com sucesso!';
-    formBanco.reset();
-  });
-
-  // Formulário sacar (simples, só mostra mensagem)
-  const formSacar = document.getElementById('formSacar');
-  const msgSaque = document.getElementById('msgSaque');
-
-  formSacar.addEventListener('submit', e => {
-    e.preventDefault();
-    const valorSaque = parseFloat(document.getElementById('valorSaque').value);
-    if (isNaN(valorSaque) || valorSaque <= 0) {
-      alert('Informe um valor válido para saque.');
+    }
+    if (itensSelecionados.length === 0) {
+      alert('Selecione ao menos um item para prosseguir.');
       return;
     }
-    msgSaque.textContent = `Solicitação de saque de R$ ${valorSaque.toFixed(2)} recebida.`;
-    formSacar.reset();
+    // Montar resumo
+    itensResumoDiv.innerHTML = '';
+    itensSelecionados.forEach(item => {
+      const p = document.createElement('p');
+      p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
+      itensResumoDiv.appendChild(p);
+    });
+    totalResumoSpan.textContent = total.toFixed(2);
+
+    // Mostrar resumo e ocultar formulário
+    formPedido.style.display = 'none';
+    resumoDiv.style.display = 'block';
+    telaPagamento.style.display = 'none';
+    areaQRCode.style.display = 'none';
   });
 
-})();
+  btnAvancarPagamento.addEventListener('click', () => {
+    // Mostra tela pagamento
+    resumoDiv.style.display = 'none';
+    telaPagamento.style.display = 'block';
+    areaQRCode.style.display = 'none';
+  });
+
+  btnVoltarInicioResumo.addEventListener('click', () => {
+    // Voltar para form pedido
+    resumoDiv.style.display = 'none';
+    formPedido.style.display = 'block';
+  });
+
+  btnVoltarResumo.addEventListener('click', () => {
+    // Voltar para resumo pedido
+    telaPagamento.style.display = 'none';
+    resumoDiv.style.display = 'block';
+  });
+
+  btnGerarQRCode.addEventListener('click', () => {
+    // Verifica forma de pagamento selecionada
+    const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
+    if (!pagamentoSelecionado) {
+      alert('Selecione uma forma de pagamento.');
+      return;
+    }
+    const metodo = pagamentoSelecionado.value;
+
+    // Incrementa número do pedido e salva
+    localStorage.setItem('ultimoNumeroPedido', numeroPedido);
+
+    // Montar string QRCode (exemplo simples, pode ser JSON ou link real)
+    const pedidoInfo = {
+      numeroPedido,
+      metodoPagamento: metodo,
+      data: new Date().toISOString()
+    };
+    const qrString = JSON.stringify(pedidoInfo);
+
+    // Gerar QR Code
+    QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
+      if (error) console.error(error);
+    });
+
+    // Mostrar QRCode e número pedido
+    numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
+
+    // Atualiza UI
+    telaPagamento.style.display = 'none';
+    areaQRCode.style.display = 'block';
+
+    // Incrementa para próximo pedido
+    numeroPedido++;
+  });
+
+  btnNovoPedido.addEventListener('click', () => {
+    // Resetar formulário
+    for (const p of produtos) {
+      document.getElementById(p.id).value = 0;
+    }
+    // Reset telas
+    areaQRCode.style.display = 'none';
+    resumoDiv.style.display = 'none';
+    telaPagamento.style.display = 'none';
+    formPedido.style.display = 'block';
+
+    // Reset radios pagamento
+    const radios = document.querySelectorAll('input[name="pagamento"]');
+    radios.forEach(r => (r.checked = false));
+  });
 </script>
 
 </body>
