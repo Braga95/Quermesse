@@ -3,158 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PagFesta</title>
+  <title>PagFesta - Quermesse</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
-    header { background-color: #d62828; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    header { background-color: #d62828; color: white; padding: 20px; text-align: center; position: relative; }
+    .admin-link {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      text-decoration: underline;
+      cursor: pointer;
+    }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     h2 { color: #d62828; }
-    .produto { margin: 10px 0; }
-    .resumo, .pagamento, .qrcode, .admin, .admin-painel, .admin-banco, .admin-saque, .admin-pedidos { display: none; }
+    .produto { margin: 10px 0; display: flex; align-items: center; justify-content: space-between; }
+    .quantidade-controls { display: flex; align-items: center; gap: 10px; }
     .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
     .btn:hover { background: #b71c1c; }
     .total { font-weight: bold; margin-top: 10px; }
-    .qrcode canvas { display: block; margin: 20px auto; width: 220px !important; height: 220px !important; }
-    nav a { color: white; margin-left: 20px; cursor: pointer; text-decoration: underline; }
-    .admin-nav button { margin: 10px; }
-    .hidden { display: none; }
+    .pagamento label { margin-right: 15px; }
+    canvas { margin: 20px auto; display: block; }
+    .pedido, .resumo, .pagamento, .qrcode { display: none; }
   </style>
 </head>
 <body>
   <header>
-    <div>
-      <h1>PagFesta</h1>
-      <p>Quermesse Nossa Senhora da Boa Esperança</p>
-    </div>
-    <nav>
-      <a onclick="abrirLoginAdmin()">Administrador</a>
-    </nav>
+    <h1>PagFesta</h1>
+    <p>Quermesse Nossa Senhora da Boa Esperança</p>
+    <span class="admin-link" onclick="window.location.href='painel.html'">Administrador</span>
   </header>
 
-  <div class="container">
-    <section class="pedido">
-      <h2>Escolha seus produtos</h2>
-      <form id="formulario">
-        <div class="produto">
-          <label>Pastel - R$10,00 <input type="number" min="0" value="0" data-nome="Pastel" data-preco="10"></label>
+  <div class="container pedido">
+    <h2>Escolha seus produtos</h2>
+    <form id="formulario">
+      <div class="produto">
+        <label>Pastel - R$10,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('pastel', -1)">-</button>
+          <input type="number" id="pastel" value="0" min="0" data-preco="10" readonly />
+          <button type="button" onclick="alterarQuantidade('pastel', 1)">+</button>
         </div>
-        <div class="produto">
-          <label>HotDog - R$10,00 <input type="number" min="0" value="0" data-nome="HotDog" data-preco="10"></label>
-        </div>
-        <div class="produto">
-          <label>Doces - R$6,00 <input type="number" min="0" value="0" data-nome="Doces" data-preco="6"></label>
-        </div>
-        <div class="produto">
-          <label>Caldinho - R$10,00 <input type="number" min="0" value="0" data-nome="Caldinho" data-preco="10"></label>
-        </div>
-        <div class="produto">
-          <label>Refrigerante - R$6,00 <input type="number" min="0" value="0" data-nome="Refrigerante" data-preco="6"></label>
-        </div>
-        <div class="produto">
-          <label>Espeto de Frango - R$12,00 <input type="number" min="0" value="0" data-nome="Espeto de Frango" data-preco="12"></label>
-        </div>
-        <div class="produto">
-          <label>Suco - R$5,00 <input type="number" min="0" value="0" data-nome="Suco" data-preco="5"></label>
-        </div>
-        <div class="produto">
-          <label>Água - R$4,00 <input type="number" min="0" value="0" data-nome="Água" data-preco="4"></label>
-        </div>
-        <button type="submit" class="btn">Avançar</button>
-      </form>
-    </section>
-
-    <section class="resumo">
-      <h2>Resumo do Pedido</h2>
-      <ul id="lista-resumo"></ul>
-      <p class="total" id="valor-total"></p>
-      <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
-      <button class="btn" onclick="voltarParaPedido()">Voltar</button>
-    </section>
-
-    <section class="pagamento">
-      <h2>Forma de Pagamento</h2>
-      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
-      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
-      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
-      <br>
-      <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
-      <button class="btn" onclick="voltarParaResumo()">Voltar</button>
-    </section>
-
-    <section class="qrcode">
-      <h2>Seu QR Code</h2>
-      <canvas id="qr"></canvas>
-      <p style="text-align: center; font-weight: bold;" id="numero-pedido"></p>
-    </section>
-
-    <section class="admin">
-      <h2>Login do Administrador</h2>
-      <label>Usuário: <input type="text" id="admin-user"></label><br>
-      <label>Senha: <input type="password" id="admin-pass"></label><br>
-      <button class="btn" onclick="loginAdmin()">Entrar</button>
-    </section>
-
-    <section class="admin-painel">
-      <h2>Painel do Administrador</h2>
-      <div class="admin-nav">
-        <button onclick="mostrarResumo()">Resumo</button>
-        <button onclick="mostrarPedidos()">Pedidos</button>
-        <button onclick="mostrarBanco()">Cadastro de Banco</button>
-        <button onclick="mostrarSaque()">Sacar</button>
       </div>
-      <div class="admin-resumo">
-        <h3>Resumo de Vendas</h3>
-        <ul id="resumo-vendas"></ul>
-        <p class="total" id="resumo-total"></p>
+      <div class="produto">
+        <label>HotDog - R$10,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('hotdog', -1)">-</button>
+          <input type="number" id="hotdog" value="0" min="0" data-preco="10" readonly />
+          <button type="button" onclick="alterarQuantidade('hotdog', 1)">+</button>
+        </div>
       </div>
-    </section>
+      <div class="produto">
+        <label>Doces - R$6,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('doces', -1)">-</button>
+          <input type="number" id="doces" value="0" min="0" data-preco="6" readonly />
+          <button type="button" onclick="alterarQuantidade('doces', 1)">+</button>
+        </div>
+      </div>
+      <div class="produto">
+        <label>Caldinho - R$10,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('caldinho', -1)">-</button>
+          <input type="number" id="caldinho" value="0" min="0" data-preco="10" readonly />
+          <button type="button" onclick="alterarQuantidade('caldinho', 1)">+</button>
+        </div>
+      </div>
+      <div class="produto">
+        <label>Refrigerante - R$6,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('refri', -1)">-</button>
+          <input type="number" id="refri" value="0" min="0" data-preco="6" readonly />
+          <button type="button" onclick="alterarQuantidade('refri', 1)">+</button>
+        </div>
+      </div>
+      <div class="produto">
+        <label>Espeto de Frango - R$12,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('espeto', -1)">-</button>
+          <input type="number" id="espeto" value="0" min="0" data-preco="12" readonly />
+          <button type="button" onclick="alterarQuantidade('espeto', 1)">+</button>
+        </div>
+      </div>
+      <div class="produto">
+        <label>Suco - R$5,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('suco', -1)">-</button>
+          <input type="number" id="suco" value="0" min="0" data-preco="5" readonly />
+          <button type="button" onclick="alterarQuantidade('suco', 1)">+</button>
+        </div>
+      </div>
+      <div class="produto">
+        <label>Água - R$4,00</label>
+        <div class="quantidade-controls">
+          <button type="button" onclick="alterarQuantidade('agua', -1)">-</button>
+          <input type="number" id="agua" value="0" min="0" data-preco="4" readonly />
+          <button type="button" onclick="alterarQuantidade('agua', 1)">+</button>
+        </div>
+      </div>
 
-    <section class="admin-pedidos">
-      <h2>Pedidos</h2>
-      <ul id="lista-pedidos"></ul>
-    </section>
+      <button type="submit" class="btn">Avançar</button>
+    </form>
+  </div>
 
-    <section class="admin-banco">
-      <h2>Cadastro de Dados Bancários</h2>
-      <input type="text" placeholder="Banco" id="banco" /><br>
-      <input type="text" placeholder="Agência" id="agencia" /><br>
-      <input type="text" placeholder="Conta" id="conta" /><br>
-      <button class="btn" onclick="salvarBanco()">Salvar</button>
-    </section>
+  <div class="container resumo">
+    <h2>Resumo do Pedido</h2>
+    <ul id="lista-resumo"></ul>
+    <p class="total" id="valor-total"></p>
+    <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+    <button class="btn" onclick="voltarPedido()">Voltar</button>
+  </div>
 
-    <section class="admin-saque">
-      <h2>Saque</h2>
-      <p>Saldo disponível: <span id="saldo"></span></p>
-      <button class="btn">Sacar</button>
-    </section>
+  <div class="container pagamento">
+    <h2>Forma de Pagamento</h2>
+    <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
+    <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
+    <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
+    <br>
+    <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+    <button class="btn" onclick="voltarResumo()">Voltar</button>
+  </div>
+
+  <div class="container qrcode">
+    <h2>Seu QR Code</h2>
+    <canvas id="qr"></canvas>
+    <p id="numero-pedido" class="total"></p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
     let pedidoFinal = [];
     let total = 0;
-    let pedidos = [];
-    let pedidoId = 1;
-    let bancoInfo = {};
+    let numeroPedido = Math.floor(Math.random() * 100000);
 
-    const form = document.getElementById('formulario');
-    const listaResumo = document.getElementById('lista-resumo');
-    const valorTotal = document.getElementById('valor-total');
+    function alterarQuantidade(id, delta) {
+      const input = document.getElementById(id);
+      let valor = parseInt(input.value);
+      valor = Math.max(0, valor + delta);
+      input.value = valor;
+    }
 
-    form.addEventListener('submit', e => {
+    document.getElementById('formulario').addEventListener('submit', function(e) {
       e.preventDefault();
-      pedidoFinal = [];
       total = 0;
+      pedidoFinal = [];
+      const listaResumo = document.getElementById('lista-resumo');
       listaResumo.innerHTML = '';
+
       document.querySelectorAll('input[type="number"]').forEach(input => {
-        const quantidade = parseInt(input.value);
-        if (quantidade > 0) {
-          const nome = input.getAttribute('data-nome');
+        const qtd = parseInt(input.value);
+        if (qtd > 0) {
+          const nome = input.id;
           const preco = parseFloat(input.getAttribute('data-preco'));
-          pedidoFinal.push({ nome, preco, quantidade });
-          total += preco * quantidade;
-          listaResumo.innerHTML += `<li>${quantidade}x ${nome} - R$${(preco * quantidade).toFixed(2)}</li>`;
+          pedidoFinal.push({ nome, preco, qtd });
+          total += preco * qtd;
+          listaResumo.innerHTML += `<li>${nome} x${qtd} - R$${(preco * qtd).toFixed(2)}</li>`;
         }
       });
 
@@ -163,7 +167,7 @@
         return;
       }
 
-      valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
+      document.getElementById('valor-total').textContent = `Total: R$${total.toFixed(2)}`;
       document.querySelector('.pedido').style.display = 'none';
       document.querySelector('.resumo').style.display = 'block';
     });
@@ -173,96 +177,27 @@
       document.querySelector('.pagamento').style.display = 'block';
     }
 
-    function voltarParaPedido() {
+    function voltarPedido() {
       document.querySelector('.resumo').style.display = 'none';
       document.querySelector('.pedido').style.display = 'block';
     }
 
-    function voltarParaResumo() {
+    function voltarResumo() {
       document.querySelector('.pagamento').style.display = 'none';
       document.querySelector('.resumo').style.display = 'block';
     }
 
     function gerarQRCode() {
       const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
-      const numero = pedidoId++;
-      const texto = `Pedido #${numero}\n${pedidoFinal.map(p => `${p.quantidade}x ${p.nome}`).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      const texto = `Pedido #${numeroPedido}\nProdutos:\n` + pedidoFinal.map(p => `${p.nome} x${p.qtd}`).join(', ') + `\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+
+      document.querySelector('.pagamento').style.display = 'none';
+      document.querySelector('.qrcode').style.display = 'block';
+      document.getElementById('numero-pedido').textContent = `Número do Pedido: #${numeroPedido}`;
+
       QRCode.toCanvas(document.getElementById('qr'), texto, error => {
         if (error) console.error(error);
       });
-      document.getElementById('numero-pedido').textContent = `Pedido nº ${numero}`;
-      document.querySelector('.pagamento').style.display = 'none';
-      document.querySelector('.qrcode').style.display = 'block';
-      pedidos.push({ numero, pedidoFinal, total });
-      atualizarResumoAdmin();
-    }
-
-    function abrirLoginAdmin() {
-      document.querySelector('.pedido').style.display = 'none';
-      document.querySelector('.admin').style.display = 'block';
-    }
-
-    function loginAdmin() {
-      const user = document.getElementById('admin-user').value;
-      const pass = document.getElementById('admin-pass').value;
-      if (user === 'lpalmeira' && pass === '123') {
-        document.querySelector('.admin').style.display = 'none';
-        document.querySelector('.admin-painel').style.display = 'block';
-        mostrarResumo();
-      } else {
-        alert('Login incorreto');
-      }
-    }
-
-    function mostrarResumo() {
-      document.querySelectorAll('.admin-pedidos, .admin-banco, .admin-saque').forEach(el => el.style.display = 'none');
-      document.querySelector('.admin-resumo').style.display = 'block';
-    }
-
-    function mostrarPedidos() {
-      document.querySelector('.admin-resumo').style.display = 'none';
-      document.querySelectorAll('.admin-banco, .admin-saque').forEach(el => el.style.display = 'none');
-      document.querySelector('.admin-pedidos').style.display = 'block';
-      const ul = document.getElementById('lista-pedidos');
-      ul.innerHTML = '';
-      pedidos.forEach(p => {
-        ul.innerHTML += `<li>Pedido ${p.numero} - R$${p.total.toFixed(2)} <button onclick="alert('NF Pedido ${p.numero} gerada')">Gerar NF</button></li>`;
-      });
-    }
-
-    function mostrarBanco() {
-      document.querySelectorAll('.admin-resumo, .admin-pedidos, .admin-saque').forEach(el => el.style.display = 'none');
-      document.querySelector('.admin-banco').style.display = 'block';
-    }
-
-    function mostrarSaque() {
-      document.querySelectorAll('.admin-resumo, .admin-pedidos, .admin-banco').forEach(el => el.style.display = 'none');
-      document.querySelector('.admin-saque').style.display = 'block';
-      document.getElementById('saldo').textContent = `R$${pedidos.reduce((acc, p) => acc + p.total, 0).toFixed(2)}`;
-    }
-
-    function salvarBanco() {
-      bancoInfo = {
-        banco: document.getElementById('banco').value,
-        agencia: document.getElementById('agencia').value,
-        conta: document.getElementById('conta').value,
-      };
-      alert('Dados salvos com sucesso!');
-    }
-
-    function atualizarResumoAdmin() {
-      const resumo = {};
-      pedidos.forEach(p => {
-        p.pedidoFinal.forEach(item => {
-          resumo[item.nome] = (resumo[item.nome] || 0) + item.quantidade;
-        });
-      });
-      const ul = document.getElementById('resumo-vendas');
-      ul.innerHTML = '';
-      for (let item in resumo) {
-        ul.innerHTML += `<li>${item}: ${resumo[item]}x</li>`;
-      }
-      document.getElementById('resumo-total').textContent = `Total arrecadado: R$${pedidos.reduce((acc, p) => acc + p.total, 0).toFixed(2)}`;
     }
   </script>
 </body>
