@@ -10,12 +10,13 @@
     header { background-color: #d62828; color: white; padding: 20px; text-align: center; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     h2 { color: #d62828; }
-    .produto { margin: 10px 0; }
-    .resumo, .pagamento, .qrcode { display: none; }
+    .produto { margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+    .controls { display: flex; align-items: center; gap: 10px; }
     .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
     .btn:hover { background: #b71c1c; }
+    .btn-sec { background: #999; }
     .total { font-weight: bold; margin-top: 10px; }
-    .pagamento label { margin-right: 15px; }
+    .resumo, .pagamento, .qrcode { display: none; }
     canvas { margin-top: 20px; }
   </style>
 </head>
@@ -29,21 +30,71 @@
     <section class="pedido">
       <h2>Escolha seus produtos</h2>
       <form id="formulario">
-        <div class="produto">
-          <input type="checkbox" id="pastel" value="Pastel" data-preco="10" /> <label for="pastel">Pastel - R$10,00</label>
+        <div class="produto" data-nome="Pastel" data-preco="10">
+          <label>Pastel - R$10,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
         </div>
-        <div class="produto">
-          <input type="checkbox" id="hotdog" value="HotDog" data-preco="10" /> <label for="hotdog">HotDog - R$10,00</label>
+        <div class="produto" data-nome="HotDog" data-preco="10">
+          <label>HotDog - R$10,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
         </div>
-        <div class="produto">
-          <input type="checkbox" id="doces" value="Doces" data-preco="6" /> <label for="doces">Doces - R$6,00</label>
+        <div class="produto" data-nome="Doces" data-preco="6">
+          <label>Doces - R$6,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
         </div>
-        <div class="produto">
-          <input type="checkbox" id="caldinho" value="Caldinho" data-preco="10" /> <label for="caldinho">Caldinho - R$10,00</label>
+        <div class="produto" data-nome="Caldinho" data-preco="10">
+          <label>Caldinho - R$10,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
         </div>
-        <div class="produto">
-          <input type="checkbox" id="refri" value="Refrigerante" data-preco="6" /> <label for="refri">Refrigerante - R$6,00</label>
+        <div class="produto" data-nome="Refrigerante" data-preco="6">
+          <label>Refrigerante - R$6,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
         </div>
+        <div class="produto" data-nome="Espeto de Frango" data-preco="12">
+          <label>Espeto de Frango - R$12,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
+        </div>
+        <div class="produto" data-nome="Suco" data-preco="5">
+          <label>Suco - R$5,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
+        </div>
+        <div class="produto" data-nome="Água" data-preco="4">
+          <label>Água - R$4,00</label>
+          <div class="controls">
+            <button type="button" onclick="alterarQuantidade(this, -1)">-</button>
+            <span>0</span>
+            <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+          </div>
+        </div>
+
         <button type="submit" class="btn">Avançar</button>
       </form>
     </section>
@@ -53,6 +104,7 @@
       <ul id="lista-resumo"></ul>
       <p class="total" id="valor-total"></p>
       <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+      <button class="btn btn-sec" onclick="voltarParaProdutos()">Voltar</button>
     </section>
 
     <section class="pagamento">
@@ -62,6 +114,7 @@
       <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label>
       <br>
       <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+      <button class="btn btn-sec" onclick="voltarParaResumo()">Voltar</button>
     </section>
 
     <section class="qrcode">
@@ -74,34 +127,46 @@
   <script>
     const form = document.getElementById('formulario');
     const resumo = document.querySelector('.resumo');
-    const listaResumo = document.getElementById('lista-resumo');
-    const valorTotal = document.getElementById('valor-total');
     const pagamento = document.querySelector('.pagamento');
     const qrcode = document.querySelector('.qrcode');
+    const listaResumo = document.getElementById('lista-resumo');
+    const valorTotal = document.getElementById('valor-total');
+
     let pedidoFinal = [];
     let total = 0;
 
+    function alterarQuantidade(btn, delta) {
+      const span = btn.parentElement.querySelector('span');
+      let valor = parseInt(span.textContent);
+      valor = Math.max(0, valor + delta);
+      span.textContent = valor;
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      const selecionados = [];
+      const produtos = document.querySelectorAll('.produto');
+      pedidoFinal = [];
       total = 0;
       listaResumo.innerHTML = '';
-      document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-        if (el.checked) {
-          const nome = el.value;
-          const preco = parseFloat(el.getAttribute('data-preco'));
-          selecionados.push({ nome, preco });
-          total += preco;
-          listaResumo.innerHTML += `<li>${nome} - R$${preco.toFixed(2)}</li>`;
+
+      produtos.forEach(prod => {
+        const nome = prod.getAttribute('data-nome');
+        const preco = parseFloat(prod.getAttribute('data-preco'));
+        const quantidade = parseInt(prod.querySelector('span').textContent);
+
+        if (quantidade > 0) {
+          pedidoFinal.push({ nome, preco, quantidade });
+          const subtotal = preco * quantidade;
+          total += subtotal;
+          listaResumo.innerHTML += `<li>${nome} x ${quantidade} - R$${subtotal.toFixed(2)}</li>`;
         }
       });
 
-      if (selecionados.length === 0) {
+      if (pedidoFinal.length === 0) {
         alert('Selecione ao menos um produto.');
         return;
       }
 
-      pedidoFinal = selecionados;
       valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
       document.querySelector('.pedido').style.display = 'none';
       resumo.style.display = 'block';
@@ -112,9 +177,19 @@
       pagamento.style.display = 'block';
     }
 
+    function voltarParaProdutos() {
+      resumo.style.display = 'none';
+      document.querySelector('.pedido').style.display = 'block';
+    }
+
+    function voltarParaResumo() {
+      pagamento.style.display = 'none';
+      resumo.style.display = 'block';
+    }
+
     function gerarQRCode() {
       const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
-      const texto = `Pedido:\n${pedidoFinal.map(p => p.nome).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      const texto = `Pedido:\n${pedidoFinal.map(p => `${p.nome} x ${p.quantidade}`).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
       pagamento.style.display = 'none';
       qrcode.style.display = 'block';
       QRCode.toCanvas(document.getElementById('qr'), texto, error => {
