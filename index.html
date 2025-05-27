@@ -136,7 +136,7 @@
 </head>
 <body>
 
-<a id="linkAdmin" href="admin.html" target="_blank">Administrador</a>
+<a id="linkAdmin" href="admin.html">Administrador</a>
 
 <h1>Faça seu pedido</h1>
 
@@ -197,14 +197,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
-  // Produtos com preço e id dos inputs
   const produtos = [
     { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
     { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
     { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
   ];
 
-  // Elementos principais
   const formPedido = document.getElementById('formPedido');
   const resumoDiv = document.getElementById('resumoPedido');
   const itensResumoDiv = document.getElementById('itensResumo');
@@ -217,138 +215,4 @@
   const areaQRCode = document.getElementById('areaQRCode');
   const qrCanvas = document.getElementById('qrCanvas');
   const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
-  const btnNovoPedido = document.getElementById('btnNovoPedido');
-  const btnQtds = document.querySelectorAll('.btnQtd');
-
-  // Controle pedido
-  let numeroPedido = 1;
-  // Tenta carregar número do pedido do localStorage
-  const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
-  if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
-
-  // Função para atualizar quantidade via botões + e -
-  btnQtds.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const inputId = btn.dataset.target;
-      const input = document.getElementById(inputId);
-      let val = parseInt(input.value) || 0;
-      if (btn.textContent === '+') {
-        val++;
-      } else {
-        val = val > 0 ? val - 1 : 0;
-      }
-      input.value = val;
-    });
-  });
-
-  // Ao submeter o formulário, mostrar resumo
-  formPedido.addEventListener('submit', e => {
-    e.preventDefault();
-    const itensSelecionados = [];
-    let total = 0;
-    for (const p of produtos) {
-      const qtd = parseInt(document.getElementById(p.id).value) || 0;
-      if (qtd > 0) {
-        const subtotal = qtd * p.preco;
-        total += subtotal;
-        itensSelecionados.push({
-          nome: p.nome,
-          qtd,
-          subtotal
-        });
-      }
-    }
-    if (itensSelecionados.length === 0) {
-      alert('Selecione ao menos um item para prosseguir.');
-      return;
-    }
-    // Montar resumo
-    itensResumoDiv.innerHTML = '';
-    itensSelecionados.forEach(item => {
-      const p = document.createElement('p');
-      p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
-      itensResumoDiv.appendChild(p);
-    });
-    totalResumoSpan.textContent = total.toFixed(2);
-
-    // Mostrar resumo e ocultar formulário
-    formPedido.style.display = 'none';
-    resumoDiv.style.display = 'block';
-    telaPagamento.style.display = 'none';
-    areaQRCode.style.display = 'none';
-  });
-
-  btnAvancarPagamento.addEventListener('click', () => {
-    // Mostra tela pagamento
-    resumoDiv.style.display = 'none';
-    telaPagamento.style.display = 'block';
-    areaQRCode.style.display = 'none';
-  });
-
-  btnVoltarInicioResumo.addEventListener('click', () => {
-    // Voltar para form pedido
-    resumoDiv.style.display = 'none';
-    formPedido.style.display = 'block';
-  });
-
-  btnVoltarResumo.addEventListener('click', () => {
-    // Voltar para resumo pedido
-    telaPagamento.style.display = 'none';
-    resumoDiv.style.display = 'block';
-  });
-
-  btnGerarQRCode.addEventListener('click', () => {
-    // Verifica forma de pagamento selecionada
-    const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
-    if (!pagamentoSelecionado) {
-      alert('Selecione uma forma de pagamento.');
-      return;
-    }
-    const metodo = pagamentoSelecionado.value;
-
-    // Incrementa número do pedido e salva
-    localStorage.setItem('ultimoNumeroPedido', numeroPedido);
-
-    // Montar string QRCode (exemplo simples, pode ser JSON ou link real)
-    const pedidoInfo = {
-      numeroPedido,
-      metodoPagamento: metodo,
-      data: new Date().toISOString()
-    };
-    const qrString = JSON.stringify(pedidoInfo);
-
-    // Gerar QR Code
-    QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
-      if (error) console.error(error);
-    });
-
-    // Mostrar QRCode e número pedido
-    numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-
-    // Atualiza UI
-    telaPagamento.style.display = 'none';
-    areaQRCode.style.display = 'block';
-
-    // Incrementa para próximo pedido
-    numeroPedido++;
-  });
-
-  btnNovoPedido.addEventListener('click', () => {
-    // Resetar formulário
-    for (const p of produtos) {
-      document.getElementById(p.id).value = 0;
-    }
-    // Reset telas
-    areaQRCode.style.display = 'none';
-    resumoDiv.style.display = 'none';
-    telaPagamento.style.display = 'none';
-    formPedido.style.display = 'block';
-
-    // Reset radios pagamento
-    const radios = document.querySelectorAll('input[name="pagamento"]');
-    radios.forEach(r => (r.checked = false));
-  });
-</script>
-
-</body>
-</html>
+ 
