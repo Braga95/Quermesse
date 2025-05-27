@@ -2,138 +2,155 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PagFesta - Pedido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PagFesta</title>
   <style>
+    * { box-sizing: border-box; }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fffaf0; color: #333; }
-    header { background-color: #d62828; color: white; padding: 20px; text-align: center; }
-    .container { max-width: 600px; margin: auto; padding: 20px; }
+    header { background-color: #d62828; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1, header p { margin: 0; }
+    .admin-btn { background: white; color: #d62828; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    .admin-btn:hover { background: #ffd6d6; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     h2 { color: #d62828; }
-    .produto { margin-bottom: 10px; }
+    .resumo, .pagamento, .qrcode, .admin-login, .painel { display: none; }
     .btn { background: #d62828; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
     .btn:hover { background: #b71c1c; }
-    .resumo, .pagamento, .qrcode { display: none; }
+    .voltar { background-color: #777; margin-left: 10px; }
+    .total { font-weight: bold; margin-top: 10px; }
+    canvas { display: block; margin: 20px auto; width: 250px !important; height: 250px !important; }
+    input[type="text"], input[type="password"] { padding: 8px; width: 100%; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
   </style>
 </head>
 <body>
   <header>
-    <h1>PagFesta</h1>
-    <p>Quermesse Nossa Senhora da Boa Esperança</p>
+    <div>
+      <h1>PagFesta</h1>
+      <p>Quermesse Nossa Senhora da Boa Esperança</p>
+    </div>
+    <button class="admin-btn" onclick="abrirLogin()">Administrador</button>
   </header>
 
   <div class="container">
+
+    <!-- Etapa 1 - Pedido -->
     <section class="pedido">
       <h2>Escolha seus produtos</h2>
       <form id="formulario">
-        <div class="produto">
-          <label>Pastel R$10 <input type="number" min="0" value="0" data-preco="10" name="Pastel" /></label>
-        </div>
-        <div class="produto">
-          <label>HotDog R$10 <input type="number" min="0" value="0" data-preco="10" name="HotDog" /></label>
-        </div>
-        <div class="produto">
-          <label>Doces R$6 <input type="number" min="0" value="0" data-preco="6" name="Doces" /></label>
-        </div>
-        <div class="produto">
-          <label>Caldinho R$10 <input type="number" min="0" value="0" data-preco="10" name="Caldinho" /></label>
-        </div>
-        <div class="produto">
-          <label>Refrigerante R$6 <input type="number" min="0" value="0" data-preco="6" name="Refrigerante" /></label>
-        </div>
-        <div class="produto">
-          <label>Espeto de Frango R$12 <input type="number" min="0" value="0" data-preco="12" name="Espeto de Frango" /></label>
-        </div>
-        <div class="produto">
-          <label>Suco R$5 <input type="number" min="0" value="0" data-preco="5" name="Suco" /></label>
-        </div>
-        <div class="produto">
-          <label>Água R$3 <input type="number" min="0" value="0" data-preco="3" name="Água" /></label>
-        </div>
+        <label><input type="checkbox" name="Pastel" data-preco="10" /> Pastel - R$10</label><br>
+        <label><input type="checkbox" name="HotDog" data-preco="10" /> HotDog - R$10</label><br>
+        <label><input type="checkbox" name="Doces" data-preco="6" /> Doces - R$6</label><br>
+        <label><input type="checkbox" name="Caldinho" data-preco="10" /> Caldinho - R$10</label><br>
+        <label><input type="checkbox" name="Refrigerante" data-preco="6" /> Refrigerante - R$6</label><br>
+        <label><input type="checkbox" name="Espeto de Frango" data-preco="12" /> Espeto de Frango - R$12</label><br>
+        <label><input type="checkbox" name="Suco" data-preco="5" /> Suco - R$5</label><br>
+        <label><input type="checkbox" name="Água" data-preco="3" /> Água - R$3</label><br><br>
         <button type="submit" class="btn">Avançar</button>
       </form>
     </section>
 
+    <!-- Etapa 2 - Resumo -->
     <section class="resumo">
       <h2>Resumo do Pedido</h2>
       <ul id="lista-resumo"></ul>
       <p class="total" id="valor-total"></p>
-      <button class="btn" onclick="voltarPedido()">Voltar</button>
       <button class="btn" onclick="mostrarPagamento()">Ir para pagamento</button>
+      <button class="btn voltar" onclick="voltarPedido()">Voltar</button>
     </section>
 
+    <!-- Etapa 3 - Pagamento -->
     <section class="pagamento">
       <h2>Forma de Pagamento</h2>
-      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label>
-      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label>
-      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro</label>
-      <br>
-      <button class="btn" onclick="voltarResumo()">Voltar</button>
-      <button class="btn" onclick="finalizarPedido()">Confirmar Pagamento</button>
+      <label><input type="radio" name="pagamento" value="Pix" checked /> Pix</label><br>
+      <label><input type="radio" name="pagamento" value="Cartão" /> Cartão</label><br>
+      <label><input type="radio" name="pagamento" value="Dinheiro" /> Dinheiro na retirada</label><br>
+      <button class="btn" onclick="gerarQRCode()">Confirmar Pagamento</button>
+      <button class="btn voltar" onclick="voltarResumo()">Voltar</button>
     </section>
 
+    <!-- Etapa 4 - QR Code -->
     <section class="qrcode">
-      <h2>Pedido registrado com sucesso!</h2>
-      <p>Apresente este QR Code na barraca:</p>
+      <h2>Seu QR Code</h2>
       <canvas id="qr"></canvas>
+      <button class="btn" onclick="voltarInicio()">Novo Pedido</button>
     </section>
+
+    <!-- Login do Admin -->
+    <section class="admin-login">
+      <h2>Login Administrador</h2>
+      <input type="text" id="usuario" placeholder="Usuário" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button class="btn" onclick="fazerLogin()">Entrar</button>
+      <button class="btn voltar" onclick="fecharLogin()">Cancelar</button>
+    </section>
+
+    <!-- Painel do Administrador -->
+    <section class="painel">
+      <h2>Painel do Organizador</h2>
+      <table>
+        <thead>
+          <tr><th>Produtos</th><th>Total</th><th>Pagamento</th></tr>
+        </thead>
+        <tbody id="lista-pedidos"></tbody>
+      </table>
+      <button class="btn voltar" onclick="fecharPainel()">Sair</button>
+    </section>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SUA_AUTH_DOMAIN",
-      projectId: "SUA_PROJECT_ID",
-      storageBucket: "SUA_BUCKET",
-      messagingSenderId: "SEU_SENDER_ID",
-      appId: "SEU_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const form = document.getElementById('formulario');
     const listaResumo = document.getElementById('lista-resumo');
     const valorTotal = document.getElementById('valor-total');
     let pedidoFinal = [];
     let total = 0;
+    const pedidos = [];
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       pedidoFinal = [];
       total = 0;
       listaResumo.innerHTML = '';
-
-      document.querySelectorAll('input[type="number"]').forEach(el => {
-        const qtd = parseInt(el.value);
-        if (qtd > 0) {
+      document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+        if (el.checked) {
           const nome = el.name;
           const preco = parseFloat(el.dataset.preco);
-          pedidoFinal.push({ nome, qtd, preco });
-          total += preco * qtd;
-          listaResumo.innerHTML += `<li>${qtd}x ${nome} - R$${(preco * qtd).toFixed(2)}</li>`;
+          pedidoFinal.push({ nome, preco });
+          total += preco;
+          listaResumo.innerHTML += `<li>${nome} - R$${preco.toFixed(2)}</li>`;
         }
       });
-
       if (pedidoFinal.length === 0) {
-        alert('Escolha pelo menos um produto!');
+        alert("Selecione ao menos um produto.");
         return;
       }
-
+      valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
       document.querySelector('.pedido').style.display = 'none';
       document.querySelector('.resumo').style.display = 'block';
-      valorTotal.textContent = `Total: R$${total.toFixed(2)}`;
     });
-
-    function voltarPedido() {
-      document.querySelector('.resumo').style.display = 'none';
-      document.querySelector('.pedido').style.display = 'block';
-    }
 
     function mostrarPagamento() {
       document.querySelector('.resumo').style.display = 'none';
       document.querySelector('.pagamento').style.display = 'block';
+    }
+
+    function gerarQRCode() {
+      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const texto = `Pedido:\n${pedidoFinal.map(p => p.nome).join(', ')}\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+      document.querySelector('.pagamento').style.display = 'none';
+      document.querySelector('.qrcode').style.display = 'block';
+      QRCode.toCanvas(document.getElementById('qr'), texto, error => {
+        if (error) console.error(error);
+      });
+      pedidos.push({ produtos: pedidoFinal.map(p => p.nome).join(', '), total: total.toFixed(2), pagamento: formaPagamento });
+    }
+
+    function voltarPedido() {
+      document.querySelector('.resumo').style.display = 'none';
+      document.querySelector('.pedido').style.display = 'block';
     }
 
     function voltarResumo() {
@@ -141,21 +158,50 @@
       document.querySelector('.resumo').style.display = 'block';
     }
 
-    function finalizarPedido() {
-      const formaPagamento = document.querySelector('input[name="pagamento"]:checked').value;
-      const textoQRCode = pedidoFinal.map(p => `${p.qtd}x ${p.nome}`).join(', ') + `\nTotal: R$${total.toFixed(2)}\nPagamento: ${formaPagamento}`;
+    function voltarInicio() {
+      document.querySelector('.qrcode').style.display = 'none';
+      document.querySelector('.pedido').style.display = 'block';
+      document.getElementById('formulario').reset();
+    }
 
-      db.collection("pedidos").add({
-        evento: "Quermesse Boa Esperança",
-        produtos: pedidoFinal,
-        total,
-        pagamento: formaPagamento,
-        data: firebase.firestore.Timestamp.now()
-      }).then(() => {
-        document.querySelector('.pagamento').style.display = 'none';
-        document.querySelector('.qrcode').style.display = 'block';
-        QRCode.toCanvas(document.getElementById('qr'), textoQRCode);
+    function abrirLogin() {
+      document.querySelector('.admin-login').style.display = 'block';
+      document.querySelector('.pedido').style.display = 'none';
+      document.querySelector('.resumo').style.display = 'none';
+      document.querySelector('.pagamento').style.display = 'none';
+      document.querySelector('.qrcode').style.display = 'none';
+    }
+
+    function fecharLogin() {
+      document.querySelector('.admin-login').style.display = 'none';
+      document.querySelector('.pedido').style.display = 'block';
+    }
+
+    function fazerLogin() {
+      const user = document.getElementById('usuario').value;
+      const pass = document.getElementById('senha').value;
+      if (user === 'lpalmeira' && pass === '123') {
+        document.querySelector('.admin-login').style.display = 'none';
+        document.querySelector('.painel').style.display = 'block';
+        atualizarPainel();
+      } else {
+        alert('Login ou senha incorretos!');
+      }
+    }
+
+    function atualizarPainel() {
+      const tbody = document.getElementById('lista-pedidos');
+      tbody.innerHTML = '';
+      pedidos.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.produtos}</td><td>R$${p.total}</td><td>${p.pagamento}</td>`;
+        tbody.appendChild(tr);
       });
+    }
+
+    function fecharPainel() {
+      document.querySelector('.painel').style.display = 'none';
+      document.querySelector('.pedido').style.display = 'block';
     }
   </script>
 </body>
