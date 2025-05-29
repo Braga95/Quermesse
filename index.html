@@ -7,125 +7,93 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 850px; /* Largura ajustada para acomodar ambos os layouts */ [cite: 2]
+            max-width: 850px; /* Largura ajustada para acomodar ambos os layouts */
             margin: 20px auto;
-            padding: 25px; [cite: 3]
+            padding: 25px;
             background: #f7f7f7;
             color: #333;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border-radius: 12px;
         }
         .header {
-            display: flex; /* Adicionado para responsividade da logo */
-            align-items: center; /* Centraliza verticalmente os itens */
-            justify-content: center; /* Centraliza horizontalmente o conteúdo, se houver espaço */
-            margin-bottom: 30px; [cite: 5]
-            position: relative;
-            padding-left: 10px;
-            padding-right: 10px;
+            text-align: center;
+            margin-bottom: 30px;
         }
         .header h1 {
             color: #d63333;
-            font-size: 2.8em; [cite: 6]
+            font-size: 2.8em;
             margin-bottom: 5px;
             letter-spacing: 1px;
         }
         .header p {
             color: #666;
-            font-size: 1.1em; [cite: 7]
+            font-size: 1.1em;
             margin-top: 0;
-        }
-        .header img { /* Estilo para a sua logo dentro do header */
-            height: 100px; /* Altura inicial para telas maiores */
-            width: auto;
-            margin-right: 20px; /* Espaço entre a logo e o texto */
-            /* Removidas propriedades de posicionamento absoluto */
-            position: static;
-            transform: none;
-            left: auto;
-            top: auto;
-        }
-        .header div { /* O div que contém o h1 e o p */
-            text-align: center;
-            flex-grow: 1; /* Permite que o div ocupe o espaço restante */
-        }
-
-        /* Media Query para telas menores */
-        @media (max-width: 600px) {
-            .header {
-                flex-direction: column; /* Empilha a logo e o texto em telas pequenas */
-                text-align: center;
-            }
-            .header img {
-                height: 80px; /* Reduza a altura da logo para celulares */
-                margin-bottom: 10px; /* Espaço entre a logo e o título */
-                margin-right: 0; /* Remove a margem direita quando empilhado */
-            }
         }
 
         /* Estilos da Página de Pedido */
         #order-section {
-            display: block; /* Visível por padrão ao carregar */ [cite: 8]
+            display: block; /* Visível por padrão ao carregar */
         }
         .produto {
-            display: flex; [cite: 9]
-            align-items: center; [cite: 9]
+            display: flex;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 15px;
             padding: 12px 15px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             background: white;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; [cite: 10]
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .produto:hover {
-            transform: translateY(-3px); [cite: 11]
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); [cite: 11]
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
         .produto label {
-            flex: 1; [cite: 12]
-            font-size: 1.1em; [cite: 12]
+            flex: 1;
+            font-size: 1.1em;
             color: #555;
         }
         .qtd-container {
-            display: flex; [cite: 13]
-            align-items: center; [cite: 13]
+            display: flex;
+            align-items: center;
         }
         .qtd-container button {
-            width: 32px; [cite: 14]
-            height: 32px; [cite: 14]
+            width: 32px;
+            height: 32px;
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             border: 1px solid #d63333;
             background: #ffe0e0;
             color: #d63333;
-            border-radius: 50%; [cite: 15]
-            margin: 0 8px; [cite: 15]
+            border-radius: 50%;
+            margin: 0 8px;
             user-select: none;
             transition: background 0.2s;
         }
         .qtd-container button:hover {
-            background: #d63333; [cite: 16]
-            color: white; [cite: 16]
+            background: #d63333;
+            color: white;
         }
         .qtd-container input[type=number] {
-            width: 50px; [cite: 17]
-            text-align: center; [cite: 17]
+            width: 50px;
+            text-align: center;
             border: 1px solid #d63333;
             border-radius: 6px;
             font-size: 18px;
             padding: 6px 0;
-            -moz-appearance: textfield; [cite: 18]
+            -moz-appearance: textfield;
         }
         .qtd-container input[type=number]::-webkit-outer-spin-button,
         .qtd-container input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none; [cite: 19]
-            margin: 0; [cite: 19]
+            -webkit-appearance: none;
+            margin: 0;
         }
         button#btnGerarPagamento {
-            display: block; [cite: 20]
-            margin: 30px auto 0; [cite: 20]
+            display: block;
+            margin: 30px auto 0;
             background: #d63333;
             color: white;
             font-size: 20px;
@@ -133,110 +101,115 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 21]
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         button#btnGerarPagamento:hover {
-            background: #b52b2b; [cite: 22]
-            transform: translateY(-2px); [cite: 22]
+            background: #b52b2b;
+            transform: translateY(-2px);
         }
         #resumoPedido, #telaPagamento, #areaQRCode {
-            margin-top: 30px; [cite: 23]
-            padding: 20px; [cite: 23]
+            margin-top: 30px;
+            padding: 20px;
             background: white;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center; [cite: 24]
+            text-align: center;
         }
         #resumoPedido h2, #telaPagamento h2, #areaQRCode h2 {
             color: #d63333;
-            margin-bottom: 20px; [cite: 25]
+            margin-bottom: 20px;
         }
         #resumoPedido p {
-            margin: 8px 0; [cite: 26]
-            font-size: 1.1em; [cite: 26]
+            margin: 8px 0;
+            font-size: 1.1em;
         }
         #resumoPedido strong {
-            font-size: 20px; [cite: 27]
-            color: #333; [cite: 27]
+            font-size: 20px;
+            color: #333;
         }
         #resumoPedido #itensResumo {
-            margin-bottom: 15px; [cite: 28]
+            margin-bottom: 15px;
         }
         #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
         #btnVoltarInicioResumo, #btnVoltarResumo {
-            background: #d63333; [cite: 29]
+            background: #d63333;
             color: white;
             border: none;
             padding: 10px 22px;
             font-size: 17px;
             border-radius: 8px;
             cursor: pointer;
-            margin-top: 20px; [cite: 30]
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 30]
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         #btnAvancarPagamento:hover,
         #btnGerarQRCode:hover,
         #btnNovoPedido:hover,
         #btnVoltarInicioResumo:hover,
         #btnVoltarResumo:hover {
-            background: #b52b2b; [cite: 31]
-            transform: translateY(-2px); [cite: 31]
+            background: #b52b2b;
+            transform: translateY(-2px);
         }
         #telaPagamento label {
-            display: block; [cite: 32]
-            margin-bottom: 12px; [cite: 32]
+            display: block;
+            margin-bottom: 12px;
             font-size: 1.1em;
             cursor: pointer;
             text-align: left;
-            padding-left: 50px; [cite: 33]
+            padding-left: 50px;
         }
         #telaPagamento input[type="radio"] {
-            margin-right: 8px; [cite: 34]
-            transform: scale(1.2); [cite: 34]
+            margin-right: 8px;
+            transform: scale(1.2);
             vertical-align: middle;
         }
         #qrCanvas {
-            display: block; [cite: 35]
-            margin: 25px auto; [cite: 35]
+            display: block;
+            margin: 25px auto;
             border: 1px solid #eee;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 8px; [cite: 36]
+            border-radius: 8px;
         }
         #numeroPedidoDisplay {
-            text-align: center; [cite: 37]
-            font-size: 22px; [cite: 37]
+            text-align: center;
+            font-size: 22px;
             font-weight: bold;
             margin-top: 15px;
             color: #d63333;
         }
-        /* Botão PagFesta */
-        #btnPagFesta {
-            position: fixed;
-            top: 20px;
-            right: 160px; /* afasta do botão Administrador */ [cite: 38]
-            font-weight: bold;
-            background: #2a9d8f;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px; [cite: 39]
-            text-decoration: none;
-            font-size: 15px;
-            z-index: 10;
-            cursor: pointer;
-            border: none;
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 40]
-        }
-        #btnPagFesta:hover {
-            background: #21867a;
-            transform: translateY(-2px);
-        }
+
+
+/* Botão PagFesta */
+#btnPagFesta {
+    position: fixed;
+    top: 20px;
+    right: 160px; /* afasta do botão Administrador */
+    font-weight: bold;
+    background: #2a9d8f;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 15px;
+    z-index: 10;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+#btnPagFesta:hover {
+    background: #21867a;
+    transform: translateY(-2px);
+}
+
+
+
         
         /* Botão Administrador */
         #btnAdminArea {
-            position: fixed; [cite: 41]
-            top: 20px; [cite: 41]
-            right: 20px; [cite: 41]
+            position: fixed;
+            top: 20px;
+            right: 20px;
             font-weight: bold;
             background: #5c677d;
             color: white;
@@ -244,198 +217,190 @@
             border-radius: 8px;
             text-decoration: none;
             font-size: 15px;
-            z-index: 10; [cite: 42]
+            z-index: 10;
             cursor: pointer;
             border: none;
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 43]
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         #btnAdminArea:hover {
-            background: #4a5264; [cite: 44]
-            transform: translateY(-2px); [cite: 44]
+            background: #4a5264;
+            transform: translateY(-2px);
         }
+
         /* Estilos do Painel de Administração */
         #admin-section {
-            display: none; /* Oculto por padrão */ [cite: 45]
+            display: none; /* Oculto por padrão */
             background: white;
-            padding: 25px; [cite: 46]
-            border-radius: 10px; [cite: 46]
+            padding: 25px;
+            border-radius: 10px;
             border: 1px solid #e0e0e0;
             margin-bottom: 25px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center; [cite: 47]
+            text-align: center;
         }
         #login-form {
-            text-align: center; [cite: 48]
-            padding: 20px; [cite: 48]
+            text-align: center;
+            padding: 20px;
         }
         #login-form input {
-            padding: 12px; [cite: 49]
-            margin: 8px auto; [cite: 49]
+            padding: 12px;
+            margin: 8px auto;
             width: 80%;
             max-width: 300px;
             border: 1px solid #ccc;
             border-radius: 6px;
-            display: block; [cite: 50]
+            display: block;
         }
         #login-form button {
-            background: #d63333; [cite: 51]
+            background: #d63333;
             color: white;
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 18px;
-            margin-top: 15px; [cite: 52]
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 52]
+            margin-top: 15px;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         #login-form button:hover {
-            background: #b52b2b; [cite: 53]
-            transform: translateY(-2px); [cite: 53]
+            background: #b52b2b;
+            transform: translateY(-2px);
         }
         .tabs {
-            display: flex; [cite: 54]
-            justify-content: center; [cite: 54]
+            display: flex;
+            justify-content: center;
             margin-bottom: 25px;
             border-bottom: 2px solid #ddd;
         }
         .tabs button {
-            background: #eee; [cite: 55]
-            border: none; [cite: 55]
+            background: #eee;
+            border: none;
             padding: 12px 20px;
             cursor: pointer;
             font-size: 17px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
-            margin: 0 3px; [cite: 56]
-            transition: background 0.3s ease, color 0.3s ease; [cite: 56]
+            margin: 0 3px;
+            transition: background 0.3s ease, color 0.3s ease;
             font-weight: bold;
-            color: #666; [cite: 57]
+            color: #666;
         }
         .tabs button.active {
-            background: #d63333; [cite: 58]
-            color: white; [cite: 58]
+            background: #d63333;
+            color: white;
             border-bottom: 2px solid #d63333;
         }
         .tabs button:hover:not(.active) {
-            background: #e5e5e5; [cite: 59]
+            background: #e5e5e5;
         }
         .tab-content {
-            display: none; [cite: 60]
-            text-align: left; [cite: 60]
+            display: none;
+            text-align: left;
             padding: 15px 0;
         }
         .tab-content.active {
-            display: block; [cite: 61]
+            display: block;
         }
         table {
-            width: 100%; [cite: 62]
-            border-collapse: collapse; [cite: 62]
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 15px;
             background-color: #fff;
         }
         th, td {
-            border: 1px solid #eee; [cite: 63]
-            padding: 10px; [cite: 63]
+            border: 1px solid #eee;
+            padding: 10px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2; [cite: 64]
-            color: #555; [cite: 64]
+            background-color: #f2f2f2;
+            color: #555;
             font-weight: bold;
         }
         .order-item {
-            border: 1px solid #e0e0e0; [cite: 65]
-            padding: 15px; [cite: 65]
+            border: 1px solid #e0e0e0;
+            padding: 15px;
             margin-bottom: 15px;
             border-radius: 8px;
             background-color: #fcfcfc;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.05); [cite: 66]
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
         }
         .order-item h3 {
-            margin-top: 0; [cite: 67]
-            color: #d63333; [cite: 67]
+            margin-top: 0;
+            color: #d63333;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
-            margin-bottom: 10px; [cite: 68]
+            margin-bottom: 10px;
         }
         .order-item ul {
-            list-style: none; [cite: 69]
-            padding: 0; [cite: 69]
+            list-style: none;
+            padding: 0;
             margin: 0;
         }
         .order-item ul li {
-            padding: 5px 0; [cite: 70]
-            border-bottom: 1px dotted #f0f0f0; [cite: 70]
+            padding: 5px 0;
+            border-bottom: 1px dotted #f0f0f0;
         }
         .order-item ul li:last-child {
-            border-bottom: none; [cite: 71]
+            border-bottom: none;
         }
         .order-item button {
-            background: #4CAF50; [cite: 72]
+            background: #4CAF50;
             color: white;
             border: none;
             padding: 9px 15px;
             border-radius: 6px;
             cursor: pointer;
             margin-top: 15px;
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 73]
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         .order-item button:hover {
-            background: #45a049; [cite: 74]
-            transform: translateY(-2px); [cite: 74]
+            background: #45a049;
+            transform: translateY(-2px);
         }
-        /* Estilos para os status de pedidos */
-        .order-item.order-delivered {
-            border: 2px solid #28a745; /* Borda verde para entregues */
-        }
-
-        .order-item.order-pending {
-            border: 2px solid #dc3545; /* Borda vermelha para pendentes */
-        }
-
         .bank-info p, .withdraw-info p {
-            margin-bottom: 12px; [cite: 75]
-            font-size: 1.1em; [cite: 75]
+            margin-bottom: 12px;
+            font-size: 1.1em;
         }
         .bank-info input[type="text"],
         .bank-info input[type="number"] {
-            width: calc(100% - 20px); [cite: 76]
-            max-width: 400px; [cite: 76]
+            width: calc(100% - 20px);
+            max-width: 400px;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 6px;
             display: block;
             margin-left: auto;
-            margin-right: auto; [cite: 77]
+            margin-right: auto;
         }
         .bank-info button, .withdraw-info button {
-            background: #d63333; [cite: 78]
+            background: #d63333;
             color: white;
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 18px;
-            margin-top: 15px; [cite: 79]
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 79]
+            margin-top: 15px;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
         .bank-info button:hover, .withdraw-info button:hover {
-            background: #b52b2b; [cite: 80]
-            transform: translateY(-2px); [cite: 80]
+            background: #b52b2b;
+            transform: translateY(-2px);
         }
         #withdrawAmount {
-            width: 150px; [cite: 81]
-            padding: 10px; [cite: 81]
+            width: 150px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 6px;
             margin-right: 15px;
             font-size: 1em;
-            text-align: center; [cite: 82]
+            text-align: center;
         }
         #backToOrder {
-            display: block; [cite: 83]
-            margin: 30px auto 0; [cite: 83]
+            display: block;
+            margin: 30px auto 0;
             background: #6c757d;
             color: white;
             font-size: 18px;
@@ -443,81 +408,73 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            text-align: center; [cite: 84]
+            text-align: center;
             text-decoration: none;
             width: fit-content;
-            transition: background 0.3s ease, transform 0.2s ease; [cite: 85]
-        }
-        #backToOrder:hover {
-            background: #5a6268; [cite: 86]
-            transform: translateY(-2px); [cite: 86]
-        }
-        /* Estilos para o leitor QR */
-        .btn-action {
-            background: #007bff; /* Cor azul para botões de ação */
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
             transition: background 0.3s ease, transform 0.2s ease;
         }
-
-        .btn-action:hover {
-            background: #0056b3;
+        #backToOrder:hover {
+            background: #5a6268;
             transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
   
+
     <button id="btnAdminArea">Administrador</button>
     <a href="https://braga95.github.io/PagFesta/" id="btnPagFesta" target="_blank">PagFesta</a>
       <div id="order-section">
+
+
+
           
-        <div class="header">
-          <img src="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
-               alt="Logo PagFesta"
-          />
-          
-          <div>
-            <h1>Quermesse</h1>
-            <p>Nossa Senhora da Boa Esperança</p>
-          </div>
-        </div>
+<div class="header" style="position: relative; text-align: center;">
+  <!-- Logo fixa na lateral esquerda -->
+  <img src="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
+       alt="Logo PagFesta"
+       style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 180px;" />
+  
+  <!-- Título e subtítulo centralizados -->
+  <div>
+    <h1>Quermesse</h1>
+    <p>Nossa Senhora da Boa Esperança</p>
+  </div>
+</div>
+
+
+
+
+
         <form id="formPedido">
             <div class="produto">
                 <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
                 <div class="qtd-container">
-              
-                    <button type="button" class="btnQtd" data-target="qtdEspeto">-</button> [cite: 88]
+                    <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
                     <input type="number" id="qtdEspeto" min="0" value="0" />
                     <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
                 </div>
             </div>
             <div class="produto">
-  
-                <label for="qtdSuco">Suco - R$ 4,00</label> [cite: 89]
+                <label for="qtdSuco">Suco - R$ 4,00</label>
                 <div class="qtd-container">
                     <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
                     <input type="number" id="qtdSuco" min="0" value="0" />
-                 
-                    <button type="button" class="btnQtd" data-target="qtdSuco">+</button> [cite: 90]
+                    <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
                 </div>
             </div>
             <div class="produto">
                 <label for="qtdAgua">Água - R$ 3,00</label>
                 <div class="qtd-container">
-                
-                    <button type="button" class="btnQtd" data-target="qtdAgua">-</button> [cite: 91]
+                    <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
                     <input type="number" id="qtdAgua" min="0" value="0" />
                     <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
                 </div>
             </div>
+
             <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
-  
-        </form> [cite: 92]
+        </form>
+
         <div id="resumoPedido" style="display:none;">
             <h2>Resumo do Pedido</h2>
             <div id="itensResumo"></div>
@@ -525,16 +482,16 @@
             <button id="btnAvancarPagamento">Avançar para pagamento</button>
             <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
         </div>
-     
-        <div id="telaPagamento" style="display:none;"> [cite: 93]
+
+        <div id="telaPagamento" style="display:none;">
             <h2>Escolha a forma de pagamento</h2>
             <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
             <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
             <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
             <button id="btnGerarQRCode">Gerar QR Code</button>
-           
-            <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button> [cite: 94]
+            <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
         </div>
+
         <div id="areaQRCode" style="display:none;">
             <h2>Pagamento QR Code</h2>
             <canvas id="qrCanvas" width="250" height="250"></canvas>
@@ -542,325 +499,303 @@
             <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
         </div>
     </div>
+
     <div id="admin-section">
-    
-        <div class="header"> [cite: 95]
+        <div class="header">
             <h1>PagFesta - Administração</h1>
             <p>Gerencie seus pedidos e finanças com facilidade.</p>
         </div>
         <div id="login-screen" class="admin-section-inner">
             <h2>Login</h2>
             <form id="login-form">
-                <input type="text" id="username" placeholder="Usuário" 
-                required /><br /> [cite: 96]
+                <input type="text" id="username" placeholder="Usuário" required /><br />
                 <input type="password" id="password" placeholder="Senha" required /><br />
                 <button type="submit">Entrar</button>
             </form>
-            <p id="login-message" style="color: red;
-            margin-top: 10px;"></p> [cite: 97]
+            <p id="login-message" style="color: red; margin-top: 10px;"></p>
         </div>
         <div id="admin-panel" style="display: none;">
             <div class="tabs">
                 <button class="tab-button active" data-tab="summary">Resumo</button>
                 <button class="tab-button" data-tab="orders">Pedidos</button>
                 <button class="tab-button" data-tab="bank">Banco</button>
-            
-                <button class="tab-button" data-tab="withdraw">Sacar</button> [cite: 98]
-                <button class="tab-button" data-tab="qrscanner">Leitor QR</button> </div>
+                <button class="tab-button" data-tab="withdraw">Sacar</button>
+            </div>
             <div id="summary-tab" class="tab-content active admin-section-inner">
                 <h2>Resumo das Vendas</h2>
                 <div id="sales-summary">
                     <p>Nenhuma venda registrada ainda.</p>
-        
-                </div> [cite: 99]
+                </div>
                 <p><strong>Total de Itens Vendidos: <span id="total-items-sold">0</span></strong></p>
                 <p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
             </div>
             <div id="orders-tab" class="tab-content admin-section-inner">
                 <h2>Pedidos</h2>
-      
-                <div id="orders-list"> [cite: 100]
+                <div id="orders-list">
                     <p>Nenhum pedido registrado ainda.</p>
                 </div>
             </div>
             <div id="bank-tab" class="tab-content admin-section-inner">
                 <h2>Configurações do Banco</h2>
-     
-                <div class="bank-info"> [cite: 101]
+                <div class="bank-info">
                     <p><strong>Nome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
                     <p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
                     <p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
-                 
-                    <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p> [cite: 102]
+                    <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
                     <h3>Cadastrar/Atualizar Informações Bancárias</h3>
                     <input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
                     <input type="text" id="inputBankAgency" placeholder="Agência" /><br />
-                   
-                    <input type="text" id="inputBankAccount" placeholder="Conta" /><br /> [cite: 103]
+                    <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
                     <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
                     <button id="saveBankInfo">Salvar Informações Bancárias</button>
                 </div>
             </div>
             <div id="withdraw-tab" class="tab-content admin-section-inner">
-  
-                <h2>Sacar Dinheiro</h2> [cite: 104]
+                <h2>Sacar Dinheiro</h2>
                 <div class="withdraw-info">
                     <p><strong>Saldo Disponível: R$ <span id="availableBalance">0.00</span></strong></p>
                     <p>Insira o valor a sacar:</p>
-                    
-                    <input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" /> [cite: 105]
+                    <input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" />
                     <button id="processWithdraw">Sacar</button>
-                    <p id="withdrawMessage" style="color: green;
-                    margin-top: 10px;"></p> [cite: 106]
+                    <p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
                 </div>
             </div>
-
-            <div id="qrscanner-tab" class="tab-content admin-section-inner">
-                <h2>Leitor de QR Code</h2>
-                <video id="qr-video" style="width: 100%; max-width: 400px; display: block; margin: 0 auto; border: 1px solid #ddd;"></video>
-                <canvas id="qr-canvas-hidden" style="display:none;"></canvas> <p id="qr-message" style="margin-top: 15px; font-weight: bold;"></p>
-                <button id="start-qr-scanner" class="btn-action" style="margin-top: 15px;">Iniciar Leitor</button>
-                <button id="stop-qr-scanner" class="btn-action" style="margin-top: 15px; display: none;">Parar Leitor</button>
-            </div>
-
             <button id="backToOrder">Voltar aos Pedidos</button>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script> <script>
+    <script>
         // --- Variáveis Globais e Constantes ---
         const ADMIN_USERNAME = 'lpalmeira';
-        const ADMIN_PASSWORD = '123'; [cite: 107]
+        const ADMIN_PASSWORD = '123';
+
         // Elementos da Seção de Pedidos
         const produtos = [
             { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
             { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
             { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
         ];
-        
-        const orderSection = document.getElementById('order-section'); [cite: 108]
+
+        const orderSection = document.getElementById('order-section');
         const formPedido = document.getElementById('formPedido');
         const resumoDiv = document.getElementById('resumoPedido');
         const itensResumoDiv = document.getElementById('itensResumo');
         const totalResumoSpan = document.getElementById('totalResumo');
-        const btnAvancarPagamento = document.getElementById('btnAvancarPagamento'); [cite: 109]
-        const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo'); [cite: 109]
+        const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
+        const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
         const telaPagamento = document.getElementById('telaPagamento');
         const btnGerarQRCode = document.getElementById('btnGerarQRCode');
         const btnVoltarResumo = document.getElementById('btnVoltarResumo');
-        const areaQRCode = document.getElementById('areaQRCode'); [cite: 110]
-        const qrCanvas = document.getElementById('qrCanvas'); [cite: 110]
+        const areaQRCode = document.getElementById('areaQRCode');
+        const qrCanvas = document.getElementById('qrCanvas');
         const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
-        const btnNovoPedido = document.getElementById('btnNovoPedido'); [cite: 111]
-        // CORREÇÃO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded [cite: 111]
-        let btnQtds; [cite: 112]
+        const btnNovoPedido = document.getElementById('btnNovoPedido');
+        
+        // CORREÇÃO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded
+        let btnQtds; 
+
         // Elementos da Seção de Administração
-        const btnAdminArea = document.getElementById('btnAdminArea'); [cite: 113]
-        const adminSection = document.getElementById('admin-section'); [cite: 113]
+        const btnAdminArea = document.getElementById('btnAdminArea');
+        const adminSection = document.getElementById('admin-section');
         const loginScreen = document.getElementById('login-screen');
         const adminPanel = document.getElementById('admin-panel');
         const loginForm = document.getElementById('login-form');
-        const loginMessage = document.getElementById('login-message'); [cite: 114]
-        const tabButtons = document.querySelectorAll('.tab-button'); [cite: 114]
+        const loginMessage = document.getElementById('login-message');
+        const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         const salesSummaryDiv = document.getElementById('sales-summary');
         const totalItemsSoldSpan = document.getElementById('total-items-sold');
-        const totalSalesValueSpan = document.getElementById('total-sales-value'); [cite: 115]
-        const ordersListDiv = document.getElementById('orders-list'); [cite: 115]
+        const totalSalesValueSpan = document.getElementById('total-sales-value');
+        const ordersListDiv = document.getElementById('orders-list');
         const displayBankName = document.getElementById('displayBankName');
         const displayBankAgency = document.getElementById('displayBankAgency');
         const displayBankAccount = document.getElementById('displayBankAccount');
-        const displayPixKey = document.getElementById('displayPixKey'); [cite: 116]
-        const inputBankName = document.getElementById('inputBankName'); [cite: 116]
+        const displayPixKey = document.getElementById('displayPixKey');
+        const inputBankName = document.getElementById('inputBankName');
         const inputBankAgency = document.getElementById('inputBankAgency');
         const inputBankAccount = document.getElementById('inputBankAccount');
         const inputPixKey = document.getElementById('inputPixKey');
-        const saveBankInfoBtn = document.getElementById('saveBankInfo'); [cite: 117]
-        const availableBalanceSpan = document.getElementById('availableBalance'); [cite: 117]
+        const saveBankInfoBtn = document.getElementById('saveBankInfo');
+        const availableBalanceSpan = document.getElementById('availableBalance');
         const withdrawAmountInput = document.getElementById('withdrawAmount');
         const processWithdrawBtn = document.getElementById('processWithdraw');
         const withdrawMessage = document.getElementById('withdrawMessage');
-        const backToOrderBtn = document.getElementById('backToOrder'); [cite: 118]
-        // Novas Variáveis para o QR Scanner
-        const qrVideo = document.getElementById('qr-video');
-        const qrCanvasHidden = document.getElementById('qr-canvas-hidden');
-        const qrCanvasContext = qrCanvasHidden.getContext('2d');
-        const qrMessage = document.getElementById('qr-message');
-        const startQrScannerBtn = document.getElementById('start-qr-scanner');
-        const stopQrScannerBtn = document.getElementById('stop-qr-scanner');
-
-        let videoStream = null;
-        let scanningInterval = null;
+        const backToOrderBtn = document.getElementById('backToOrder');
 
         // Dados persistentes (usando localStorage)
         let numeroPedido = 1;
-        const pedidoLS = localStorage.getItem('ultimoNumeroPedido'); [cite: 119]
-        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1; [cite: 119]
-        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || []; [cite: 119]
-        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 119]
-        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0; [cite: 120]
-        
+        const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
+        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
+
+        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
+        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
+
         // --- Funções de Visibilidade das Seções ---
         function showOrderSection() {
-            orderSection.style.display = 'block'; [cite: 121]
-            adminSection.style.display = 'none'; [cite: 121]
-            stopQrScanner(); // Para o scanner ao sair da seção admin
+            orderSection.style.display = 'block';
+            adminSection.style.display = 'none';
         }
+
         function showAdminSection() {
-            orderSection.style.display = 'none'; [cite: 122]
-            adminSection.style.display = 'block'; [cite: 122]
+            orderSection.style.display = 'none';
+            adminSection.style.display = 'block';
             loginScreen.style.display = 'block'; // Sempre volta para a tela de login ao acessar Admin
-            adminPanel.style.display = 'none'; [cite: 123]
-            loginForm.reset(); // Limpa o formulário de login [cite: 123]
-            loginMessage.textContent = ''; [cite: 124] // Limpa mensagens de login
+            adminPanel.style.display = 'none';
+            loginForm.reset(); // Limpa o formulário de login
+            loginMessage.textContent = ''; // Limpa mensagens de login
             // Nao chamar updateAdminPanel() aqui, ele sera chamado apos o login
         }
 
         // --- Lógica da Página de Pedidos ---
+
         // Ao submeter o formulário, mostrar resumo
         formPedido.addEventListener('submit', e => {
             e.preventDefault();
-            const itensSelecionados = []; [cite: 125]
+            const itensSelecionados = [];
             let total = 0;
             for (const p of produtos) {
                 const qtd = parseInt(document.getElementById(p.id).value) || 0;
                 if (qtd > 0) {
                     const subtotal = qtd * p.preco;
- 
-                    total += subtotal; [cite: 126]
+                    total += subtotal;
                     itensSelecionados.push({
                         nome: p.nome,
                         qtd,
-          
-                        preco: p.preco, [cite: 127]
+                        preco: p.preco,
                         subtotal
                     });
                 }
             }
-            if (itensSelecionados.length === 0) { [cite: 128]
+            if (itensSelecionados.length === 0) {
                 alert('Selecione ao menos um item para prosseguir.');
                 return;
             }
-            itensResumoDiv.innerHTML = ''; [cite: 129]
+            itensResumoDiv.innerHTML = '';
             itensSelecionados.forEach(item => {
                 const p = document.createElement('p');
                 p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
                 itensResumoDiv.appendChild(p);
             });
-            totalResumoSpan.textContent = total.toFixed(2); [cite: 130]
+            totalResumoSpan.textContent = total.toFixed(2);
+
             formPedido.style.display = 'none';
             resumoDiv.style.display = 'block';
             telaPagamento.style.display = 'none';
             areaQRCode.style.display = 'none';
         });
-        btnAvancarPagamento.addEventListener('click', () => { [cite: 131]
+
+        btnAvancarPagamento.addEventListener('click', () => {
             resumoDiv.style.display = 'none';
             telaPagamento.style.display = 'block';
             areaQRCode.style.display = 'none';
         });
-        btnVoltarInicioResumo.addEventListener('click', () => { [cite: 132]
+
+        btnVoltarInicioResumo.addEventListener('click', () => {
             resumoDiv.style.display = 'none';
             formPedido.style.display = 'block';
         });
-        btnVoltarResumo.addEventListener('click', () => { [cite: 133]
+
+        btnVoltarResumo.addEventListener('click', () => {
             telaPagamento.style.display = 'none';
             resumoDiv.style.display = 'block';
         });
-        btnGerarQRCode.addEventListener('click', () => { [cite: 134]
+
+        btnGerarQRCode.addEventListener('click', () => {
             const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
             if (!pagamentoSelecionado) {
                 alert('Selecione uma forma de pagamento.');
                 return;
             }
             const metodo = pagamentoSelecionado.value;
-     
-            const currentItemsSelected = []; [cite: 135]
+
+            const currentItemsSelected = [];
             let currentTotal = 0;
             for (const p of produtos) {
                 const qtd = parseInt(document.getElementById(p.id).value) || 0;
                 if (qtd > 0) {
-                 
-                    const subtotal = qtd * p.preco; [cite: 136]
+                    const subtotal = qtd * p.preco;
                     currentTotal += subtotal;
                     currentItemsSelected.push({
                         nome: p.nome,
                         qtd,
- 
-                        preco: p.preco, [cite: 137]
+                        preco: p.preco,
                         subtotal
                     });
                 }
             }
-    
-            localStorage.setItem('ultimoNumeroPedido', numeroPedido); [cite: 138]
+
+            localStorage.setItem('ultimoNumeroPedido', numeroPedido);
             const orderData = {
                 numeroPedido: numeroPedido,
                 metodoPagamento: metodo,
                 data: new Date().toISOString(),
                 items: currentItemsSelected,
-       
-                total: currentTotal, [cite: 139]
-                status: 'pendente' // Adicione o status inicial aqui
+                total: currentTotal
             };
-            allOrders.push(orderData); [cite: 140]
-            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 140]
+            allOrders.push(orderData);
+            localStorage.setItem('allOrders', JSON.stringify(allOrders));
+
             accumulatedBalance += currentTotal;
             localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
+
             const qrString = JSON.stringify({
                 numeroPedido: numeroPedido,
                 metodoPagamento: metodo,
                 valor: currentTotal.toFixed(2)
             });
-            if (metodo === 'pix') { [cite: 141]
-                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {}; [cite: 142]
+
+            if (metodo === 'pix') {
+                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {};
                 if (bankInfoStored.pixKey) {
-                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`; [cite: 143]
-                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) { [cite: 143]
+                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
+                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
                         if (error) console.error(error);
                         else {
                             numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-        
-                            telaPagamento.style.display = 'none'; [cite: 144]
+                            telaPagamento.style.display = 'none';
                             areaQRCode.style.display = 'block';
                             alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
-       
-                        } [cite: 145]
+                        }
                     });
-                } else { [cite: 146]
-                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.'); [cite: 147]
-                    return; [cite: 147]
+                } else {
+                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
+                    return;
                 }
             } else {
                 QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
                     if (error) console.error(error);
                     else {
-                  
-                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`; [cite: 148]
+                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
                         telaPagamento.style.display = 'none';
                         areaQRCode.style.display = 'block';
                     }
                 });
             }
-            numeroPedido++; [cite: 149]
+            numeroPedido++;
         });
-        btnNovoPedido.addEventListener('click', () => { [cite: 150]
+
+        btnNovoPedido.addEventListener('click', () => {
             for (const p of produtos) {
                 document.getElementById(p.id).value = 0;
             }
             areaQRCode.style.display = 'none';
             resumoDiv.style.display = 'none';
             telaPagamento.style.display = 'none';
-        
-            formPedido.style.display = 'block'; [cite: 151]
+            formPedido.style.display = 'block';
+
             const radios = document.querySelectorAll('input[name="pagamento"]');
             radios.forEach(r => (r.checked = false));
         });
 
         // --- Lógica do Painel de Administração ---
+
         // Mostrar painel de admin ao clicar no botão "Administrador"
-        btnAdminArea.addEventListener('click', showAdminSection); [cite: 152]
+        btnAdminArea.addEventListener('click', showAdminSection);
+
         // Voltar para a seção de pedidos
-        backToOrderBtn.addEventListener('click', showOrderSection); [cite: 153]
+        backToOrderBtn.addEventListener('click', showOrderSection);
 
         // Lógica de Login
         loginForm.addEventListener('submit', (e) => {
@@ -869,14 +804,12 @@
             const password = document.getElementById('password').value;
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 loginScreen.style.display = 'none';
-      
-                adminPanel.style.display = 'block'; [cite: 155]
+                adminPanel.style.display = 'block';
                 loginMessage.textContent = '';
                 updateAdminPanel(); // Atualiza o painel após o login
             } else {
                 loginMessage.textContent = 'Usuário ou senha incorretos.';
-            
-            } [cite: 156]
+            }
         });
 
         // Lógica de Troca de Abas
@@ -885,329 +818,188 @@
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
                 button.classList.add('active');
-                const targetTabId = `${button.dataset.tab}-tab`;
-                document.getElementById(targetTabId).classList.add('active'); [cite: 157]
+                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
                 updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
-
-                // Lógica para iniciar/parar o QR scanner
-                if (button.dataset.tab === 'qrscanner') {
-                    startQrScanner();
-                } else {
-                    stopQrScanner(); // Para o scanner ao sair da aba QR
-                }
             });
         });
-        
+
         // Persistência de Dados (usando localStorage)
         function saveOrders() {
-            localStorage.setItem('allOrders', JSON.stringify(allOrders)); [cite: 158]
+            localStorage.setItem('allOrders', JSON.stringify(allOrders));
         }
         function saveBankInfo() {
-            localStorage.setItem('bankInfo', JSON.stringify(bankInfo)); [cite: 159]
-            updateBankInfoDisplay(); // Atualiza a exibição imediatamente [cite: 160]
+            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+            updateBankInfoDisplay(); // Atualiza a exibição imediatamente
         }
         function saveAccumulatedBalance() {
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2)); [cite: 161]
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente [cite: 161]
+            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente
         }
 
         // Função para Atualizar o Painel Administrativo
         function updateAdminPanel() {
-            updateSummary(); [cite: 162]
-            updateOrdersList(); [cite: 162]
-            updateBankInfoDisplay(); [cite: 162]
-            updateWithdrawSection(); [cite: 162]
+            updateSummary();
+            updateOrdersList();
+            updateBankInfoDisplay();
+            updateWithdrawSection();
         }
 
         // Lógica da Aba Resumo
         function updateSummary() {
-            let totalItems = 0; [cite: 163]
-            let totalSales = 0; [cite: 163]
+            let totalItems = 0;
+            let totalSales = 0;
             salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior
             if (allOrders.length === 0) {
-                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>'; [cite: 164]
+                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>';
             } else {
-                const productSales = {}; [cite: 165]
-                allOrders.forEach(order => { [cite: 165]
+                const productSales = {};
+                allOrders.forEach(order => {
                     order.items.forEach(item => {
                         if (!productSales[item.nome]) {
                             productSales[item.nome] = { quantity: 0, value: 0 };
-               
-                        } [cite: 166]
+                        }
                         productSales[item.nome].quantity += item.qtd;
                         productSales[item.nome].value += item.subtotal;
                         totalItems += item.qtd;
-             
-                        totalSales += item.subtotal; [cite: 167]
+                        totalSales += item.subtotal;
                     });
                 });
-                for (const productName in productSales) { [cite: 168]
-                    const data = productSales[productName]; [cite: 169]
-                    const p = document.createElement('p'); [cite: 169]
+                for (const productName in productSales) {
+                    const data = productSales[productName];
+                    const p = document.createElement('p');
                     p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`;
-                    salesSummaryDiv.appendChild(p); [cite: 170]
+                    salesSummaryDiv.appendChild(p);
                 }
             }
-            totalItemsSoldSpan.textContent = totalItems; [cite: 171]
-            totalSalesValueSpan.textContent = totalSales.toFixed(2); [cite: 171]
+            totalItemsSoldSpan.textContent = totalItems;
+            totalSalesValueSpan.textContent = totalSales.toFixed(2);
         }
 
         // Lógica da Aba Pedidos
         function updateOrdersList() {
-            ordersListDiv.innerHTML = ''; [cite: 172]
+            ordersListDiv.innerHTML = '';
             if (allOrders.length === 0) {
-                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>'; [cite: 173]
-                return; [cite: 173]
+                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>';
+                return;
             }
             allOrders.forEach(order => {
                 const orderDiv = document.createElement('div');
                 orderDiv.classList.add('order-item');
-
-                // Adiciona uma classe CSS baseada no status para estilização visual
-                if (order.status === 'entregue') {
-                    orderDiv.classList.add('order-delivered');
-                } else {
-                    orderDiv.classList.add('order-pending');
-                }
-
                 orderDiv.innerHTML = `
                     <h3>Pedido #${order.numeroPedido}</h3>
-           
-                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p> [cite: 174]
+                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
                     <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
-                    <p><strong>Status:</strong> <span style="font-weight: bold; color: ${order.status === 'entregue' ? '#28a745' : '#dc3545'};">${order.status ? order.status.toUpperCase() : 'PENDENTE'}</span></p>
                     <h4>Itens:</h4>
                     <ul>
-                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')} [cite: 175]
+                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
                     </ul>
                     <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p>
                     <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button>
-                    ${order.status !== 'entregue' ? `<button onclick="markOrderAsDelivered(${order.numeroPedido})" style="background-color: #007bff; margin-left: 10px;">Marcar como Entregue</button>` : ''}
                 `;
-             
-                ordersListDiv.appendChild(orderDiv); [cite: 176]
+                ordersListDiv.appendChild(orderDiv);
             });
         }
-
-        function printOrder(orderNumber) { [cite: 177]
-            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber); [cite: 178]
+        function printOrder(orderNumber) {
+            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
             if (!orderToPrint) {
-                alert('Pedido não encontrado para impressão.'); [cite: 179]
-                return; [cite: 179]
+                alert('Pedido não encontrado para impressão.');
+                return;
             }
             let printContent = `
                 <h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
                 <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
                 <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
                 <hr>
-           
-                <h3>Itens:</h3> [cite: 180]
+                <h3>Itens:</h3>
                 <ul>
                     ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
                 </ul>
                 <hr>
                 <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
-  
-                <p>Obrigado pela preferência!</p> [cite: 181]
+                <p>Obrigado pela preferência!</p>
             `;
-            const printWindow = window.open('', '', 'height=600,width=800'); [cite: 182]
+            const printWindow = window.open('', '', 'height=600,width=800');
             printWindow.document.write('<html><head><title>Nota Fiscal</title>');
             printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
             printWindow.document.write('</head><body>');
             printWindow.document.write(printContent);
             printWindow.document.write('</body></html>');
             printWindow.document.close();
-            printWindow.print(); [cite: 183]
+            printWindow.print();
         }
-
-        // Nova função para marcar pedidos manualmente como entregues
-        function markOrderAsDelivered(orderNumber) {
-            const orderIndex = allOrders.findIndex(order => order.numeroPedido === orderNumber);
-            if (orderIndex !== -1) {
-                if (allOrders[orderIndex].status !== 'entregue') {
-                    allOrders[orderIndex].status = 'entregue';
-                    saveOrders();
-                    updateOrdersList();
-                    alert(`Pedido #${orderNumber} marcado como ENTREGUE!`);
-                } else {
-                    alert(`Pedido #${orderNumber} já foi entregue.`);
-                }
-            } else {
-                alert('Pedido não encontrado.');
-            }
-        }
-
 
         // Lógica da Aba Banco
         function updateBankInfoDisplay() {
-            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado'; [cite: 184]
+            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
             displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada';
             displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada';
             displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada';
-            inputBankName.value = bankInfo.bankName || ''; [cite: 185]
+            inputBankName.value = bankInfo.bankName || '';
             inputBankAgency.value = bankInfo.bankAgency || '';
             inputBankAccount.value = bankInfo.bankAccount || '';
             inputPixKey.value = bankInfo.pixKey || '';
         }
-        saveBankInfoBtn.addEventListener('click', () => { [cite: 186]
+        saveBankInfoBtn.addEventListener('click', () => {
             bankInfo.bankName = inputBankName.value.trim();
             bankInfo.bankAgency = inputBankAgency.value.trim();
             bankInfo.bankAccount = inputBankAccount.value.trim();
             bankInfo.pixKey = inputPixKey.value.trim();
             saveBankInfo(); // Salva e atualiza a exibição
-            alert('Informações bancárias salvas com sucesso!'); [cite: 187]
+            alert('Informações bancárias salvas com sucesso!');
         });
 
         // Lógica da Aba Sacar
         function updateWithdrawSection() {
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); [cite: 188]
-            withdrawMessage.textContent = ''; // Limpa mensagens anteriores [cite: 189]
-            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2)); [cite: 190]
+            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2);
+            withdrawMessage.textContent = ''; // Limpa mensagens anteriores
+            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2));
         }
         processWithdrawBtn.addEventListener('click', () => {
             const withdrawAmount = parseFloat(withdrawAmountInput.value);
             if (!bankInfo.bankName || !bankInfo.bankAccount) {
                 withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.';
                 withdrawMessage.style.color = 'red';
-          
-                return; [cite: 191]
+                return;
             }
             if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
                 withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.';
                 withdrawMessage.style.color = 'red';
                 return;
-     
-            } [cite: 192]
+            }
             if (withdrawAmount > accumulatedBalance) {
                 withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`;
                 withdrawMessage.style.color = 'red';
                 return;
             }
-     
-            accumulatedBalance -= withdrawAmount; [cite: 193]
-            saveAccumulatedBalance(); [cite: 194] // Salva e atualiza o saldo
-            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`; [cite: 194]
-            withdrawMessage.style.color = 'green'; [cite: 195]
-            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor [cite: 195]
+            accumulatedBalance -= withdrawAmount;
+            saveAccumulatedBalance(); // Salva e atualiza o saldo
+            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`;
+            withdrawMessage.style.color = 'green';
+            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
         });
-
-        // Lógica do Leitor de QR Code
-        function startQrScanner() {
-            qrMessage.textContent = 'Iniciando câmera...';
-            startQrScannerBtn.style.display = 'none';
-            stopQrScannerBtn.style.display = 'inline-block';
-
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) // Usa a câmera traseira
-                    .then(function(stream) {
-                        videoStream = stream;
-                        qrVideo.srcObject = stream;
-                        qrVideo.setAttribute('playsinline', true); // Necessário para iOS
-                        qrVideo.play();
-                        requestAnimationFrame(tick); // Inicia o loop de varredura
-                    })
-                    .catch(function(err) {
-                        qrMessage.textContent = 'Erro ao acessar a câmera: ' + err;
-                        console.error('Erro ao acessar a câmera:', err);
-                        startQrScannerBtn.style.display = 'inline-block';
-                        stopQrScannerBtn.style.display = 'none';
-                    });
-            } else {
-                qrMessage.textContent = 'Seu navegador não suporta acesso à câmera.';
-                startQrScannerBtn.style.display = 'inline-block';
-                stopQrScannerBtn.style.display = 'none';
-            }
-        }
-
-        function stopQrScanner() {
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-                qrVideo.srcObject = null;
-                videoStream = null;
-            }
-            if (scanningInterval) {
-                clearInterval(scanningInterval);
-                scanningInterval = null;
-            }
-            qrMessage.textContent = 'Leitor parado.';
-            startQrScannerBtn.style.display = 'inline-block';
-            stopQrScannerBtn.style.display = 'none';
-        }
-
-        function tick() {
-            if (qrVideo.readyState === qrVideo.HAVE_ENOUGH_DATA) {
-                qrCanvasHidden.height = qrVideo.videoHeight;
-                qrCanvasHidden.width = qrVideo.videoWidth;
-                qrCanvasContext.drawImage(qrVideo, 0, 0, qrCanvasHidden.width, qrCanvasHidden.height);
-                const imageData = qrCanvasContext.getImageData(0, 0, qrCanvasHidden.width, qrCanvasHidden.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-
-                if (code) {
-                    console.log("QR Code detectado:", code.data);
-                    try {
-                        const qrData = JSON.parse(code.data);
-                        if (qrData.numeroPedido) {
-                            processQrCode(qrData.numeroPedido);
-                            stopQrScanner(); // Para o scanner após um QR válido ser lido
-                            return;
-                        }
-                    } catch (e) {
-                        console.warn("QR Code não é um JSON de pedido, tentando como string simples:", code.data);
-                        qrMessage.textContent = 'QR Code inválido ou não reconhecido como pedido.';
-                        qrMessage.style.color = 'orange';
-                    }
-                }
-            }
-            requestAnimationFrame(tick);
-        }
-
-        function processQrCode(orderNumber) {
-            const orderIndex = allOrders.findIndex(order => order.numeroPedido === orderNumber);
-
-            if (orderIndex !== -1) {
-                const order = allOrders[orderIndex];
-                if (order.status === 'entregue') {
-                    qrMessage.textContent = `Pedido #${orderNumber} já foi entregue.`;
-                    qrMessage.style.color = 'orange';
-                } else {
-                    order.status = 'entregue'; // Atualiza o status
-                    saveOrders(); // Salva as ordens atualizadas
-                    updateOrdersList(); // Atualiza a lista de pedidos na aba "Pedidos"
-                    qrMessage.textContent = `Pedido #${orderNumber} marcado como ENTREGUE!`;
-                    qrMessage.style.color = 'green';
-                }
-            } else {
-                qrMessage.textContent = `Pedido #${orderNumber} não encontrado.`;
-                qrMessage.style.color = 'red';
-            }
-        }
-
 
         // --- Carregamento Inicial e Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
             // Inicializa os event listeners para os botões de quantidade aqui
-            btnQtds = document.querySelectorAll('.btnQtd'); // Garante que btnQtds seja definido [cite: 196]
+            btnQtds = document.querySelectorAll('.btnQtd'); // Garante que btnQtds seja definido
             btnQtds.forEach(btn => {
                 btn.addEventListener('click', () => {
-       
-                    const inputId = btn.dataset.target; [cite: 197]
+                    const inputId = btn.dataset.target;
                     const input = document.getElementById(inputId);
                     let val = parseInt(input.value) || 0;
                     if (btn.textContent === '+') {
-            
-                        val++; [cite: 198]
+                        val++;
                     } else {
                         val = val > 0 ? val - 1 : 0;
                     }
-            
-                    input.value = val; [cite: 199]
+                    input.value = val;
                 });
             });
-            showOrderSection(); // Mostra a seção de pedidos por padrão [cite: 199]
-            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página [cite: 199]
+
+            showOrderSection(); // Mostra a seção de pedidos por padrão
+            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página
         });
     </script>
+
 </body>
 </html>
