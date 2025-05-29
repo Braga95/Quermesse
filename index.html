@@ -531,6 +531,9 @@
                 <button class="tab-button" data-tab="orders">Pedidos</button>
                 <button class="tab-button" data-tab="bank">Banco</button>
                 <button class="tab-button" data-tab="withdraw">Sacar</button>
+<button class="tab-button" data-tab="scanner">QRCODE</button>
+
+                
             </div>
             <div id="summary-tab" class="tab-content active admin-section-inner">
                 <h2>Resumo das Vendas</h2>
@@ -541,6 +544,8 @@
                 <p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
             </div>
             <div id="orders-tab" class="tab-content admin-section-inner">
+
+                
                 <h2>Pedidos</h2>
                 <div id="orders-list">
                     <p>Nenhum pedido registrado ainda.</p>
@@ -574,6 +579,14 @@
             <button id="backToOrder">Voltar aos Pedidos</button>
         </div>
     </div>
+
+
+    <div id="scanner-tab" class="tab-content admin-section-inner">
+  <h2>Escanear QR Code do Pedido</h2>
+  <div id="camera" style="width: 100%; max-width: 400px;"></div>
+  <p id="scan-result" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script>
@@ -1011,6 +1024,64 @@
             updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página
         });
     </script>
+
+
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+let html5QrCode;
+
+function iniciarScanner() {
+  const scannerDiv = document.getElementById("camera");
+  document.getElementById("scan-result").textContent = "";
+
+  if (html5QrCode) {
+    html5QrCode.stop().then(() => {
+      scannerDiv.innerHTML = "";
+      start();
+    });
+  } else {
+    start();
+  }
+
+  function start() {
+    html5QrCode = new Html5Qrcode("camera");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      qrCodeMessage => {
+        try {
+          const data = JSON.parse(qrCodeMessage);
+          const pedido = allOrders.find(p => p.numeroPedido == data.numeroPedido);
+
+          if (pedido && !pedido.entregue) {
+            pedido.entregue = true;
+            saveOrders();
+            document.getElementById("scan-result").textContent = `✅ Pedido #${pedido.numeroPedido} marcado como ENTREGUE.`;
+          } else if (pedido && pedido.entregue) {
+            document.getElementById("scan-result").textContent = `⚠️ Pedido #${pedido.numeroPedido} já foi entregue.`;
+          } else {
+            document.getElementById("scan-result").textContent = "❌ Pedido não encontrado.";
+          }
+
+          html5QrCode.stop().then(() => scannerDiv.innerHTML = "");
+        } catch (e) {
+          document.getElementById("scan-result").textContent = "QR inválido.";
+        }
+      },
+      err => {}
+    );
+  }
+}
+
+// Quando clicar na aba "QRCODE", iniciar o scanner
+document.querySelectorAll('.tab-button').forEach(button => {
+  button.addEventListener('click', () => {
+    if (button.dataset.tab === 'scanner') iniciarScanner();
+  });
+});
+</script>
+
 
 </body>
 </html>
