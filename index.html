@@ -3,6 +3,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJaxoo8XTmb02jLqGAsL9wRfpCq8cpXJQ",
+    authDomain: "banco0-eeda3.firebaseapp.com",
+    projectId: "banco0-eeda3",
+    storageBucket: "banco0-eeda3.firebasestorage.app",
+    messagingSenderId: "1048527206329",
+    appId: "1:1048527206329:web:12b730b48feeeb7bb2a868",
+    measurementId: "G-8L4L1KGD7N"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+    
+    
     <title>Quermesse - Nossa Senhora da Boa Esperança</title>
     <link rel="icon" href="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true" type="image/png">
     <style>
@@ -1106,31 +1128,6 @@ document.querySelectorAll('.tab-button').forEach(button => {
   });
 });
 </script>
-
-
-
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJaxoo8XTmb02jLqGAsL9wRfpCq8cpXJQ",
-    authDomain: "banco0-eeda3.firebaseapp.com",
-    projectId: "banco0-eeda3",
-    storageBucket: "banco0-eeda3.firebasestorage.app",
-    messagingSenderId: "1048527206329",
-    appId: "1:1048527206329:web:12b730b48feeeb7bb2a868",
-    measurementId: "G-8L4L1KGD7N"
-  };
-
-  // Inicializar Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
-
-
 
 
 
