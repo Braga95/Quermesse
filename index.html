@@ -652,7 +652,23 @@
         const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
         if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
 
-        let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+        let allOrders = [];
+
+function carregarPedidosDoFirebase() {
+  db.ref('pedidos').once('value').then(snapshot => {
+    const data = snapshot.val();
+    if (data) {
+      allOrders = Object.values(data);
+    } else {
+      allOrders = [];
+    }
+    updateAdminPanel(); // atualiza o painel com os dados carregados
+  });
+}
+
+
+
+
         let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
         let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
 
@@ -750,24 +766,31 @@
                 }
             }
 
-            localStorage.setItem('ultimoNumeroPedido', numeroPedido);
-            const orderData = {
-                numeroPedido: numeroPedido,
-                metodoPagamento: metodo,
-                data: new Date().toISOString(),
-                items: currentItemsSelected,
-                total: currentTotal
-            };
-            allOrders.push(orderData);
-            localStorage.setItem('allOrders', JSON.stringify(allOrders));
 
-            accumulatedBalance += currentTotal;
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
 
-            const qrString = JSON.stringify({
-                numeroPedido: numeroPedido,
-                metodoPagamento: metodo,
-                valor: currentTotal.toFixed(2)
+
+
+            
+          const orderData = {
+  numeroPedido: numeroPedido,
+  metodoPagamento: metodo,
+  data: new Date().toISOString(),
+  items: currentItemsSelected,
+  total: currentTotal,
+  entregue: false
+};
+
+// Salva no Firebase
+db.ref('pedidos/' + numeroPedido).set(orderData);
+
+// Salva localmente para manter a lógica funcionando (opcional)
+allOrders.push(orderData);
+
+accumulatedBalance += currentTotal;
+db.ref('saldo').set(accumulatedBalance); // salva saldo atualizado no Firebase
+
+
+                
             });
 
             if (metodo === 'pix') {
@@ -1003,9 +1026,11 @@
         });
 
         // --- Carregamento Inicial e Event Listeners ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Inicializa os event listeners para os botões de quantidade aqui
-            btnQtds = document.querySelectorAll('.btnQtd'); // Garante que btnQtds seja definido
+       document.addEventListener('DOMContentLoaded', () => {
+  carregarPedidosDoFirebase(); // <-- adiciona essa linha aqui
+
+  // Inicializa os botões de quantidade
+  btnQtds = document.querySelectorAll('.btnQtd');
             btnQtds.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const inputId = btn.dataset.target;
@@ -1081,6 +1106,32 @@ document.querySelectorAll('.tab-button').forEach(button => {
   });
 });
 </script>
+
+
+// BANCO FIREBASE
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJaxoo8XTmb02jLqGAsL9wRfpCq8cpXJQ",
+    authDomain: "banco0-eeda3.firebaseapp.com",
+    projectId: "banco0-eeda3",
+    storageBucket: "banco0-eeda3.firebasestorage.app",
+    messagingSenderId: "1048527206329",
+    appId: "1:1048527206329:web:12b730b48feeeb7bb2a868",
+    measurementId: "G-8L4L1KGD7N"
+  };
+
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+
+
 
 
 </body>
