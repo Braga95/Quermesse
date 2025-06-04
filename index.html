@@ -750,8 +750,7 @@ else {
 numeroPedidoDisplay.textContent = `Nmero do pedido: ${numeroPedido}`;
 telaPagamento.style.display = 'none';
 areaQRCode.style.display = 'block';
-alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$
-${currentTotal.toFixed(2)}`);
+alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
 }
 });
 } else {
@@ -990,8 +989,7 @@ withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2));
 processWithdrawBtn.addEventListener('click', () => {
 const withdrawAmount = parseFloat(withdrawAmountInput.value);
 if (!bankInfo.bankName || !bankInfo.bankAccount) {
-withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informaes bancrias na aba "Banco" antes de
-sacar.';
+withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informaes bancárias na aba "Banco" antes de sacar.';
 withdrawMessage.style.color = 'red';
 return;
 }
@@ -1001,8 +999,7 @@ withdrawMessage.style.color = 'red';
 return;
 }
 if (withdrawAmount > accumulatedBalance) {
-withdrawMessage.textContent = `Voc no tem saldo suficiente. Saldo disponvel: R$
-${accumulatedBalance.toFixed(2)}`;
+withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`;
 withdrawMessage.style.color = 'red';
 return;
 }
@@ -1062,8 +1059,7 @@ const pedido = allOrders.find(p => p.numeroPedido == numeroPedido);
 if (pedido && !pedido.entregue) {
 pedido.entregue = true;
 saveOrders();
-document.getElementById("scan-result").textContent = ` Pedido #${pedido.numeroPedido} marcado como
-ENTREGUE.`;
+document.getElementById("scan-result").textContent = `Pedido #${pedido.numeroPedido} marcado como ENTREGUE.`;
 } else if (pedido && pedido.entregue) {
 document.getElementById("scan-result").textContent = ` Pedido #${pedido.numeroPedido} j foi entregue.`;
 } else {
