@@ -1014,7 +1014,7 @@ withdrawMessage.style.color = 'green';
 withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
 });
 // --- Carregamento Inicial e Event Listeners ---
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
 carregarPedidosDoFirebase(); // <-- adiciona essa linha aqui
 // Inicializa os botes de quantidade
 btnQtds = document.querySelectorAll('.btnQtd');
