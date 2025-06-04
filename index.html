@@ -541,7 +541,7 @@
 
 
 
-<button id="backToOrder">Voltar</button>
+<button id="backToOrderLogin">Voltar</button>
 
                 
             </form>
@@ -871,7 +871,8 @@ function carregarPedidosDoFirebase() {
         btnAdminArea.addEventListener('click', showAdminSection);
 
         // Voltar para a seção de pedidos
-        backToOrderBtn.addEventListener('click', showOrderSection);
+        document.getElementById('backToOrderLogin').addEventListener('click', showOrderSection);
+
 
         // Lógica de Login
         loginForm.addEventListener('submit', (e) => {
