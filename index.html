@@ -330,7 +330,6 @@ font-weight: bold;
 .order-item {
 border: 1px solid #e0e0e0;
 padding: 15px;
-
 margin-bottom: 15px;
 border-radius: 8px;
 background-color: #fcfcfc;
@@ -898,7 +897,6 @@ function printOrder(orderNumber) {
 const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
 if (!orderToPrint) {
 alert('Pedido no encontrado para impresso.');
-
 return;
 }
 let printContent = `
