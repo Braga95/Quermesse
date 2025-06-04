@@ -447,6 +447,52 @@
     </style>
 </head>
 <body>
+
+
+
+
+    
+
+
+function carregarProdutosParaCliente() {
+  db.ref('produtos').once('value').then(snapshot => {
+    const produtos = snapshot.val() || {};
+    const container = document.getElementById('produtosContainer');
+    container.innerHTML = '';
+
+    for (const id in produtos) {
+      const produto = produtos[id];
+
+      const itemHTML = `
+        <div>
+          <label>${produto.nome} - R$ ${parseFloat(produto.preco).toFixed(2)}</label>
+          <div class="quantidade">
+            <button class="btnQtd" data-target="${id}">-</button>
+            <input type="number" id="${id}" value="0" min="0" readonly>
+            <button class="btnQtd" data-target="${id}">+</button>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', itemHTML);
+    }
+
+    // Ativa os botões + e -
+    ativarBotoesQuantidade();
+  });
+}
+
+
+
+
+
+    
+
+
+
+
+
+
+    
   
 
     <button id="btnAdminArea">Administrador</button>
@@ -1125,7 +1171,39 @@ function excluirProduto(id) {
 
         // --- Carregamento Inicial e Event Listeners ---
        document.addEventListener('DOMContentLoaded', () => {
-  carregarPedidosDoFirebase(); // <-- adiciona essa linha aqui
+  cadastrarProdutosFixos();          // 👈 adiciona essa linha
+  carregarPedidosDoFirebase();
+  carregarSaldoDoFirebase();
+  carregarProdutosParaCliente();
+  ativarBotoesQuantidade();
+  updateWithdrawSection();
+});
+
+
+
+           function cadastrarProdutosFixos() {
+  const produtosFixos = [
+    { nome: "Espeto de Frango", preco: 6.00 },
+    { nome: "Espeto de Carne", preco: 7.00 },
+    { nome: "Suco", preco: 3.00 },
+    { nome: "Água", preco: 2.00 }
+  ];
+
+  db.ref('produtos').once('value').then(snapshot => {
+    const existentes = snapshot.val() || {};
+    const nomesExistentes = Object.values(existentes).map(p => p.nome);
+
+    produtosFixos.forEach(produto => {
+      if (!nomesExistentes.includes(produto.nome)) {
+        db.ref('produtos').push(produto);
+      }
+    });
+  });
+}
+
+
+
+           
 
   // Inicializa os botões de quantidade
   btnQtds = document.querySelectorAll('.btnQtd');
