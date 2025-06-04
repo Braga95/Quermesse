@@ -841,56 +841,13 @@ function carregarPedidosDoFirebase() {
 
 
             
-          const orderData = {
-  numeroPedido: numeroPedido,
-  metodoPagamento: metodo,
-  data: new Date().toISOString(),
-  items: currentItemsSelected,
-  total: currentTotal,
-  entregue: false
-};
-
-// Salva no Firebase
-db.ref('pedidos/' + numeroPedido).set(orderData);
-
-// Salva localmente para manter a lógica funcionando (opcional)
-allOrders.push(orderData);
-
-accumulatedBalance += currentTotal;
-db.ref('saldo').set(accumulatedBalance); // salva saldo atualizado no Firebase
+        
 
 
                 
             });
 
-            if (metodo === 'pix') {
-                const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {};
-                if (bankInfoStored.pixKey) {
-                    const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
-                    QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
-                        if (error) console.error(error);
-                        else {
-                            numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                            telaPagamento.style.display = 'none';
-                            areaQRCode.style.display = 'block';
-                            alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
-                        }
-                    });
-                } else {
-                    alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
-                    return;
-                }
-            } else {
-                QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
-                    if (error) console.error(error);
-                    else {
-                        numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                        telaPagamento.style.display = 'none';
-                        areaQRCode.style.display = 'block';
-                    }
-                });
-            }
-            numeroPedido++;
+            
         });
 
         btnNovoPedido.addEventListener('click', () => {
