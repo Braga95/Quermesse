@@ -615,7 +615,7 @@
                     <p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
                 </div>
             </div>
-            <button id="backToOrderLogin">Voltar aos Pedidos</button>
+            <button id="backToOrderAdmin">Voltar aos Pedidos</button>
         </div>
     </div>
 
@@ -872,6 +872,10 @@ function carregarPedidosDoFirebase() {
 
         // Voltar para a seção de pedidos
         document.getElementById('backToOrderLogin').addEventListener('click', showOrderSection);
+
+
+ // Voltar para a seção de pedidos
+        document.getElementById('backToOrderAdmin').addEventListener('click', showOrderSection);
 
 
         // Lógica de Login
