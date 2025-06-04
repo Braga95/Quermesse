@@ -541,7 +541,7 @@
 
 
 
-<button id="backToOrder">Voltar2</button>
+<button id="backToOrder">Voltar</button>
 
                 
             </form>
@@ -549,6 +549,7 @@
         </div>
         <div id="admin-panel" style="display: none;">
             <div class="tabs">
+                <button class="tab-button" data-tab="produtos">Produtos</button>
                 <button class="tab-button active" data-tab="summary">Resumo</button>
                 <button class="tab-button" data-tab="orders">Pedidos</button>
                 <button class="tab-button" data-tab="bank">Banco</button>
@@ -557,6 +558,22 @@
 
                 
             </div>
+
+<div id="produtos-tab" class="tab-content admin-section-inner">
+  <h2>Gerenciar Produtos</h2>
+  
+  <input type="text" id="novoProdutoNome" placeholder="Nome do Produto">
+  <input type="number" id="novoProdutoPreco" placeholder="Preço (ex: 5.00)" step="0.01">
+  <button id="btnAdicionarProduto">Adicionar Produto</button>
+
+  <h3>Produtos Cadastrados</h3>
+  <ul id="listaProdutos"></ul>
+</div>
+
+
+
+
+            
             <div id="summary-tab" class="tab-content active admin-section-inner">
                 <h2>Resumo das Vendas</h2>
                 <div id="sales-summary">
@@ -861,11 +878,14 @@ function carregarPedidosDoFirebase() {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                loginScreen.style.display = 'none';
-                adminPanel.style.display = 'block';
-                loginMessage.textContent = '';
-                updateAdminPanel(); // Atualiza o painel após o login
+           if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+  localStorage.setItem('isAdmin', 'true'); // 👈 ADICIONA ESSA LINHA
+  loginScreen.style.display = 'none';
+  adminPanel.style.display = 'block';
+  loginMessage.textContent = '';
+  updateAdminPanel(); // Atualiza o painel após o login
+}
+
             } else {
                 loginMessage.textContent = 'Usuário ou senha incorretos.';
             }
@@ -881,6 +901,12 @@ function carregarPedidosDoFirebase() {
                 updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
             });
         });
+
+
+
+    if (button.dataset.tab === 'produtos') {
+      carregarProdutos();
+    }
 
         // Persistência de Dados (usando localStorage)
         function saveOrders() {
@@ -987,6 +1013,58 @@ function carregarPedidosDoFirebase() {
             printWindow.print();
         }
 
+
+const listaProdutosUL = document.getElementById('listaProdutos');
+const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
+const inputProdutoNome = document.getElementById('novoProdutoNome');
+const inputProdutoPreco = document.getElementById('novoProdutoPreco');
+
+// Carrega os produtos cadastrados
+function carregarProdutos() {
+  db.ref('produtos').once('value').then(snapshot => {
+    const produtos = snapshot.val() || {};
+    listaProdutosUL.innerHTML = '';
+
+    for (const id in produtos) {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${produtos[id].nome} - R$ ${parseFloat(produtos[id].preco).toFixed(2)}
+        <button onclick="excluirProduto('${id}')">Excluir</button>
+      `;
+      listaProdutosUL.appendChild(li);
+    }
+  });
+}
+
+// Adiciona novo produto
+btnAdicionarProduto.addEventListener('click', () => {
+  const nome = inputProdutoNome.value.trim();
+  const preco = parseFloat(inputProdutoPreco.value);
+
+  if (!nome || isNaN(preco)) {
+    alert('Preencha corretamente nome e preço.');
+    return;
+  }
+
+  const novoRef = db.ref('produtos').push();
+  novoRef.set({ nome, preco }).then(() => {
+    inputProdutoNome.value = '';
+    inputProdutoPreco.value = '';
+    carregarProdutos();
+  });
+});
+
+// Exclui produto
+function excluirProduto(id) {
+  if (confirm('Deseja excluir este produto?')) {
+    db.ref('produtos/' + id).remove().then(carregarProdutos);
+  }
+}
+
+
+
+        
+
         // Lógica da Aba Banco
         function updateBankInfoDisplay() {
             displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
@@ -1088,8 +1166,21 @@ function iniciarScanner() {
       { fps: 10, qrbox: 250 },
       qrCodeMessage => {
         try {
-          const data = JSON.parse(qrCodeMessage);
-          const pedido = allOrders.find(p => p.numeroPedido == data.numeroPedido);
+          const partes = qrCodeMessage.split('|');
+const numeroPedido = partes[3]; // o número do pedido está na 4ª posição
+
+const pedido = allOrders.find(p => p.numeroPedido == numeroPedido);
+
+if (pedido && !pedido.entregue) {
+  pedido.entregue = true;
+  db.ref('pedidos/' + pedido.numeroPedido).update({ entregue: true });
+  document.getElementById("scan-result").textContent = `✅ Pedido #${pedido.numeroPedido} marcado como ENTREGUE.`;
+} else if (pedido && pedido.entregue) {
+  document.getElementById("scan-result").textContent = `⚠️ Pedido #${pedido.numeroPedido} já foi entregue.`;
+} else {
+  document.getElementById("scan-result").textContent = "❌ Pedido não encontrado.";
+}
+
 
           if (pedido && !pedido.entregue) {
             pedido.entregue = true;
@@ -1118,7 +1209,6 @@ document.querySelectorAll('.tab-button').forEach(button => {
   });
 });
 </script>
-
 
 
 </body>
