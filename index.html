@@ -1,1293 +1,1091 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJaxoo8XTmb02jLqGAsL9wRfpCq8cpXJQ",
-    authDomain: "banco0-eeda3.firebaseapp.com",
-    projectId: "banco0-eeda3",
-    storageBucket: "banco0-eeda3.firebasestorage.app",
-    messagingSenderId: "1048527206329",
-    appId: "1:1048527206329:web:12b730b48feeeb7bb2a868",
-    measurementId: "G-8L4L1KGD7N"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+const firebaseConfig = {
+apiKey: "AIzaSyBJaxoo8XTmb02jLqGAsL9wRfpCq8cpXJQ",
+authDomain: "banco0-eeda3.firebaseapp.com",
+projectId: "banco0-eeda3",
+storageBucket: "banco0-eeda3.firebasestorage.app",
+messagingSenderId: "1048527206329",
+appId: "1:1048527206329:web:12b730b48feeeb7bb2a868",
+measurementId: "G-8L4L1KGD7N"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 </script>
-    
-    
-    <title>Quermesse - Nossa Senhora da Boa Esperança</title>
-    <link rel="icon" href="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true" type="image/png">
-    <style>
-
-
-
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 850px; /* Largura ajustada para acomodar ambos os layouts */
-            margin: 20px auto;
-            padding: 25px;
-            background: #f7f7f7;
-            color: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 12px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            color: #d63333;
-            font-size: 2.8em;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-            margin-top: 0;
-        }
-
-        /* Estilos da Página de Pedido */
-        #order-section {
-            display: block; /* Visível por padrão ao carregar */
-        }
-        .produto {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .produto:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-        .produto label {
-            flex: 1;
-            font-size: 1.1em;
-            color: #555;
-        }
-        .qtd-container {
-            display: flex;
-            align-items: center;
-        }
-        .qtd-container button {
-            width: 32px;
-            height: 32px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid #d63333;
-            background: #ffe0e0;
-            color: #d63333;
-            border-radius: 50%;
-            margin: 0 8px;
-            user-select: none;
-            transition: background 0.2s;
-        }
-        .qtd-container button:hover {
-            background: #d63333;
-            color: white;
-        }
-        .qtd-container input[type=number] {
-            width: 50px;
-            text-align: center;
-            border: 1px solid #d63333;
-            border-radius: 6px;
-            font-size: 18px;
-            padding: 6px 0;
-            -moz-appearance: textfield;
-        }
-        .qtd-container input[type=number]::-webkit-outer-spin-button,
-        .qtd-container input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        button#btnGerarPagamento {
-            display: block;
-            margin: 30px auto 0;
-            background: #d63333;
-            color: white;
-            font-size: 20px;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        button#btnGerarPagamento:hover {
-            background: #b52b2b;
-            transform: translateY(-2px);
-        }
-        #resumoPedido, #telaPagamento, #areaQRCode {
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        #resumoPedido h2, #telaPagamento h2, #areaQRCode h2 {
-            color: #d63333;
-            margin-bottom: 20px;
-        }
-        #resumoPedido p {
-            margin: 8px 0;
-            font-size: 1.1em;
-        }
-        #resumoPedido strong {
-            font-size: 20px;
-            color: #333;
-        }
-        #resumoPedido #itensResumo {
-            margin-bottom: 15px;
-        }
-        #btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
-        #btnVoltarInicioResumo, #btnVoltarResumo {
-            background: #d63333;
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            font-size: 17px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        #btnAvancarPagamento:hover,
-        #btnGerarQRCode:hover,
-        #btnNovoPedido:hover,
-        #btnVoltarInicioResumo:hover,
-        #btnVoltarResumo:hover {
-            background: #b52b2b;
-            transform: translateY(-2px);
-        }
-        #telaPagamento label {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 1.1em;
-            cursor: pointer;
-            text-align: left;
-            padding-left: 50px;
-        }
-        #telaPagamento input[type="radio"] {
-            margin-right: 8px;
-            transform: scale(1.2);
-            vertical-align: middle;
-        }
-        #qrCanvas {
-            display: block;
-            margin: 25px auto;
-            border: 1px solid #eee;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-        #numeroPedidoDisplay {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin-top: 15px;
-            color: #d63333;
-        }
-
-
-/* Botão PagFesta */
+<title>Quermesse - Nossa Senhora da Boa Esperana</title>
+<link rel="icon" href="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
+type="image/png">
+<style>
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+max-width: 850px; /* Largura ajustada para acomodar ambos os layouts */
+margin: 20px auto;
+padding: 25px;
+background: #f7f7f7;
+color: #333;
+box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+border-radius: 12px;
+}
+.header {
+text-align: center;
+margin-bottom: 30px;
+}
+.header h1 {
+color: #d63333;
+font-size: 2.8em;
+margin-bottom: 5px;
+letter-spacing: 1px;
+}
+.header p {
+color: #666;
+font-size: 1.1em;
+margin-top: 0;
+}
+/* Estilos da Pgina de Pedido */
+#order-section {
+display: block; /* Visvel por padro ao carregar */
+}
+.produto {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 15px;
+padding: 12px 15px;
+border: 1px solid #e0e0e0;
+border-radius: 8px;
+background: white;
+transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.produto:hover {
+transform: translateY(-3px);
+box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.produto label {
+flex: 1;
+font-size: 1.1em;
+color: #555;
+}
+.qtd-container {
+display: flex;
+align-items: center;
+}
+.qtd-container button {
+width: 32px;
+height: 32px;
+font-size: 20px;
+font-weight: bold;
+cursor: pointer;
+border: 1px solid #d63333;
+background: #ffe0e0;
+color: #d63333;
+border-radius: 50%;
+margin: 0 8px;
+user-select: none;
+transition: background 0.2s;
+}
+.qtd-container button:hover {
+background: #d63333;
+color: white;
+}
+.qtd-container input[type=number] {
+width: 50px;
+text-align: center;
+border: 1px solid #d63333;
+border-radius: 6px;
+font-size: 18px;
+padding: 6px 0;
+-moz-appearance: textfield;
+}
+.qtd-container input[type=number]::-webkit-outer-spin-button,
+.qtd-container input[type=number]::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+button#btnGerarPagamento {
+display: block;
+margin: 30px auto 0;
+background: #d63333;
+color: white;
+font-size: 20px;
+padding: 12px 30px;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+button#btnGerarPagamento:hover {
+background: #b52b2b;
+transform: translateY(-2px);
+}
+#resumoPedido, #telaPagamento, #areaQRCode {
+margin-top: 30px;
+padding: 20px;
+background: white;
+border-radius: 8px;
+border: 1px solid #e0e0e0;
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+text-align: center;
+}
+#resumoPedido h2, #telaPagamento h2, #areaQRCode h2 {
+color: #d63333;
+margin-bottom: 20px;
+}
+#resumoPedido p {
+margin: 8px 0;
+font-size: 1.1em;
+}
+#resumoPedido strong {
+font-size: 20px;
+color: #333;
+}
+#resumoPedido #itensResumo {
+margin-bottom: 15px;
+}
+#btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
+#btnVoltarInicioResumo, #btnVoltarResumo {
+background: #d63333;
+color: white;
+border: none;
+padding: 10px 22px;
+font-size: 17px;
+border-radius: 8px;
+cursor: pointer;
+margin-top: 20px;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+#btnAvancarPagamento:hover,
+#btnGerarQRCode:hover,
+#btnNovoPedido:hover,
+#btnVoltarInicioResumo:hover,
+#btnVoltarResumo:hover {
+background: #b52b2b;
+transform: translateY(-2px);
+}
+#telaPagamento label {
+display: block;
+margin-bottom: 12px;
+font-size: 1.1em;
+cursor: pointer;
+text-align: left;
+padding-left: 50px;
+}
+#telaPagamento input[type="radio"] {
+margin-right: 8px;
+transform: scale(1.2);
+vertical-align: middle;
+}
+#qrCanvas {
+display: block;
+margin: 25px auto;
+border: 1px solid #eee;
+box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+border-radius: 8px;
+}
+#numeroPedidoDisplay {
+text-align: center;
+font-size: 22px;
+font-weight: bold;
+margin-top: 15px;
+color: #d63333;
+}
+/* Boto PagFesta */
 #btnPagFesta {
-    position: fixed;
-    top: 20px;
-    right: 160px; /* afasta do botão Administrador */
-    font-weight: bold;
-    background: #2a9d8f;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 15px;
-    z-index: 10;
-    cursor: pointer;
-    border: none;
-    transition: background 0.3s ease, transform 0.2s ease;
+position: fixed;
+top: 20px;
+right: 160px; /* afasta do boto Administrador */
+font-weight: bold;
+background: #2a9d8f;
+color: white;
+padding: 8px 15px;
+border-radius: 8px;
+text-decoration: none;
+font-size: 15px;
+z-index: 10;
+cursor: pointer;
+border: none;
+transition: background 0.3s ease, transform 0.2s ease;
 }
 #btnPagFesta:hover {
-    background: #21867a;
-    transform: translateY(-2px);
+background: #21867a;
+transform: translateY(-2px);
 }
+/* Boto Administrador */
+#btnAdminArea {
+position: fixed;
+top: 20px;
+right: 20px;
+font-weight: bold;
+background: #5c677d;
+color: white;
+padding: 8px 15px;
+border-radius: 8px;
+text-decoration: none;
+font-size: 15px;
+z-index: 10;
+cursor: pointer;
+border: none;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+#btnAdminArea:hover {
+background: #4a5264;
+transform: translateY(-2px);
+}
+/* Estilos do Painel de Administrao */
+#admin-section {
+display: none; /* Oculto por padro */
+background: white;
+padding: 25px;
+border-radius: 10px;
+border: 1px solid #e0e0e0;
+margin-bottom: 25px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+text-align: center;
+}
+#login-form {
+text-align: center;
+padding: 20px;
+}
+#login-form input {
+padding: 12px;
+margin: 8px auto;
+width: 80%;
+max-width: 300px;
+border: 1px solid #ccc;
+border-radius: 6px;
+display: block;
+}
+#login-form button {
+background: #d63333;
+color: white;
+padding: 12px 25px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 18px;
+margin-top: 15px;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+#login-form button:hover {
+background: #b52b2b;
+transform: translateY(-2px);
+}
+.tabs {
+display: flex;
+justify-content: center;
+margin-bottom: 25px;
+border-bottom: 2px solid #ddd;
+}
+.tabs button {
+background: #eee;
+border: none;
+padding: 12px 20px;
+cursor: pointer;
+font-size: 17px;
+border-top-left-radius: 8px;
+border-top-right-radius: 8px;
+margin: 0 3px;
+transition: background 0.3s ease, color 0.3s ease;
+font-weight: bold;
+color: #666;
+}
+.tabs button.active {
+background: #d63333;
+color: white;
+border-bottom: 2px solid #d63333;
+}
+.tabs button:hover:not(.active) {
+background: #e5e5e5;
+}
+.tab-content {
+display: none;
+text-align: left;
+padding: 15px 0;
+}
+.tab-content.active {
+display: block;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 15px;
+background-color: #fff;
+}
+th, td {
+border: 1px solid #eee;
+padding: 10px;
+text-align: left;
+}
+th {
+background-color: #f2f2f2;
+color: #555;
+font-weight: bold;
+}
+.order-item {
+border: 1px solid #e0e0e0;
+padding: 15px;
 
-
-
-        
-        /* Botão Administrador */
-        #btnAdminArea {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-weight: bold;
-            background: #5c677d;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 15px;
-            z-index: 10;
-            cursor: pointer;
-            border: none;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        #btnAdminArea:hover {
-            background: #4a5264;
-            transform: translateY(-2px);
-        }
-
-        /* Estilos do Painel de Administração */
-        #admin-section {
-            display: none; /* Oculto por padrão */
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        #login-form {
-            text-align: center;
-            padding: 20px;
-        }
-        #login-form input {
-            padding: 12px;
-            margin: 8px auto;
-            width: 80%;
-            max-width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            display: block;
-        }
-        #login-form button {
-            background: #d63333;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            margin-top: 15px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        #login-form button:hover {
-            background: #b52b2b;
-            transform: translateY(-2px);
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #ddd;
-        }
-        .tabs button {
-            background: #eee;
-            border: none;
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 17px;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            margin: 0 3px;
-            transition: background 0.3s ease, color 0.3s ease;
-            font-weight: bold;
-            color: #666;
-        }
-        .tabs button.active {
-            background: #d63333;
-            color: white;
-            border-bottom: 2px solid #d63333;
-        }
-        .tabs button:hover:not(.active) {
-            background: #e5e5e5;
-        }
-        .tab-content {
-            display: none;
-            text-align: left;
-            padding: 15px 0;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background-color: #fff;
-        }
-        th, td {
-            border: 1px solid #eee;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #555;
-            font-weight: bold;
-        }
-        .order-item {
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background-color: #fcfcfc;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
-        }
-        .order-item h3 {
-            margin-top: 0;
-            color: #d63333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-        .order-item ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .order-item ul li {
-            padding: 5px 0;
-            border-bottom: 1px dotted #f0f0f0;
-        }
-        .order-item ul li:last-child {
-            border-bottom: none;
-        }
-        .order-item button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 9px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        .order-item button:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-        }
-        .bank-info p, .withdraw-info p {
-            margin-bottom: 12px;
-            font-size: 1.1em;
-        }
-        .bank-info input[type="text"],
-        .bank-info input[type="number"] {
-            width: calc(100% - 20px);
-            max-width: 400px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .bank-info button, .withdraw-info button {
-            background: #d63333;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            margin-top: 15px;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        .bank-info button:hover, .withdraw-info button:hover {
-            background: #b52b2b;
-            transform: translateY(-2px);
-        }
-        #withdrawAmount {
-            width: 150px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-right: 15px;
-            font-size: 1em;
-            text-align: center;
-        }
-        #backToOrder {
-            display: block;
-            margin: 30px auto 0;
-            background: #6c757d;
-            color: white;
-            font-size: 18px;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            width: fit-content;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-        #backToOrder:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-    </style>
+margin-bottom: 15px;
+border-radius: 8px;
+background-color: #fcfcfc;
+box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+.order-item h3 {
+margin-top: 0;
+color: #d63333;
+border-bottom: 1px solid #eee;
+padding-bottom: 10px;
+margin-bottom: 10px;
+}
+.order-item ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+.order-item ul li {
+padding: 5px 0;
+border-bottom: 1px dotted #f0f0f0;
+}
+.order-item ul li:last-child {
+border-bottom: none;
+}
+.order-item button {
+background: #4CAF50;
+color: white;
+border: none;
+padding: 9px 15px;
+border-radius: 6px;
+cursor: pointer;
+margin-top: 15px;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+.order-item button:hover {
+background: #45a049;
+transform: translateY(-2px);
+}
+.bank-info p, .withdraw-info p {
+margin-bottom: 12px;
+font-size: 1.1em;
+}
+.bank-info input[type="text"],
+.bank-info input[type="number"] {
+width: calc(100% - 20px);
+max-width: 400px;
+padding: 10px;
+margin-bottom: 15px;
+border: 1px solid #ccc;
+border-radius: 6px;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+.bank-info button, .withdraw-info button {
+background: #d63333;
+color: white;
+padding: 12px 25px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 18px;
+margin-top: 15px;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+.bank-info button:hover, .withdraw-info button:hover {
+background: #b52b2b;
+transform: translateY(-2px);
+}
+#withdrawAmount {
+width: 150px;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 6px;
+margin-right: 15px;
+font-size: 1em;
+text-align: center;
+}
+#backToOrder {
+display: block;
+margin: 30px auto 0;
+background: #6c757d;
+color: white;
+font-size: 18px;
+padding: 12px 30px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+text-align: center;
+text-decoration: none;
+width: fit-content;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+#backToOrder:hover {
+background: #5a6268;
+transform: translateY(-2px);
+}
+</style>
 </head>
 <body>
-
-
-
-
-    
-
-
-function carregarProdutosParaCliente() {
-  db.ref('produtos').once('value').then(snapshot => {
-    const produtos = snapshot.val() || {};
-    const container = document.getElementById('produtosContainer');
-    container.innerHTML = '';
-
-    for (const id in produtos) {
-      const produto = produtos[id];
-
-      const itemHTML = `
-        <div>
-          <label>${produto.nome} - R$ ${parseFloat(produto.preco).toFixed(2)}</label>
-          <div class="quantidade">
-            <button class="btnQtd" data-target="${id}">-</button>
-            <input type="number" id="${id}" value="0" min="0" readonly>
-            <button class="btnQtd" data-target="${id}">+</button>
-          </div>
-        </div>
-      `;
-      container.insertAdjacentHTML('beforeend', itemHTML);
-    }
-
-    // Ativa os botões + e -
-    ativarBotoesQuantidade();
-  });
-}
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-  
-
-    <button id="btnAdminArea">Administrador</button>
-    <a href="https://braga95.github.io/PagFesta/" id="btnPagFesta" target="_blank">PagFesta</a>
-      <div id="order-section">
-
-
-
-          
+<button id="btnAdminArea">Administrador</button>
+<a href="https://braga95.github.io/PagFesta/" id="btnPagFesta" target="_blank">PagFesta</a>
+<div id="order-section">
 <div class="header" style="position: relative; text-align: center;">
-  <!-- Logo fixa na lateral esquerda -->
-  <img src="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
-       alt="Logo PagFesta"
-       style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 180px;" />
-  
-  <!-- Título e subtítulo centralizados -->
-  <div>
-    <h1>Quermesse</h1>
-    <p>Nossa Senhora da Boa Esperança</p>
-  </div>
+<!-- Logo fixa na lateral esquerda -->
+<img src="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
+alt="Logo PagFesta"
+style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 180px;" />
+<!-- Ttulo e subttulo centralizados -->
+<div>
+<h1>Quermesse</h1>
+<p>Nossa Senhora da Boa Esperana</p>
 </div>
-
-
-
-
-
-        <form id="formPedido">
-            <div class="produto">
-                <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
-                <div class="qtd-container">
-                    <button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
-                    <input type="number" id="qtdEspeto" min="0" value="0" />
-                    <button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
-                </div>
-            </div>
-            <div class="produto">
-                <label for="qtdSuco">Suco - R$ 4,00</label>
-                <div class="qtd-container">
-                    <button type="button" class="btnQtd" data-target="qtdSuco">-</button>
-                    <input type="number" id="qtdSuco" min="0" value="0" />
-                    <button type="button" class="btnQtd" data-target="qtdSuco">+</button>
-                </div>
-            </div>
-            <div class="produto">
-                <label for="qtdAgua">Água - R$ 3,00</label>
-                <div class="qtd-container">
-                    <button type="button" class="btnQtd" data-target="qtdAgua">-</button>
-                    <input type="number" id="qtdAgua" min="0" value="0" />
-                    <button type="button" class="btnQtd" data-target="qtdAgua">+</button>
-                </div>
-            </div>
-
-            <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
-        </form>
-
-        <div id="resumoPedido" style="display:none;">
-            <h2>Resumo do Pedido</h2>
-            <div id="itensResumo"></div>
-            <p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
-            <button id="btnAvancarPagamento">Avançar para pagamento</button>
-            <button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
-        </div>
-
-        <div id="telaPagamento" style="display:none;">
-            <h2>Escolha a forma de pagamento</h2>
-            <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
-            <label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
-            <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
-            <button id="btnGerarQRCode">Gerar QR Code</button>
-            <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
-        </div>
-
-        <div id="areaQRCode" style="display:none;">
-            <h2>Pagamento QR Code</h2>
-            <canvas id="qrCanvas" width="250" height="250"></canvas>
-            <div id="numeroPedidoDisplay"></div>
-            <button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
-        </div>
-    </div>
-
-    <div id="admin-section">
-        <div class="header">
-            <h1>Quermesse - Administração</h1>
-            <p>Gerencie seus pedidos e finanças com facilidade.</p>
-        </div>
-        <div id="login-screen" class="admin-section-inner">
-            <h2>Login</h2>
-            <form id="login-form">
-                <input type="text" id="username" placeholder="Usuário" required /><br />
-                <input type="password" id="password" placeholder="Senha" required /><br />
-                <button type="submit">Entrar</button>
-
-
-
+</div>
+<form id="formPedido">
+<div class="produto">
+<label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
+<div class="qtd-container">
+<button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
+<input type="number" id="qtdEspeto" min="0" value="0" />
+<button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
+</div>
+</div>
+<div class="produto">
+<label for="qtdSuco">Suco - R$ 4,00</label>
+<div class="qtd-container">
+<button type="button" class="btnQtd" data-target="qtdSuco">-</button>
+<input type="number" id="qtdSuco" min="0" value="0" />
+<button type="button" class="btnQtd" data-target="qtdSuco">+</button>
+</div>
+</div>
+<div class="produto">
+<label for="qtdAgua">gua - R$ 3,00</label>
+<div class="qtd-container">
+<button type="button" class="btnQtd" data-target="qtdAgua">-</button>
+<input type="number" id="qtdAgua" min="0" value="0" />
+<button type="button" class="btnQtd" data-target="qtdAgua">+</button>
+</div>
+</div>
+<button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
+</form>
+<div id="resumoPedido" style="display:none;">
+<h2>Resumo do Pedido</h2>
+<div id="itensResumo"></div>
+<p><strong>Total: R$ <span id="totalResumo">0.00</span></strong></p>
+<button id="btnAvancarPagamento">Avanar para pagamento</button>
+<button id="btnVoltarInicioResumo" style="margin-left:10px;">Voltar</button>
+</div>
+<div id="telaPagamento" style="display:none;">
+<h2>Escolha a forma de pagamento</h2>
+<label><input type="radio" name="pagamento" value="pix" /> Pix</label>
+<label><input type="radio" name="pagamento" value="cartao" /> Carto de Crdito</label>
+<label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
+<button id="btnGerarQRCode">Gerar QR Code</button>
+<button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
+</div>
+<div id="areaQRCode" style="display:none;">
+<h2>Pagamento QR Code</h2>
+<canvas id="qrCanvas" width="250" height="250"></canvas>
+<div id="numeroPedidoDisplay"></div>
+<button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
+</div>
+</div>
+<div id="admin-section">
+<div class="header">
+<h1>Quermesse - Administrao</h1>
+<p>Gerencie seus pedidos e finanas com facilidade.</p>
+</div>
+<div id="login-screen" class="admin-section-inner">
+<h2>Login</h2>
+<form id="login-form">
+<input type="text" id="username" placeholder="Usurio" required /><br />
+<input type="password" id="password" placeholder="Senha" required /><br />
+<button type="submit">Entrar</button>
 <button id="backToOrderLogin">Voltar</button>
-
-                
-            </form>
-            <p id="login-message" style="color: red; margin-top: 10px;"></p>
-        </div>
-        <div id="admin-panel" style="display: none;">
-            <div class="tabs">
-                <button class="tab-button" data-tab="produtos">Produtos</button>
-                <button class="tab-button active" data-tab="summary">Resumo</button>
-                <button class="tab-button" data-tab="orders">Pedidos</button>
-                <button class="tab-button" data-tab="bank">Banco</button>
-                <button class="tab-button" data-tab="withdraw">Sacar</button>
+</form>
+<p id="login-message" style="color: red; margin-top: 10px;"></p>
+</div>
+<div id="admin-panel" style="display: none;">
+<div class="tabs">
+<button class="tab-button" data-tab="produtos">Produtos</button>
+<button class="tab-button active" data-tab="summary">Resumo</button>
+<button class="tab-button" data-tab="orders">Pedidos</button>
+<button class="tab-button" data-tab="bank">Banco</button>
+<button class="tab-button" data-tab="withdraw">Sacar</button>
 <button class="tab-button" data-tab="scanner">QRCODE</button>
-
-                
-            </div>
-
+</div>
 <div id="produtos-tab" class="tab-content admin-section-inner">
-  <h2>Gerenciar Produtos</h2>
-  
-  <input type="text" id="novoProdutoNome" placeholder="Nome do Produto">
-  <input type="number" id="novoProdutoPreco" placeholder="Preço (ex: 5.00)" step="0.01">
-  <button id="btnAdicionarProduto">Adicionar Produto</button>
-
-  <h3>Produtos Cadastrados</h3>
-  <ul id="listaProdutos"></ul>
+<h2>Gerenciar Produtos</h2>
+<input type="text" id="novoProdutoNome" placeholder="Nome do Produto">
+<input type="number" id="novoProdutoPreco" placeholder="Preo (ex: 5.00)" step="0.01">
+<button id="btnAdicionarProduto">Adicionar Produto</button>
+<h3>Produtos Cadastrados</h3>
+<ul id="listaProdutos"></ul>
 </div>
-
-
-
-
-            
-            <div id="summary-tab" class="tab-content active admin-section-inner">
-                <h2>Resumo das Vendas</h2>
-                <div id="sales-summary">
-                    <p>Nenhuma venda registrada ainda.</p>
-                </div>
-                <p><strong>Total de Itens Vendidos: <span id="total-items-sold">0</span></strong></p>
-                <p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
-            </div>
-            <div id="orders-tab" class="tab-content admin-section-inner">
-
-                
-                <h2>Pedidos</h2>
-                <div id="orders-list">
-                    <p>Nenhum pedido registrado ainda.</p>
-                </div>
-            </div>
-            <div id="bank-tab" class="tab-content admin-section-inner">
-                <h2>Configurações do Banco</h2>
-                <div class="bank-info">
-                    <p><strong>Nome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
-                    <p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
-                    <p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
-                    <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
-                    <h3>Cadastrar/Atualizar Informações Bancárias</h3>
-                    <input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
-                    <input type="text" id="inputBankAgency" placeholder="Agência" /><br />
-                    <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
-                    <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
-                    <button id="saveBankInfo">Salvar Informações Bancárias</button>
-                </div>
-            </div>
-            <div id="withdraw-tab" class="tab-content admin-section-inner">
-                <h2>Sacar Dinheiro</h2>
-                <div class="withdraw-info">
-                    <p><strong>Saldo Disponível: R$ <span id="availableBalance">0.00</span></strong></p>
-                    <p>Insira o valor a sacar:</p>
-                    <input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" />
-                    <button id="processWithdraw">Sacar</button>
-                    <p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
-                </div>
-            </div>
-            <button id="backToOrderAdmin">Voltar aos Pedidos</button>
-        </div>
-    </div>
-
-
-    <div id="scanner-tab" class="tab-content admin-section-inner">
-  <h2>Escanear QR Code do Pedido</h2>
-  <div id="camera" style="width: 100%; max-width: 400px;"></div>
-  <p id="scan-result" style="margin-top: 20px; font-weight: bold;"></p>
+<div id="summary-tab" class="tab-content active admin-section-inner">
+<h2>Resumo das Vendas</h2>
+<div id="sales-summary">
+<p>Nenhuma venda registrada ainda.</p>
 </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <script>
-        // --- Variáveis Globais e Constantes ---
-        const ADMIN_USERNAME = 'lpalmeira';
-        const ADMIN_PASSWORD = '123';
-
-        // Elementos da Seção de Pedidos
-        const produtos = [
-            { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
-            { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
-            { id: 'qtdAgua', nome: 'Água', preco: 3.0 }
-        ];
-
-        const orderSection = document.getElementById('order-section');
-        const formPedido = document.getElementById('formPedido');
-        const resumoDiv = document.getElementById('resumoPedido');
-        const itensResumoDiv = document.getElementById('itensResumo');
-        const totalResumoSpan = document.getElementById('totalResumo');
-        const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
-        const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
-        const telaPagamento = document.getElementById('telaPagamento');
-        const btnGerarQRCode = document.getElementById('btnGerarQRCode');
-        const btnVoltarResumo = document.getElementById('btnVoltarResumo');
-        const areaQRCode = document.getElementById('areaQRCode');
-        const qrCanvas = document.getElementById('qrCanvas');
-        const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
-        const btnNovoPedido = document.getElementById('btnNovoPedido');
-        
-        // CORREÇÃO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded
-        let btnQtds; 
-
-        // Elementos da Seção de Administração
-        const btnAdminArea = document.getElementById('btnAdminArea');
-        const adminSection = document.getElementById('admin-section');
-        const loginScreen = document.getElementById('login-screen');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginForm = document.getElementById('login-form');
-        const loginMessage = document.getElementById('login-message');
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const salesSummaryDiv = document.getElementById('sales-summary');
-        const totalItemsSoldSpan = document.getElementById('total-items-sold');
-        const totalSalesValueSpan = document.getElementById('total-sales-value');
-        const ordersListDiv = document.getElementById('orders-list');
-        const displayBankName = document.getElementById('displayBankName');
-        const displayBankAgency = document.getElementById('displayBankAgency');
-        const displayBankAccount = document.getElementById('displayBankAccount');
-        const displayPixKey = document.getElementById('displayPixKey');
-        const inputBankName = document.getElementById('inputBankName');
-        const inputBankAgency = document.getElementById('inputBankAgency');
-        const inputBankAccount = document.getElementById('inputBankAccount');
-        const inputPixKey = document.getElementById('inputPixKey');
-        const saveBankInfoBtn = document.getElementById('saveBankInfo');
-        const availableBalanceSpan = document.getElementById('availableBalance');
-        const withdrawAmountInput = document.getElementById('withdrawAmount');
-        const processWithdrawBtn = document.getElementById('processWithdraw');
-        const withdrawMessage = document.getElementById('withdrawMessage');
-        const backToOrderBtn = document.getElementById('backToOrder');
-
-        // Dados persistentes (usando localStorage)
-        let numeroPedido = 1;
-        const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
-        if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
-
-        let allOrders = [];
-
+<p><strong>Total de Itens Vendidos: <span id="total-items-sold">0</span></strong></p>
+<p><strong>Valor Total das Vendas: R$ <span id="total-sales-value">0.00</span></strong></p>
+</div>
+<div id="orders-tab" class="tab-content admin-section-inner">
+<h2>Pedidos</h2>
+<div id="orders-list">
+<p>Nenhum pedido registrado ainda.</p>
+</div>
+</div>
+<div id="bank-tab" class="tab-content admin-section-inner">
+<h2>Configuraes do Banco</h2>
+<div class="bank-info">
+<p><strong>Nome do Banco:</strong> <span id="displayBankName">No Cadastrado</span></p>
+<p><strong>Agncia:</strong> <span id="displayBankAgency">No Cadastrada</span></p>
+<p><strong>Conta:</strong> <span id="displayBankAccount">No Cadastrada</span></p>
+<p><strong>Chave Pix:</strong> <span id="displayPixKey">No Cadastrada</span></p>
+<h3>Cadastrar/Atualizar Informaes Bancrias</h3>
+<input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
+<input type="text" id="inputBankAgency" placeholder="Agncia" /><br />
+<input type="text" id="inputBankAccount" placeholder="Conta" /><br />
+<input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
+<button id="saveBankInfo">Salvar Informaes Bancrias</button>
+</div>
+</div>
+<div id="withdraw-tab" class="tab-content admin-section-inner">
+<h2>Sacar Dinheiro</h2>
+<div class="withdraw-info">
+<p><strong>Saldo Disponvel: R$ <span id="availableBalance">0.00</span></strong></p>
+<p>Insira o valor a sacar:</p>
+<input type="number" id="withdrawAmount" min="0" step="0.01" value="0.00" />
+<button id="processWithdraw">Sacar</button>
+<p id="withdrawMessage" style="color: green; margin-top: 10px;"></p>
+</div>
+</div>
+<button id="backToOrderAdmin">Voltar aos Pedidos</button>
+</div>
+</div>
+<div id="scanner-tab" class="tab-content admin-section-inner">
+<h2>Escanear QR Code do Pedido</h2>
+<div id="camera" style="width: 100%; max-width: 400px;"></div>
+<p id="scan-result" style="margin-top: 20px; font-weight: bold;"></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+// --- Variveis Globais e Constantes ---
+const ADMIN_USERNAME = 'lpalmeira';
+const ADMIN_PASSWORD = '123';
+// Elementos da Seo de Pedidos
+const produtos = [
+{ id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
+{ id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
+{ id: 'qtdAgua', nome: 'gua', preco: 3.0 }
+];
+const orderSection = document.getElementById('order-section');
+const formPedido = document.getElementById('formPedido');
+const resumoDiv = document.getElementById('resumoPedido');
+const itensResumoDiv = document.getElementById('itensResumo');
+const totalResumoSpan = document.getElementById('totalResumo');
+const btnAvancarPagamento = document.getElementById('btnAvancarPagamento');
+const btnVoltarInicioResumo = document.getElementById('btnVoltarInicioResumo');
+const telaPagamento = document.getElementById('telaPagamento');
+const btnGerarQRCode = document.getElementById('btnGerarQRCode');
+const btnVoltarResumo = document.getElementById('btnVoltarResumo');
+const areaQRCode = document.getElementById('areaQRCode');
+const qrCanvas = document.getElementById('qrCanvas');
+const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
+const btnNovoPedido = document.getElementById('btnNovoPedido');
+// CORREO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded
+let btnQtds;
+// Elementos da Seo de Administrao
+const btnAdminArea = document.getElementById('btnAdminArea');
+const adminSection = document.getElementById('admin-section');
+const loginScreen = document.getElementById('login-screen');
+const adminPanel = document.getElementById('admin-panel');
+const loginForm = document.getElementById('login-form');
+const loginMessage = document.getElementById('login-message');
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
+const salesSummaryDiv = document.getElementById('sales-summary');
+const totalItemsSoldSpan = document.getElementById('total-items-sold');
+const totalSalesValueSpan = document.getElementById('total-sales-value');
+const ordersListDiv = document.getElementById('orders-list');
+const displayBankName = document.getElementById('displayBankName');
+const displayBankAgency = document.getElementById('displayBankAgency');
+const displayBankAccount = document.getElementById('displayBankAccount');
+const displayPixKey = document.getElementById('displayPixKey');
+const inputBankName = document.getElementById('inputBankName');
+const inputBankAgency = document.getElementById('inputBankAgency');
+const inputBankAccount = document.getElementById('inputBankAccount');
+const inputPixKey = document.getElementById('inputPixKey');
+const saveBankInfoBtn = document.getElementById('saveBankInfo');
+const availableBalanceSpan = document.getElementById('availableBalance');
+const withdrawAmountInput = document.getElementById('withdrawAmount');
+const processWithdrawBtn = document.getElementById('processWithdraw');
+const withdrawMessage = document.getElementById('withdrawMessage');
+const backToOrderBtn = document.getElementById('backToOrder');
+// Dados persistentes (usando localStorage)
+let numeroPedido = 1;
+const pedidoLS = localStorage.getItem('ultimoNumeroPedido');
+if (pedidoLS) numeroPedido = parseInt(pedidoLS) + 1;
+let allOrders = [];
 function carregarPedidosDoFirebase() {
-  db.ref('pedidos').once('value').then(snapshot => {
-    const data = snapshot.val();
-    if (data) {
-      allOrders = Object.values(data);
-    } else {
-      allOrders = [];
-    }
-    updateAdminPanel(); // atualiza o painel com os dados carregados
-  });
+db.ref('pedidos').once('value').then(snapshot => {
+const data = snapshot.val();
+if (data) {
+allOrders = Object.values(data);
+} else {
+allOrders = [];
 }
-
-
-
-
-        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
-        let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
-
-        // --- Funções de Visibilidade das Seções ---
-        function showOrderSection() {
-            orderSection.style.display = 'block';
-            adminSection.style.display = 'none';
-        }
-
-        function showAdminSection() {
-            orderSection.style.display = 'none';
-            adminSection.style.display = 'block';
-            loginScreen.style.display = 'block'; // Sempre volta para a tela de login ao acessar Admin
-            adminPanel.style.display = 'none';
-            loginForm.reset(); // Limpa o formulário de login
-            loginMessage.textContent = ''; // Limpa mensagens de login
-            // Nao chamar updateAdminPanel() aqui, ele sera chamado apos o login
-        }
-
-        // --- Lógica da Página de Pedidos ---
-
-        // Ao submeter o formulário, mostrar resumo
-        formPedido.addEventListener('submit', e => {
-            e.preventDefault();
-            const itensSelecionados = [];
-            let total = 0;
-            for (const p of produtos) {
-                const qtd = parseInt(document.getElementById(p.id).value) || 0;
-                if (qtd > 0) {
-                    const subtotal = qtd * p.preco;
-                    total += subtotal;
-                    itensSelecionados.push({
-                        nome: p.nome,
-                        qtd,
-                        preco: p.preco,
-                        subtotal
-                    });
-                }
-            }
-            if (itensSelecionados.length === 0) {
-                alert('Selecione ao menos um item para prosseguir.');
-                return;
-            }
-            itensResumoDiv.innerHTML = '';
-            itensSelecionados.forEach(item => {
-                const p = document.createElement('p');
-                p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
-                itensResumoDiv.appendChild(p);
-            });
-            totalResumoSpan.textContent = total.toFixed(2);
-
-            formPedido.style.display = 'none';
-            resumoDiv.style.display = 'block';
-            telaPagamento.style.display = 'none';
-            areaQRCode.style.display = 'none';
-        });
-
-        btnAvancarPagamento.addEventListener('click', () => {
-            resumoDiv.style.display = 'none';
-            telaPagamento.style.display = 'block';
-            areaQRCode.style.display = 'none';
-        });
-
-        btnVoltarInicioResumo.addEventListener('click', () => {
-            resumoDiv.style.display = 'none';
-            formPedido.style.display = 'block';
-        });
-
-        btnVoltarResumo.addEventListener('click', () => {
-            telaPagamento.style.display = 'none';
-            resumoDiv.style.display = 'block';
-        });
-
-        btnGerarQRCode.addEventListener('click', () => {
-    const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
-    if (!pagamentoSelecionado) {
-        alert('Selecione uma forma de pagamento.');
-        return;
-    }
-
-    const metodo = pagamentoSelecionado.value;
-
-    const currentItemsSelected = [];
-    let currentTotal = 0;
-    for (const p of produtos) {
-        const qtd = parseInt(document.getElementById(p.id).value) || 0;
-        if (qtd > 0) {
-            const subtotal = qtd * p.preco;
-            currentTotal += subtotal;
-            currentItemsSelected.push({
-                nome: p.nome,
-                qtd,
-                preco: p.preco,
-                subtotal
-            });
-        }
-    }
-
-    const orderData = {
-        numeroPedido: numeroPedido,
-        metodoPagamento: metodo,
-        data: new Date().toISOString(),
-        items: currentItemsSelected,
-        total: currentTotal,
-        entregue: false
-    };
-
-    db.ref('pedidos/' + numeroPedido).set(orderData);
-    allOrders.push(orderData);
-    accumulatedBalance += currentTotal;
-    db.ref('saldo').set(accumulatedBalance);
-
-    if (metodo === 'pix') {
-        const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {};
-        if (bankInfoStored.pixKey) {
-            const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
-            QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
-                if (error) console.error(error);
-                else {
-                    numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                    telaPagamento.style.display = 'none';
-                    areaQRCode.style.display = 'block';
-                    alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$ ${currentTotal.toFixed(2)}`);
-                }
-            });
-        } else {
-            alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configurações do Banco.');
-            return;
-        }
-    } else {
-        const qrString = `pagamento|${metodo}|${currentTotal.toFixed(2)}|${numeroPedido}`;
-        QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
-            if (error) console.error(error);
-            else {
-                numeroPedidoDisplay.textContent = `Número do pedido: ${numeroPedido}`;
-                telaPagamento.style.display = 'none';
-                areaQRCode.style.display = 'block';
-            }
-        });
-    }
-
-    numeroPedido++;
+updateAdminPanel(); // atualiza o painel com os dados carregados
 });
+}
+let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
+let accumulatedBalance = parseFloat(localStorage.getItem('accumulatedBalance')) || 0;
+// --- Funes de Visibilidade das Sees ---
+function showOrderSection() {
+orderSection.style.display = 'block';
+adminSection.style.display = 'none';
+}
+function showAdminSection() {
+orderSection.style.display = 'none';
+adminSection.style.display = 'block';
+loginScreen.style.display = 'block'; // Sempre volta para a tela de login ao acessar Admin
+adminPanel.style.display = 'none';
+loginForm.reset(); // Limpa o formulrio de login
+loginMessage.textContent = ''; // Limpa mensagens de login
+// Nao chamar updateAdminPanel() aqui, ele sera chamado apos o login
+}
+// --- Lgica da Pgina de Pedidos ---
+// Ao submeter o formulrio, mostrar resumo
+formPedido.addEventListener('submit', e => {
+e.preventDefault();
+const itensSelecionados = [];
+let total = 0;
+for (const p of produtos) {
+const qtd = parseInt(document.getElementById(p.id).value) || 0;
+if (qtd > 0) {
+const subtotal = qtd * p.preco;
+total += subtotal;
+itensSelecionados.push({
+nome: p.nome,
+qtd,
+preco: p.preco,
+subtotal
+});
+}
+}
+if (itensSelecionados.length === 0) {
+alert('Selecione ao menos um item para prosseguir.');
+return;
+}
+itensResumoDiv.innerHTML = '';
+itensSelecionados.forEach(item => {
+const p = document.createElement('p');
+p.textContent = `${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}`;
+itensResumoDiv.appendChild(p);
+});
+totalResumoSpan.textContent = total.toFixed(2);
+formPedido.style.display = 'none';
+resumoDiv.style.display = 'block';
+telaPagamento.style.display = 'none';
+areaQRCode.style.display = 'none';
+});
+btnAvancarPagamento.addEventListener('click', () => {
+resumoDiv.style.display = 'none';
+telaPagamento.style.display = 'block';
+areaQRCode.style.display = 'none';
+});
+btnVoltarInicioResumo.addEventListener('click', () => {
+resumoDiv.style.display = 'none';
+formPedido.style.display = 'block';
+});
+btnVoltarResumo.addEventListener('click', () => {
+telaPagamento.style.display = 'none';
+resumoDiv.style.display = 'block';
+});
+btnGerarQRCode.addEventListener('click', () => {
+const pagamentoSelecionado = document.querySelector('input[name="pagamento"]:checked');
+if (!pagamentoSelecionado) {
+alert('Selecione uma forma de pagamento.');
+return;
+}
+const metodo = pagamentoSelecionado.value;
+const currentItemsSelected = [];
+let currentTotal = 0;
+for (const p of produtos) {
+const qtd = parseInt(document.getElementById(p.id).value) || 0;
+if (qtd > 0) {
+const subtotal = qtd * p.preco;
+currentTotal += subtotal;
+currentItemsSelected.push({
+nome: p.nome,
+qtd,
+preco: p.preco,
+subtotal
+});
+}
+}
+const orderData = {
+numeroPedido: numeroPedido,
+metodoPagamento: metodo,
+data: new Date().toISOString(),
+items: currentItemsSelected,
+total: currentTotal,
+entregue: false
+};
+db.ref('pedidos/' + numeroPedido).set(orderData);
+allOrders.push(orderData);
+accumulatedBalance += currentTotal;
+db.ref('saldo').set(accumulatedBalance);
+if (metodo === 'pix') {
+const bankInfoStored = JSON.parse(localStorage.getItem('bankInfo')) || {};
+if (bankInfoStored.pixKey) {
+const pixQrString = `pix|${bankInfoStored.pixKey}|${currentTotal.toFixed(2)}|${numeroPedido}`;
+QRCode.toCanvas(qrCanvas, pixQrString, { width: 250 }, function (error) {
+if (error) console.error(error);
+else {
+numeroPedidoDisplay.textContent = `Nmero do pedido: ${numeroPedido}`;
+telaPagamento.style.display = 'none';
+areaQRCode.style.display = 'block';
+alert(`Para pagar com Pix, use a chave: ${bankInfoStored.pixKey} com o valor de R$
+${currentTotal.toFixed(2)}`);
+}
+});
+} else {
+alert('Para pagamento com Pix, o administrador precisa cadastrar a Chave Pix nas configuraes do Banco.');
+return;
+}
+} else {
+const qrString = `pagamento|${metodo}|${currentTotal.toFixed(2)}|${numeroPedido}`;
+QRCode.toCanvas(qrCanvas, qrString, { width: 250 }, function (error) {
+if (error) console.error(error);
+else {
+numeroPedidoDisplay.textContent = `Nmero do pedido: ${numeroPedido}`;
+telaPagamento.style.display = 'none';
+areaQRCode.style.display = 'block';
+}
+});
+}
+numeroPedido++;
+});
+btnNovoPedido.addEventListener('click', () => {
+for (const p of produtos) {
+document.getElementById(p.id).value = 0;
+}
+areaQRCode.style.display = 'none';
+resumoDiv.style.display = 'none';
+telaPagamento.style.display = 'none';
+formPedido.style.display = 'block';
+const radios = document.querySelectorAll('input[name="pagamento"]');
+radios.forEach(r => (r.checked = false));
+});
+// --- Lgica do Painel de Administrao ---
+// Mostrar painel de admin ao clicar no boto "Administrador"
+btnAdminArea.addEventListener('click', showAdminSection);
+// Voltar para a seo de pedidos
+document.getElementById('backToOrderLogin').addEventListener('click', showOrderSection);
+// Voltar para a seo de pedidos
+document.getElementById('backToOrderAdmin').addEventListener('click', showOrderSection);
+// Lgica de Login
+loginForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const username = document.getElementById('username').value;
+const password = document.getElementById('password').value;
+if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+localStorage.setItem('isAdmin', 'true'); // ADICIONA ESSA LINHA
+loginScreen.style.display = 'none';
+adminPanel.style.display = 'block';
+loginMessage.textContent = '';
+updateAdminPanel(); // Atualiza o painel aps o login
+} else {
+loginMessage.textContent = 'Usurio ou senha incorretos.';
+}
+});
+// Lgica de Troca de Abas
+tabButtons.forEach(button => {
+button.addEventListener('click', () => {
+tabButtons.forEach(btn => btn.classList.remove('active'));
+tabContents.forEach(content => content.classList.remove('active'));
+button.classList.add('active');
+document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
+updateAdminPanel(); // Atualiza o contedo da aba ao trocar
+if (button.dataset.tab === 'produtos') {
+carregarProdutos();
+}
+if (button.dataset.tab === 'scanner') {
+iniciarScanner();
+}
+});
+});
+// Persistncia de Dados (usando localStorage)
+function saveOrders() {
+localStorage.setItem('allOrders', JSON.stringify(allOrders));
+}
+function saveBankInfo() {
+localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+updateBankInfoDisplay(); // Atualiza a exibio imediatamente
+}
+function saveAccumulatedBalance() {
+localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
+availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibio imediatamente
+}
+// Funo para Atualizar o Painel Administrativo
+function updateAdminPanel() {
+updateSummary();
+updateOrdersList();
+updateBankInfoDisplay();
+updateWithdrawSection();
+}
+// Lgica da Aba Resumo
+function updateSummary() {
+let totalItems = 0;
+let totalSales = 0;
+salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior
+if (allOrders.length === 0) {
+salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>';
+} else {
+const productSales = {};
+allOrders.forEach(order => {
+order.items.forEach(item => {
+if (!productSales[item.nome]) {
+productSales[item.nome] = { quantity: 0, value: 0 };
+}
+productSales[item.nome].quantity += item.qtd;
+productSales[item.nome].value += item.subtotal;
+totalItems += item.qtd;
+totalSales += item.subtotal;
+});
+});
+for (const productName in productSales) {
+const data = productSales[productName];
+const p = document.createElement('p');
+p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`;
+salesSummaryDiv.appendChild(p);
+}
+}
+totalItemsSoldSpan.textContent = totalItems;
+totalSalesValueSpan.textContent = totalSales.toFixed(2);
+}
+// Lgica da Aba Pedidos
+function updateOrdersList() {
+ordersListDiv.innerHTML = '';
+if (allOrders.length === 0) {
+ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>';
+return;
+}
+allOrders.forEach(order => {
+const orderDiv = document.createElement('div');
+orderDiv.classList.add('order-item');
+orderDiv.innerHTML = `
+<h3>Pedido #${order.numeroPedido}</h3>
+<p><strong>Mtodo de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
+<p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
+<h4>Itens:</h4>
+<ul>
+${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
+</ul>
+<p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p>
+<button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button>
+`;
+ordersListDiv.appendChild(orderDiv);
+});
+}
+function printOrder(orderNumber) {
+const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
+if (!orderToPrint) {
+alert('Pedido no encontrado para impresso.');
 
-        btnNovoPedido.addEventListener('click', () => {
-            for (const p of produtos) {
-                document.getElementById(p.id).value = 0;
-            }
-            areaQRCode.style.display = 'none';
-            resumoDiv.style.display = 'none';
-            telaPagamento.style.display = 'none';
-            formPedido.style.display = 'block';
-
-            const radios = document.querySelectorAll('input[name="pagamento"]');
-            radios.forEach(r => (r.checked = false));
-        });
-
-        // --- Lógica do Painel de Administração ---
-
-        // Mostrar painel de admin ao clicar no botão "Administrador"
-        btnAdminArea.addEventListener('click', showAdminSection);
-
-        // Voltar para a seção de pedidos
-        document.getElementById('backToOrderLogin').addEventListener('click', showOrderSection);
-
-
- // Voltar para a seção de pedidos
-        document.getElementById('backToOrderAdmin').addEventListener('click', showOrderSection);
-
-
-        // Lógica de Login
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-           if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-  localStorage.setItem('isAdmin', 'true'); // 👈 ADICIONA ESSA LINHA
-  loginScreen.style.display = 'none';
-  adminPanel.style.display = 'block';
-  loginMessage.textContent = '';
-  updateAdminPanel(); // Atualiza o painel após o login
-
-
-            } else {
-                loginMessage.textContent = 'Usuário ou senha incorretos.';
-            }
-        });
-
-        // Lógica de Troca de Abas
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-                button.classList.add('active');
-                document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
-                updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
-
- if (button.dataset.tab === 'produtos') {
-      carregarProdutos();
-    }
-
-    if (button.dataset.tab === 'scanner') {
-      iniciarScanner();
-             }   
-            });
-        });
-   
-
-        // Persistência de Dados (usando localStorage)
-        function saveOrders() {
-            localStorage.setItem('allOrders', JSON.stringify(allOrders));
-        }
-        function saveBankInfo() {
-            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
-            updateBankInfoDisplay(); // Atualiza a exibição imediatamente
-        }
-        function saveAccumulatedBalance() {
-            localStorage.setItem('accumulatedBalance', accumulatedBalance.toFixed(2));
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2); // Atualiza a exibição imediatamente
-        }
-
-        // Função para Atualizar o Painel Administrativo
-        function updateAdminPanel() {
-            updateSummary();
-            updateOrdersList();
-            updateBankInfoDisplay();
-            updateWithdrawSection();
-        }
-
-        // Lógica da Aba Resumo
-        function updateSummary() {
-            let totalItems = 0;
-            let totalSales = 0;
-            salesSummaryDiv.innerHTML = ''; // Limpa o resumo anterior
-            if (allOrders.length === 0) {
-                salesSummaryDiv.innerHTML = '<p>Nenhuma venda registrada ainda.</p>';
-            } else {
-                const productSales = {};
-                allOrders.forEach(order => {
-                    order.items.forEach(item => {
-                        if (!productSales[item.nome]) {
-                            productSales[item.nome] = { quantity: 0, value: 0 };
-                        }
-                        productSales[item.nome].quantity += item.qtd;
-                        productSales[item.nome].value += item.subtotal;
-                        totalItems += item.qtd;
-                        totalSales += item.subtotal;
-                    });
-                });
-                for (const productName in productSales) {
-                    const data = productSales[productName];
-                    const p = document.createElement('p');
-                    p.textContent = `${productName}: ${data.quantity} unidades vendidas, Total: R$ ${data.value.toFixed(2)}`;
-                    salesSummaryDiv.appendChild(p);
-                }
-            }
-            totalItemsSoldSpan.textContent = totalItems;
-            totalSalesValueSpan.textContent = totalSales.toFixed(2);
-        }
-
-        // Lógica da Aba Pedidos
-        function updateOrdersList() {
-            ordersListDiv.innerHTML = '';
-            if (allOrders.length === 0) {
-                ordersListDiv.innerHTML = '<p>Nenhum pedido registrado ainda.</p>';
-                return;
-            }
-            allOrders.forEach(order => {
-                const orderDiv = document.createElement('div');
-                orderDiv.classList.add('order-item');
-                orderDiv.innerHTML = `
-                    <h3>Pedido #${order.numeroPedido}</h3>
-                    <p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
-                    <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
-                    <h4>Itens:</h4>
-                    <ul>
-                        ${order.items.map(item => `<li>${item.qtd} x ${item.nome} = R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
-                    </ul>
-                    <p><strong>Total do Pedido: R$ ${order.total.toFixed(2)}</strong></p>
-                    <button onclick="printOrder(${order.numeroPedido})">Imprimir NF</button>
-                `;
-                ordersListDiv.appendChild(orderDiv);
-            });
-        }
-        function printOrder(orderNumber) {
-            const orderToPrint = allOrders.find(order => order.numeroPedido === orderNumber);
-            if (!orderToPrint) {
-                alert('Pedido não encontrado para impressão.');
-                return;
-            }
-            let printContent = `
-                <h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
-                <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
-                <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
-                <hr>
-                <h3>Itens:</h3>
-                <ul>
-                    ${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$ ${item.subtotal.toFixed(2)}</li>`).join('')}
-                </ul>
-                <hr>
-                <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
-                <p>Obrigado pela preferência!</p>
-            `;
-            const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<html><head><title>Nota Fiscal</title>');
-            printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(printContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-
+return;
+}
+let printContent = `
+<h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
+<p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
+<p><strong>Mtodo de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
+<hr>
+<h3>Itens:</h3>
+<ul>
+${orderToPrint.items.map(item => `<li>${item.qtd} x ${item.nome} - R$
+${item.subtotal.toFixed(2)}</li>`).join('')}
+</ul>
+<hr>
+<p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
+<p>Obrigado pela preferncia!</p>
+`;
+const printWindow = window.open('', '', 'height=600,width=800');
+printWindow.document.write('<html><head><title>Nota Fiscal</title>');
+printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
+printWindow.document.write('</head><body>');
+printWindow.document.write(printContent);
+printWindow.document.write('</body></html>');
+printWindow.document.close();
+printWindow.print();
+}
 const listaProdutosUL = document.getElementById('listaProdutos');
 const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
 const inputProdutoNome = document.getElementById('novoProdutoNome');
 const inputProdutoPreco = document.getElementById('novoProdutoPreco');
-
 // Carrega os produtos cadastrados
 function carregarProdutos() {
-  db.ref('produtos').once('value').then(snapshot => {
-    const produtos = snapshot.val() || {};
-    listaProdutosUL.innerHTML = '';
-
-    for (const id in produtos) {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        ${produtos[id].nome} - R$ ${parseFloat(produtos[id].preco).toFixed(2)}
-        <button onclick="excluirProduto('${id}')">Excluir</button>
-      `;
-      listaProdutosUL.appendChild(li);
-    }
-  });
+db.ref('produtos').once('value').then(snapshot => {
+const produtos = snapshot.val() || {};
+listaProdutosUL.innerHTML = '';
+for (const id in produtos) {
+const li = document.createElement('li');
+li.innerHTML = `
+${produtos[id].nome} - R$ ${parseFloat(produtos[id].preco).toFixed(2)}
+<button onclick="excluirProduto('${id}')">Excluir</button>
+`;
+listaProdutosUL.appendChild(li);
 }
-
+});
+}
 // Adiciona novo produto
 btnAdicionarProduto.addEventListener('click', () => {
-  const nome = inputProdutoNome.value.trim();
-  const preco = parseFloat(inputProdutoPreco.value);
-
-  if (!nome || isNaN(preco)) {
-    alert('Preencha corretamente nome e preço.');
-    return;
-  }
-
-  const novoRef = db.ref('produtos').push();
-  novoRef.set({ nome, preco }).then(() => {
-    inputProdutoNome.value = '';
-    inputProdutoPreco.value = '';
-    carregarProdutos();
-  });
+const nome = inputProdutoNome.value.trim();
+const preco = parseFloat(inputProdutoPreco.value);
+if (!nome || isNaN(preco)) {
+alert('Preencha corretamente nome e preo.');
+return;
+}
+const novoRef = db.ref('produtos').push();
+novoRef.set({ nome, preco }).then(() => {
+inputProdutoNome.value = '';
+inputProdutoPreco.value = '';
+carregarProdutos();
 });
-
+});
 // Exclui produto
 function excluirProduto(id) {
-  if (confirm('Deseja excluir este produto?')) {
-    db.ref('produtos/' + id).remove().then(carregarProdutos);
-  }
+if (confirm('Deseja excluir este produto?')) {
+db.ref('produtos/' + id).remove().then(carregarProdutos);
 }
-
-
-
-        
-
-        // Lógica da Aba Banco
-        function updateBankInfoDisplay() {
-            displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
-            displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada';
-            displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada';
-            displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada';
-            inputBankName.value = bankInfo.bankName || '';
-            inputBankAgency.value = bankInfo.bankAgency || '';
-            inputBankAccount.value = bankInfo.bankAccount || '';
-            inputPixKey.value = bankInfo.pixKey || '';
-        }
-        saveBankInfoBtn.addEventListener('click', () => {
-            bankInfo.bankName = inputBankName.value.trim();
-            bankInfo.bankAgency = inputBankAgency.value.trim();
-            bankInfo.bankAccount = inputBankAccount.value.trim();
-            bankInfo.pixKey = inputPixKey.value.trim();
-            saveBankInfo(); // Salva e atualiza a exibição
-            alert('Informações bancárias salvas com sucesso!');
-        });
-
-        // Lógica da Aba Sacar
-        function updateWithdrawSection() {
-            availableBalanceSpan.textContent = accumulatedBalance.toFixed(2);
-            withdrawMessage.textContent = ''; // Limpa mensagens anteriores
-            withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2));
-        }
-        processWithdrawBtn.addEventListener('click', () => {
-            const withdrawAmount = parseFloat(withdrawAmountInput.value);
-            if (!bankInfo.bankName || !bankInfo.bankAccount) {
-                withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informações bancárias na aba "Banco" antes de sacar.';
-                withdrawMessage.style.color = 'red';
-                return;
-            }
-            if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
-                withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.';
-                withdrawMessage.style.color = 'red';
-                return;
-            }
-            if (withdrawAmount > accumulatedBalance) {
-                withdrawMessage.textContent = `Você não tem saldo suficiente. Saldo disponível: R$ ${accumulatedBalance.toFixed(2)}`;
-                withdrawMessage.style.color = 'red';
-                return;
-            }
-            accumulatedBalance -= withdrawAmount;
-            saveAccumulatedBalance(); // Salva e atualiza o saldo
-            withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a conta ${bankInfo.bankAccount}.`;
-            withdrawMessage.style.color = 'green';
-            withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
-        });
-
-        // --- Carregamento Inicial e Event Listeners ---
-       document.addEventListener('DOMContentLoaded', () => {
-  cadastrarProdutosFixos();          // 👈 adiciona essa linha
-  carregarPedidosDoFirebase();
-  carregarSaldoDoFirebase();
-  carregarProdutosParaCliente();
-  ativarBotoesQuantidade();
-  updateWithdrawSection();
+}
+// Lgica da Aba Banco
+function updateBankInfoDisplay() {
+displayBankName.textContent = bankInfo.bankName || 'No Cadastrado';
+displayBankAgency.textContent = bankInfo.bankAgency || 'No Cadastrada';
+displayBankAccount.textContent = bankInfo.bankAccount || 'No Cadastrada';
+displayPixKey.textContent = bankInfo.pixKey || 'No Cadastrada';
+inputBankName.value = bankInfo.bankName || '';
+inputBankAgency.value = bankInfo.bankAgency || '';
+inputBankAccount.value = bankInfo.bankAccount || '';
+inputPixKey.value = bankInfo.pixKey || '';
+}
+saveBankInfoBtn.addEventListener('click', () => {
+bankInfo.bankName = inputBankName.value.trim();
+bankInfo.bankAgency = inputBankAgency.value.trim();
+bankInfo.bankAccount = inputBankAccount.value.trim();
+bankInfo.pixKey = inputPixKey.value.trim();
+saveBankInfo(); // Salva e atualiza a exibio
+alert('Informaes bancrias salvas com sucesso!');
 });
-
-
-
-           function cadastrarProdutosFixos() {
-  const produtosFixos = [
-    { nome: "Espeto de Frango", preco: 6.00 },
-    { nome: "Espeto de Carne", preco: 7.00 },
-    { nome: "Suco", preco: 3.00 },
-    { nome: "Água", preco: 2.00 }
-  ];
-
-  db.ref('produtos').once('value').then(snapshot => {
-    const existentes = snapshot.val() || {};
-    const nomesExistentes = Object.values(existentes).map(p => p.nome);
-
-    produtosFixos.forEach(produto => {
-      if (!nomesExistentes.includes(produto.nome)) {
-        db.ref('produtos').push(produto);
-      }
-    });
-  });
+// Lgica da Aba Sacar
+function updateWithdrawSection() {
+availableBalanceSpan.textContent = accumulatedBalance.toFixed(2);
+withdrawMessage.textContent = ''; // Limpa mensagens anteriores
+withdrawAmountInput.setAttribute('max', accumulatedBalance.toFixed(2));
 }
-
-
-
-           
-
-  // Inicializa os botões de quantidade
-  btnQtds = document.querySelectorAll('.btnQtd');
-            btnQtds.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const inputId = btn.dataset.target;
-                    const input = document.getElementById(inputId);
-                    let val = parseInt(input.value) || 0;
-                    if (btn.textContent === '+') {
-                        val++;
-                    } else {
-                        val = val > 0 ? val - 1 : 0;
-                    }
-                    input.value = val;
-                });
-            });
-
-            showOrderSection(); // Mostra a seção de pedidos por padrão
-            updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a página
-        });
-    </script>
-
-
-
-    <script src="https://unpkg.com/html5-qrcode"></script>
-<script>
-let html5QrCode;
-
-function iniciarScanner() {
-  const scannerDiv = document.getElementById("camera");
-  document.getElementById("scan-result").textContent = "";
-
-  if (html5QrCode) {
-    html5QrCode.stop().then(() => {
-      scannerDiv.innerHTML = "";
-      start();
-    });
-  } else {
-    start();
-  }
-
-  function start() {
-    html5QrCode = new Html5Qrcode("camera");
-    html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      qrCodeMessage => {
-        try {
-          const partes = qrCodeMessage.split('|');
-const numeroPedido = partes[3]; // o número do pedido está na 4ª posição
-
-const pedido = allOrders.find(p => p.numeroPedido == numeroPedido);
-
-
-
-
-          if (pedido && !pedido.entregue) {
-            pedido.entregue = true;
-            saveOrders();
-            document.getElementById("scan-result").textContent = `✅ Pedido #${pedido.numeroPedido} marcado como ENTREGUE.`;
-          } else if (pedido && pedido.entregue) {
-            document.getElementById("scan-result").textContent = `⚠️ Pedido #${pedido.numeroPedido} já foi entregue.`;
-          } else {
-            document.getElementById("scan-result").textContent = "❌ Pedido não encontrado.";
-          }
-
-          html5QrCode.stop().then(() => scannerDiv.innerHTML = "");
-        } catch (e) {
-          document.getElementById("scan-result").textContent = "QR inválido.";
-        }
-      },
-      err => {}
-    );
-  }
+processWithdrawBtn.addEventListener('click', () => {
+const withdrawAmount = parseFloat(withdrawAmountInput.value);
+if (!bankInfo.bankName || !bankInfo.bankAccount) {
+withdrawMessage.textContent = 'Erro: Por favor, cadastre suas informaes bancrias na aba "Banco" antes de
+sacar.';
+withdrawMessage.style.color = 'red';
+return;
 }
-
-// Quando clicar na aba "QRCODE", iniciar o scanner
-document.querySelectorAll('.tab-button').forEach(button => {
-  button.addEventListener('click', () => {
-    if (button.dataset.tab === 'scanner') iniciarScanner();
-  });
+if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+withdrawMessage.textContent = 'Por favor, insira um valor vlido para saque.';
+withdrawMessage.style.color = 'red';
+return;
+}
+if (withdrawAmount > accumulatedBalance) {
+withdrawMessage.textContent = `Voc no tem saldo suficiente. Saldo disponvel: R$
+${accumulatedBalance.toFixed(2)}`;
+withdrawMessage.style.color = 'red';
+return;
+}
+accumulatedBalance -= withdrawAmount;
+saveAccumulatedBalance(); // Salva e atualiza o saldo
+withdrawMessage.textContent = `Saque de R$ ${withdrawAmount.toFixed(2)} realizado com sucesso para a
+conta ${bankInfo.bankAccount}.`;
+withdrawMessage.style.color = 'green';
+withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
+});
+// --- Carregamento Inicial e Event Listeners ---
+document.addEventListener('DOMContentLoaded', () => {
+carregarPedidosDoFirebase(); // <-- adiciona essa linha aqui
+// Inicializa os botes de quantidade
+btnQtds = document.querySelectorAll('.btnQtd');
+btnQtds.forEach(btn => {
+btn.addEventListener('click', () => {
+const inputId = btn.dataset.target;
+const input = document.getElementById(inputId);
+let val = parseInt(input.value) || 0;
+if (btn.textContent === '+') {
+val++;
+} else {
+val = val > 0 ? val - 1 : 0;
+}
+input.value = val;
+});
+});
+showOrderSection(); // Mostra a seo de pedidos por padro
+updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a pgina
 });
 </script>
-
-
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+let html5QrCode;
+function iniciarScanner() {
+const scannerDiv = document.getElementById("camera");
+document.getElementById("scan-result").textContent = "";
+if (html5QrCode) {
+html5QrCode.stop().then(() => {
+scannerDiv.innerHTML = "";
+start();
+});
+} else {
+start();
+}
+function start() {
+html5QrCode = new Html5Qrcode("camera");
+html5QrCode.start(
+{ facingMode: "environment" },
+{ fps: 10, qrbox: 250 },
+qrCodeMessage => {
+try {
+const partes = qrCodeMessage.split('|');
+const numeroPedido = partes[3]; // o nmero do pedido est na 4 posio
+const pedido = allOrders.find(p => p.numeroPedido == numeroPedido);
+if (pedido && !pedido.entregue) {
+pedido.entregue = true;
+saveOrders();
+document.getElementById("scan-result").textContent = ` Pedido #${pedido.numeroPedido} marcado como
+ENTREGUE.`;
+} else if (pedido && pedido.entregue) {
+document.getElementById("scan-result").textContent = ` Pedido #${pedido.numeroPedido} j foi entregue.`;
+} else {
+document.getElementById("scan-result").textContent = " Pedido no encontrado.";
+}
+html5QrCode.stop().then(() => scannerDiv.innerHTML = "");
+} catch (e) {
+document.getElementById("scan-result").textContent = "QR invlido.";
+}
+},
+err => {}
+);
+}
+}
+// Quando clicar na aba "QRCODE", iniciar o scanner
+document.querySelectorAll('.tab-button').forEach(button => {
+button.addEventListener('click', () => {
+if (button.dataset.tab === 'scanner') iniciarScanner();
+});
+});
+</script>
 </body>
 </html>
