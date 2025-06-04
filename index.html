@@ -884,7 +884,7 @@ function carregarPedidosDoFirebase() {
   adminPanel.style.display = 'block';
   loginMessage.textContent = '';
   updateAdminPanel(); // Atualiza o painel após o login
-}
+
 
             } else {
                 loginMessage.textContent = 'Usuário ou senha incorretos.';
@@ -899,14 +899,17 @@ function carregarPedidosDoFirebase() {
                 button.classList.add('active');
                 document.getElementById(`${button.dataset.tab}-tab`).classList.add('active');
                 updateAdminPanel(); // Atualiza o conteúdo da aba ao trocar
-            });
-        });
 
-
-
-    if (button.dataset.tab === 'produtos') {
+ if (button.dataset.tab === 'produtos') {
       carregarProdutos();
     }
+
+    if (button.dataset.tab === 'scanner') {
+      iniciarScanner();
+             }   
+            });
+        });
+   
 
         // Persistência de Dados (usando localStorage)
         function saveOrders() {
@@ -1171,15 +1174,7 @@ const numeroPedido = partes[3]; // o número do pedido está na 4ª posição
 
 const pedido = allOrders.find(p => p.numeroPedido == numeroPedido);
 
-if (pedido && !pedido.entregue) {
-  pedido.entregue = true;
-  db.ref('pedidos/' + pedido.numeroPedido).update({ entregue: true });
-  document.getElementById("scan-result").textContent = `✅ Pedido #${pedido.numeroPedido} marcado como ENTREGUE.`;
-} else if (pedido && pedido.entregue) {
-  document.getElementById("scan-result").textContent = `⚠️ Pedido #${pedido.numeroPedido} já foi entregue.`;
-} else {
-  document.getElementById("scan-result").textContent = "❌ Pedido não encontrado.";
-}
+
 
 
           if (pedido && !pedido.entregue) {
