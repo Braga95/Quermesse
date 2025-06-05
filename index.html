@@ -19,7 +19,7 @@ measurementId: "G-8L4L1KGD7N"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 </script>
-<title>Quermesse - Nossa Senhora da Boa Esperança</title>
+<title>Quermesse - Nãossa Senhora da Boa Esperança</title>
 <link rel="icon" href="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
 type="image/png">
 <style>
@@ -48,9 +48,9 @@ color: #666;
 font-size: 1.1em;
 margin-top: 0;
 }
-/* Estilos da Pgina de Pedido */
+/* Estilos da Página de Pedido */
 #order-section {
-display: block; /* Visvel por padro ao carregar */
+display: block; /* Visível por padro ao carregar */
 }
 .produto {
 display: flex;
@@ -148,7 +148,7 @@ color: #333;
 #resumoPedido #itensResumo {
 margin-bottom: 15px;
 }
-#btnAvancarPagamento, #btnGerarQRCode, #btnNovoPedido,
+#btnAvancarPagamento, #btnGerarQRCode, #btnNãovoPedido,
 #btnVoltarInicioResumo, #btnVoltarResumo {
 background: #d63333;
 color: white;
@@ -162,7 +162,7 @@ transition: background 0.3s ease, transform 0.2s ease;
 }
 #btnAvancarPagamento:hover,
 #btnGerarQRCode:hover,
-#btnNovoPedido:hover,
+#btnNãovoPedido:hover,
 #btnVoltarInicioResumo:hover,
 #btnVoltarResumo:hover {
 background: #b52b2b;
@@ -441,32 +441,32 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <!-- Ttulo e subttulo centralizados -->
 <div>
 <h1>Quermesse</h1>
-<p>Nossa Senhora da Boa Esperança</p>
+<p>Nãossa Senhora da Boa Esperança</p>
 </div>
 </div>
 <form id="formPedido">
 <div class="produto">
 <label for="qtdEspeto">Espeto de Frango - R$ 5,00</label>
 <div class="qtd-container">
-<button type="button" class="btnQtd" data-target="qtdEspeto">-</button>
+<button type="button" class="btnQtde" data-target="qtdEspeto">-</button>
 <input type="number" id="qtdEspeto" min="0" value="0" />
-<button type="button" class="btnQtd" data-target="qtdEspeto">+</button>
+<button type="button" class="btnQtde" data-target="qtdEspeto">+</button>
 </div>
 </div>
 <div class="produto">
 <label for="qtdSuco">Suco - R$ 4,00</label>
 <div class="qtd-container">
-<button type="button" class="btnQtd" data-target="qtdSuco">-</button>
+<button type="button" class="btnQtde" data-target="qtdSuco">-</button>
 <input type="number" id="qtdSuco" min="0" value="0" />
-<button type="button" class="btnQtd" data-target="qtdSuco">+</button>
+<button type="button" class="btnQtde" data-target="qtdSuco">+</button>
 </div>
 </div>
 <div class="produto">
-<label for="qtdAgua">Agua - R$ 3,00</label>
+<label for="qtdAÁgua">AÁgua - R$ 3,00</label>
 <div class="qtd-container">
-<button type="button" class="btnQtd" data-target="qtdAgua">-</button>
-<input type="number" id="qtdAgua" min="0" value="0" />
-<button type="button" class="btnQtd" data-target="qtdAgua">+</button>
+<button type="button" class="btnQtde" data-target="qtdAÁgua">-</button>
+<input type="number" id="qtdAÁgua" min="0" value="0" />
+<button type="button" class="btnQtde" data-target="qtdAÁgua">+</button>
 </div>
 </div>
 <button id="btnGerarPagamento" type="submit">Gerar pagamento</button>
@@ -481,7 +481,7 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <div id="telaPagamento" style="display:none;">
 <h2>Escolha a forma de pagamento</h2>
 <label><input type="radio" name="pagamento" value="pix" /> Pix</label>
-<label><input type="radio" name="pagamento" value="cartao" /> Carto de Crdito</label>
+<label><input type="radio" name="pagamento" value="cartao" /> Cartão de Crédito</label>
 <label><input type="radio" name="pagamento" value="boleto" /> Boleto</label>
 <button id="btnGerarQRCode">Gerar QR Code</button>
 <button id="btnVoltarResumo" style="margin-left:10px;">Voltar</button>
@@ -490,7 +490,7 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <h2>Pagamento QR Code</h2>
 <canvas id="qrCanvas" width="250" height="250"></canvas>
 <div id="numeroPedidoDisplay"></div>
-<button id="btnNovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
+<button id="btnNãovoPedido" style="margin-top:20px;">Gerar novo pedido</button>
 </div>
 </div>
 <div id="admin-section">
@@ -519,7 +519,7 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 </div>
 <div id="produtos-tab" class="tab-content admin-section-inner">
 <h2>Gerenciar Produtos</h2>
-<input type="text" id="novoProdutoNome" placeholder="Nome do Produto">
+<input type="text" id="novoProdutoNãome" placeholder="Nãome do Produto">
 <input type="number" id="novoProdutoPreco" placeholder="Preço (ex: R$5,00)" step="0.01">
 <button id="btnAdicionarProduto">Adicionar Produto</button>
 <h3>Produtos Cadastrados</h3>
@@ -542,16 +542,16 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <div id="bank-tab" class="tab-content admin-section-inner">
 <h2>Configuraes do Banco</h2>
 <div class="bank-info">
-<p><strong>Nome do Banco:</strong> <span id="displayBankName">No Cadastrado</span></p>
-<p><strong>Agncia:</strong> <span id="displayBankAgency">No Cadastrada</span></p>
-<p><strong>Conta:</strong> <span id="displayBankAccount">No Cadastrada</span></p>
-<p><strong>Chave Pix:</strong> <span id="displayPixKey">No Cadastrada</span></p>
-<h3>Cadastrar/Atualizar Informaes Bancrias</h3>
-<input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
-<input type="text" id="inputBankAgency" placeholder="Agncia" /><br />
+<p><strong>Nãome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
+<p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
+<p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
+<p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
+<h3>Cadastrar/Atualizar Informações Bancrias</h3>
+<input type="text" id="inputBankName" placeholder="Nãome do Banco" /><br />
+<input type="text" id="inputBankAgency" placeholder="Agência" /><br />
 <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
 <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
-<button id="saveBankInfo">Salvar Informaes Bancrias</button>
+<button id="saveBankInfo">Salvar Informações Bancrias</button>
 </div>
 </div>
 <div id="withdraw-tab" class="tab-content admin-section-inner">
@@ -577,11 +577,11 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 // --- Variveis Globais e Constantes ---
 const ADMIN_USERNAME = 'lpalmeira';
 const ADMIN_PASSWORD = '123';
-// Elementos da Seo de Pedidos
+// Elementos da Seção de Pedidos
 const produtos = [
 { id: 'qtdEspeto', nome: 'Espeto de Frango', preco: 5.0 },
 { id: 'qtdSuco', nome: 'Suco', preco: 4.0 },
-{ id: 'qtdAgua', nome: 'gua', preco: 3.0 }
+{ id: 'qtdAÁgua', nome: 'Água', preco: 3.0 }
 ];
 const orderSection = document.getElementById('order-section');
 const formPedido = document.getElementById('formPedido');
@@ -596,10 +596,10 @@ const btnVoltarResumo = document.getElementById('btnVoltarResumo');
 const areaQRCode = document.getElementById('areaQRCode');
 const qrCanvas = document.getElementById('qrCanvas');
 const numeroPedidoDisplay = document.getElementById('numeroPedidoDisplay');
-const btnNovoPedido = document.getElementById('btnNovoPedido');
+const btnNãovoPedido = document.getElementById('btnNãovoPedido');
 // CORREO: Removendo o querySelectorAll duplicado e movendo para dentro do DOMContentLoaded
-let btnQtds;
-// Elementos da Seo de Administrao
+let btnQtdes;
+// Elementos da Seção de Administrao
 const btnAdminArea = document.getElementById('btnAdminArea');
 const adminSection = document.getElementById('admin-section');
 const loginScreen = document.getElementById('login-screen');
@@ -658,7 +658,7 @@ loginForm.reset(); // Limpa o formulrio de login
 loginMessage.textContent = ''; // Limpa mensagens de login
 // Nao chamar updateAdminPanel() aqui, ele sera chamado apos o login
 }
-// --- Lgica da Pgina de Pedidos ---
+// --- Lgica da Página de Pedidos ---
 // Ao submeter o formulrio, mostrar resumo
 formPedido.addEventListener('submit', e => {
 e.preventDefault();
@@ -771,7 +771,7 @@ areaQRCode.style.display = 'block';
 }
 numeroPedido++;
 });
-btnNovoPedido.addEventListener('click', () => {
+btnNãovoPedido.addEventListener('click', () => {
 for (const p of produtos) {
 document.getElementById(p.id).value = 0;
 }
@@ -881,7 +881,7 @@ const orderDiv = document.createElement('div');
 orderDiv.classList.add('order-item');
 orderDiv.innerHTML = `
 <h3>Pedido #${order.numeroPedido}</h3>
-<p><strong>Mtodo de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
+<p><strong>Método de Pagamento:</strong> ${order.metodoPagamento.toUpperCase()}</p>
 <p><strong>Data:</strong> ${new Date(order.data).toLocaleString()}</p>
 <h4>Itens:</h4>
 <ul>
@@ -900,9 +900,9 @@ alert('Pedido no encontrado para impresso.');
 return;
 }
 let printContent = `
-<h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
+<h2>Nãota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
 <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
-<p><strong>Mtodo de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
+<p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
 <hr>
 <h3>Itens:</h3>
 <ul>
@@ -911,10 +911,10 @@ ${item.subtotal.toFixed(2)}</li>`).join('')}
 </ul>
 <hr>
 <p><strong>Total: R$ ${orderToPrint.total.toFixed(2)}</strong></p>
-<p>Obrigado pela preferncia!</p>
+<p>Obrigado pela preferência!</p>
 `;
 const printWindow = window.open('', '', 'height=600,width=800');
-printWindow.document.write('<html><head><title>Nota Fiscal</title>');
+printWindow.document.write('<html><head><title>Nãota Fiscal</title>');
 printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
 printWindow.document.write('</head><body>');
 printWindow.document.write(printContent);
@@ -924,7 +924,7 @@ printWindow.print();
 }
 const listaProdutosUL = document.getElementById('listaProdutos');
 const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
-const inputProdutoNome = document.getElementById('novoProdutoNome');
+const inputProdutoNãome = document.getElementById('novoProdutoNãome');
 const inputProdutoPreco = document.getElementById('novoProdutoPreco');
 // Carrega os produtos cadastrados
 function carregarProdutos() {
@@ -943,7 +943,7 @@ listaProdutosUL.appendChild(li);
 }
 // Adiciona novo produto
 btnAdicionarProduto.addEventListener('click', () => {
-const nome = inputProdutoNome.value.trim();
+const nome = inputProdutoNãome.value.trim();
 const preco = parseFloat(inputProdutoPreco.value);
 if (!nome || isNaN(preco)) {
 alert('Preencha corretamente nome e preo.');
@@ -951,7 +951,7 @@ return;
 }
 const novoRef = db.ref('produtos').push();
 novoRef.set({ nome, preco }).then(() => {
-inputProdutoNome.value = '';
+inputProdutoNãome.value = '';
 inputProdutoPreco.value = '';
 carregarProdutos();
 });
@@ -964,10 +964,10 @@ db.ref('produtos/' + id).remove().then(carregarProdutos);
 }
 // Lgica da Aba Banco
 function updateBankInfoDisplay() {
-displayBankName.textContent = bankInfo.bankName || 'No Cadastrado';
-displayBankAgency.textContent = bankInfo.bankAgency || 'No Cadastrada';
-displayBankAccount.textContent = bankInfo.bankAccount || 'No Cadastrada';
-displayPixKey.textContent = bankInfo.pixKey || 'No Cadastrada';
+displayBankName.textContent = bankInfo.bankName || 'Não Cadastrado';
+displayBankAgency.textContent = bankInfo.bankAgency || 'Não Cadastrada';
+displayBankAccount.textContent = bankInfo.bankAccount || 'Não Cadastrada';
+displayPixKey.textContent = bankInfo.pixKey || 'Não Cadastrada';
 inputBankName.value = bankInfo.bankName || '';
 inputBankAgency.value = bankInfo.bankAgency || '';
 inputBankAccount.value = bankInfo.bankAccount || '';
@@ -979,7 +979,7 @@ bankInfo.bankAgency = inputBankAgency.value.trim();
 bankInfo.bankAccount = inputBankAccount.value.trim();
 bankInfo.pixKey = inputPixKey.value.trim();
 saveBankInfo(); // Salva e atualiza a exibio
-alert('Informaes bancrias salvas com sucesso!');
+alert('Informações bancrias salvas com sucesso!');
 });
 // Lgica da Aba Sacar
 function updateWithdrawSection() {
@@ -996,7 +996,7 @@ withdrawMessage.style.color = 'red';
 return;
 }
 if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
-withdrawMessage.textContent = 'Por favor, insira um valor vlido para saque.';
+withdrawMessage.textContent = 'Por favor, insira um valor válido para saque.';
 withdrawMessage.style.color = 'red';
 return;
 }
@@ -1017,8 +1017,8 @@ withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
 window.addEventListener('DOMContentLoaded', () => {
 carregarPedidosDoFirebase(); // <-- adiciona essa linha aqui
 // Inicializa os botes de quantidade
-btnQtds = document.querySelectorAll('.btnQtd');
-btnQtds.forEach(btn => {
+btnQtdes = document.querySelectorAll('.btnQtde');
+btnQtdes.forEach(btn => {
 btn.addEventListener('click', () => {
 const inputId = btn.dataset.target;
 const input = document.getElementById(inputId);
@@ -1070,7 +1070,7 @@ document.getElementById("scan-result").textContent = " Pedido no encontrado.";
 }
 html5QrCode.stop().then(() => scannerDiv.innerHTML = "");
 } catch (e) {
-document.getElementById("scan-result").textContent = "QR invlido.";
+document.getElementById("scan-result").textContent = "QR inválido.";
 }
 },
 err => {}
