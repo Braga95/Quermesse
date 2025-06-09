@@ -1015,31 +1015,26 @@ withdrawAmountInput.value = '0.00'; // Reseta o campo de valor
 });
 // --- Carregamento Inicial e Event Listeners ---
 window.addEventListener('DOMContentLoaded', () => {
-  carregarPedidosDoFirebase();
-  showOrderSection();
-  updateWithdrawSection();
-
-  // <-- adicione esta linha dentro do DOMContentLoaded
-  btnAdminArea.addEventListener('click', showAdminSection);
-
-
-  
+carregarPedidosDoFirebase();
+showOrderSection();
+updateWithdrawSection();
+// <-- adicione esta linha dentro do DOMContentLoaded
+btnAdminArea.addEventListener('click', showAdminSection);
 // Inicializa os botes de quantidade
 const botoesQtd = document.querySelectorAll('.btnQtde');
 botoesQtd.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const inputId = btn.dataset.target;
-    const input = document.getElementById(inputId);
-    let val = parseInt(input.value) || 0;
-    if (btn.textContent === '+') {
-      val++;
-    } else {
-      val = val > 0 ? val - 1 : 0;
-    }
-    input.value = val;
-  });
+btn.addEventListener('click', () => {
+const inputId = btn.dataset.target;
+const input = document.getElementById(inputId);
+let val = parseInt(input.value) || 0;
+if (btn.textContent === '+') {
+val++;
+} else {
+val = val > 0 ? val - 1 : 0;
+}
+input.value = val;
 });
-
+});
 showOrderSection(); // Mostra a seo de pedidos por padro
 updateWithdrawSection(); // Garante que o saldo seja carregado ao abrir a pgina
 });
