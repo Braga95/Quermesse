@@ -19,7 +19,7 @@ measurementId: "G-8L4L1KGD7N"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 </script>
-<title>Quermesse - Nãossa Senhora da Boa Esperança</title>
+<title>Quermesse - Nossa Senhora da Boa Esperança</title>
 <link rel="icon" href="https://github.com/Braga95/Quermesse/blob/main/pagfesta-removebg-preview.png?raw=true"
 type="image/png">
 <style>
@@ -441,7 +441,7 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <!-- Ttulo e subttulo centralizados -->
 <div>
 <h1>Quermesse</h1>
-<p>Nãossa Senhora da Boa Esperança</p>
+<p>Nossa Senhora da Boa Esperança</p>
 </div>
 </div>
 <form id="formPedido">
@@ -519,7 +519,7 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 </div>
 <div id="produtos-tab" class="tab-content admin-section-inner">
 <h2>Gerenciar Produtos</h2>
-<input type="text" id="novoProdutoNãome" placeholder="Nãome do Produto">
+<input type="text" id="novoProdutoNome" placeholder="Nome do Produto">
 <input type="number" id="novoProdutoPreco" placeholder="Preço (ex: R$5,00)" step="0.01">
 <button id="btnAdicionarProduto">Adicionar Produto</button>
 <h3>Produtos Cadastrados</h3>
@@ -542,12 +542,12 @@ style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); heigh
 <div id="bank-tab" class="tab-content admin-section-inner">
 <h2>Configuraes do Banco</h2>
 <div class="bank-info">
-<p><strong>Nãome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
+<p><strong>Nome do Banco:</strong> <span id="displayBankName">Não Cadastrado</span></p>
 <p><strong>Agência:</strong> <span id="displayBankAgency">Não Cadastrada</span></p>
 <p><strong>Conta:</strong> <span id="displayBankAccount">Não Cadastrada</span></p>
 <p><strong>Chave Pix:</strong> <span id="displayPixKey">Não Cadastrada</span></p>
 <h3>Cadastrar/Atualizar Informações Bancrias</h3>
-<input type="text" id="inputBankName" placeholder="Nãome do Banco" /><br />
+<input type="text" id="inputBankName" placeholder="Nome do Banco" /><br />
 <input type="text" id="inputBankAgency" placeholder="Agência" /><br />
 <input type="text" id="inputBankAccount" placeholder="Conta" /><br />
 <input type="text" id="inputPixKey" placeholder="Chave Pix" /><br />
@@ -900,7 +900,7 @@ alert('Pedido no encontrado para impresso.');
 return;
 }
 let printContent = `
-<h2>Nãota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
+<h2>Nota Fiscal - Pedido #${orderToPrint.numeroPedido}</h2>
 <p><strong>Data:</strong> ${new Date(orderToPrint.data).toLocaleString()}</p>
 <p><strong>Método de Pagamento:</strong> ${orderToPrint.metodoPagamento.toUpperCase()}</p>
 <hr>
@@ -914,7 +914,7 @@ ${item.subtotal.toFixed(2)}</li>`).join('')}
 <p>Obrigado pela preferência!</p>
 `;
 const printWindow = window.open('', '', 'height=600,width=800');
-printWindow.document.write('<html><head><title>Nãota Fiscal</title>');
+printWindow.document.write('<html><head><title>Nota Fiscal</title>');
 printWindow.document.write('<style>body{font-family: Arial, sans-serif;}</style>');
 printWindow.document.write('</head><body>');
 printWindow.document.write(printContent);
@@ -924,7 +924,7 @@ printWindow.print();
 }
 const listaProdutosUL = document.getElementById('listaProdutos');
 const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
-const inputProdutoNãome = document.getElementById('novoProdutoNãome');
+const inputProdutoNome = document.getElementById('novoProdutoNome');
 const inputProdutoPreco = document.getElementById('novoProdutoPreco');
 // Carrega os produtos cadastrados
 function carregarProdutos() {
@@ -943,7 +943,7 @@ listaProdutosUL.appendChild(li);
 }
 // Adiciona novo produto
 btnAdicionarProduto.addEventListener('click', () => {
-const nome = inputProdutoNãome.value.trim();
+const nome = inputProdutoNome.value.trim();
 const preco = parseFloat(inputProdutoPreco.value);
 if (!nome || isNaN(preco)) {
 alert('Preencha corretamente nome e preo.');
@@ -951,7 +951,7 @@ return;
 }
 const novoRef = db.ref('produtos').push();
 novoRef.set({ nome, preco }).then(() => {
-inputProdutoNãome.value = '';
+inputProdutoNome.value = '';
 inputProdutoPreco.value = '';
 carregarProdutos();
 });
